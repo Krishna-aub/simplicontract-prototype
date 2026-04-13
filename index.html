@@ -1477,7 +1477,6 @@
     <div class="left-panel">
       <div class="panel-tabs">
         <button class="panel-tab active" onclick="switchTab(this,'nemo-panel-6')">✦ Nemo</button>
-        <button class="panel-tab" onclick="switchTab(this,'details-panel-6')">Details</button>
         <button class="panel-tab" onclick="switchTab(this,'collab-panel-6')">Collaborate</button>
         <button class="panel-tab" onclick="switchTab(this,'analysis-panel-6')">Analysis</button>
       </div>
@@ -1497,16 +1496,8 @@
           <button class="chat-send">↑</button>
         </div>
       </div>
-      <!-- Details summary tab -->
-      <div id="details-panel-6" class="panel-tab-content" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
-        <div class="details-panel-scroll">
-          <div style="margin-bottom:16px">
-            <h2 style="font-size:15px;font-weight:700;margin-bottom:2px">Contract Details</h2>
-            <p style="font-size:12px;color:var(--mid)">All sections completed</p>
-          </div>
-          <div id="details-summary" style="display:flex;flex-direction:column;gap:8px;font-size:13px"></div>
-        </div>
-      </div>
+      <!-- details-summary kept hidden for JS population but not shown as tab -->
+      <div id="details-summary" style="display:none"></div>
 
       <div id="collab-panel-6" class="panel-tab-content">
         <div class="empty-panel">Collaboration threads will appear here once reviewers are added.</div>
