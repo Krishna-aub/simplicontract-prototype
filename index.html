@@ -430,10 +430,12 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
   .chat-input-wrap {
+    flex-shrink: 0;
     padding: 10px 12px;
     border-top: 1px solid var(--border);
     display: flex; gap: 8px; align-items: center;
     background: var(--white);
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.04);
   }
   .chat-input-wrap input {
     flex: 1; height: 34px;
@@ -512,13 +514,20 @@
   }
   .field-error { border-color: var(--red) !important; }
   .error-msg { font-size: 11px; color: var(--red); margin-top: 3px; display: none; }
-  .confirm-btn-wrap {
-    margin-top: 8px;
-    position: sticky; bottom: 0;
-    background: var(--surface);
-    padding: 16px 0 0;
+  /* sticky confirm footer */
+  .right-panel-footer {
+    flex-shrink: 0;
+    padding: 14px 24px;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.06);
   }
-  .confirm-btn-wrap .btn { width: 100%; height: 44px; font-size: 14px; }
+  .right-panel-footer .btn { width: 100%; height: 44px; font-size: 14px; }
+  /* right panel scroll area */
+  .right-panel-scroll {
+    flex: 1; overflow-y: auto;
+    padding: 24px;
+  }
 
   /* ────────────────────────────────────────────────────────── */
   /* SCREEN 5 — MODAL                                          */
@@ -623,8 +632,8 @@
   </div>
   <!-- Nav tabs -->
   <div class="navtabs">
-    <button class="navtab active" onclick="goto('s1','Home')">Home</button>
-    <button class="navtab" onclick="goto('s2','Contracts')">Contracts</button>
+    <button class="navtab active" onclick="goto('s1')">Home</button>
+    <button class="navtab" onclick="goto('s2')">Contracts</button>
     <button class="navtab">Tasks</button>
     <button class="navtab">Deliverables</button>
     <button class="navtab">Analytics</button>
@@ -663,35 +672,35 @@
           </tr>
         </thead>
         <tbody>
-          <tr onclick="goto('s4','Contracts')">
+          <tr onclick="goto('s4')">
             <td class="mono">C-1259</td>
             <td>FLIP_FINAL_TEST1_with_signature</td>
             <td><span class="pill pill-green">Active</span></td>
             <td class="muted">Test01</td>
             <td class="muted">30-Jun-2026</td>
           </tr>
-          <tr onclick="goto('s4','Contracts')">
+          <tr onclick="goto('s4')">
             <td class="mono">C-1258</td>
             <td>FLIP_FINAL_TEST1</td>
             <td><span class="pill pill-green">Active</span></td>
             <td class="muted">Test01</td>
             <td class="muted">15-May-2026</td>
           </tr>
-          <tr onclick="goto('s4','Contracts')">
+          <tr onclick="goto('s4')">
             <td class="mono">C-1255</td>
             <td>KR-Test-Document_1</td>
             <td><span class="pill pill-green">Active</span></td>
             <td class="muted">Test01</td>
             <td class="muted">01-Apr-2027</td>
           </tr>
-          <tr onclick="goto('s4','Contracts')">
+          <tr onclick="goto('s4')">
             <td class="mono">C-1256</td>
             <td>KR-Test-Document_2</td>
             <td><span class="pill pill-red">Expired</span></td>
             <td class="muted">Test01</td>
             <td class="muted">01-Apr-2026</td>
           </tr>
-          <tr onclick="goto('s4','Contracts')">
+          <tr onclick="goto('s4')">
             <td class="mono">C-746</td>
             <td>TestCreate</td>
             <td><span class="pill pill-green">Active</span></td>
@@ -722,8 +731,8 @@
     </div>
   </div>
   <div class="navtabs">
-    <button class="navtab" onclick="goto('s1','Home')">Home</button>
-    <button class="navtab active" onclick="goto('s2','Contracts')">Contracts</button>
+    <button class="navtab" onclick="goto('s1')">Home</button>
+    <button class="navtab active" onclick="goto('s2')">Contracts</button>
     <button class="navtab">Tasks</button>
     <button class="navtab">Deliverables</button>
     <button class="navtab">Analytics</button>
@@ -733,7 +742,7 @@
     <h1>Contracts</h1>
     <div style="display:flex;gap:10px">
       <button class="btn btn-outline">Import</button>
-      <button class="btn btn-primary" onclick="goto('s3','Contracts')">+ Add New</button>
+      <button class="btn btn-primary" onclick="goto('s3')">+ Add New</button>
     </div>
   </div>
   <div class="filter-bar">
@@ -763,7 +772,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr onclick="goto('s6','Contracts')">
+        <tr onclick="goto('s6')">
           <td><button class="expand-btn" onclick="toggleChild(event,'child-1259')">▾</button></td>
           <td class="mono">C-1259</td>
           <td>FLIP_FINAL_TEST1_with_signature</td>
@@ -773,7 +782,7 @@
           <td><span class="pill pill-green">Active</span></td>
           <td class="muted">B2B(Wholesale)</td>
         </tr>
-        <tr id="child-1259" class="child-row" style="display:none" onclick="goto('s6','Contracts')">
+        <tr id="child-1259" class="child-row" style="display:none" onclick="goto('s6')">
           <td></td>
           <td class="mono">--</td>
           <td>FLIP_FINAL_TEST</td>
@@ -783,7 +792,7 @@
           <td><span class="pill pill-green">Active</span></td>
           <td class="muted">B2B(Wholesale)</td>
         </tr>
-        <tr onclick="goto('s6','Contracts')">
+        <tr onclick="goto('s6')">
           <td></td>
           <td class="mono">C-1258</td>
           <td>FLIP_FINAL_TEST1</td>
@@ -793,7 +802,7 @@
           <td><span class="pill pill-green">Active</span></td>
           <td class="muted">B2B(Wholesale)</td>
         </tr>
-        <tr onclick="goto('s6','Contracts')">
+        <tr onclick="goto('s6')">
           <td></td>
           <td class="mono">C-1257</td>
           <td style="padding-left:24px;color:var(--mid)">↳ Brilio_test_S.B.1</td>
@@ -803,7 +812,7 @@
           <td><span class="pill pill-green">Active</span></td>
           <td class="muted">B2B(Wholesale)</td>
         </tr>
-        <tr onclick="goto('s6','Contracts')">
+        <tr onclick="goto('s6')">
           <td></td>
           <td class="mono">C-1255</td>
           <td>KR-Test-Document_1</td>
@@ -813,7 +822,7 @@
           <td><span class="pill pill-green">Active</span></td>
           <td class="muted">B2B(Wholesale)</td>
         </tr>
-        <tr onclick="goto('s6','Contracts')">
+        <tr onclick="goto('s6')">
           <td></td>
           <td class="mono">C-1256</td>
           <td>KR-Test-Document_2</td>
@@ -823,7 +832,7 @@
           <td><span class="pill pill-red">Expired</span></td>
           <td class="muted">B2B(Wholesale)</td>
         </tr>
-        <tr onclick="goto('s6','Contracts')">
+        <tr onclick="goto('s6')">
           <td></td>
           <td class="mono">C-1254</td>
           <td>KR-Test-Document</td>
@@ -833,7 +842,7 @@
           <td><span class="pill pill-green">Active</span></td>
           <td class="muted">B2B(Wholesale)</td>
         </tr>
-        <tr onclick="goto('s6','Contracts')">
+        <tr onclick="goto('s6')">
           <td><button class="expand-btn" onclick="toggleChild(event,'child-746')">▾</button></td>
           <td class="mono">C-746</td>
           <td>TestCreate</td>
@@ -876,8 +885,8 @@
     </div>
   </div>
   <div class="navtabs">
-    <button class="navtab" onclick="goto('s1','Home')">Home</button>
-    <button class="navtab active" onclick="goto('s2','Contracts')">Contracts</button>
+    <button class="navtab" onclick="goto('s1')">Home</button>
+    <button class="navtab active" onclick="goto('s2')">Contracts</button>
     <button class="navtab">Tasks</button>
     <button class="navtab">Deliverables</button>
     <button class="navtab">Analytics</button>
@@ -960,7 +969,7 @@
 
       </div>
       <div class="origin-footer">
-        <button class="btn btn-primary btn-lg" id="next-btn" onclick="goto('s4','Contracts')">Next →</button>
+        <button class="btn btn-primary btn-lg" id="next-btn" onclick="goto('s4')">Next →</button>
       </div>
     </div>
   </div>
@@ -984,8 +993,8 @@
     </div>
   </div>
   <div class="navtabs">
-    <button class="navtab" onclick="goto('s1','Home')">Home</button>
-    <button class="navtab active" onclick="goto('s2','Contracts')">Contracts</button>
+    <button class="navtab" onclick="goto('s1')">Home</button>
+    <button class="navtab active" onclick="goto('s2')">Contracts</button>
     <button class="navtab">Tasks</button>
     <button class="navtab">Deliverables</button>
     <button class="navtab">Analytics</button>
@@ -1045,7 +1054,8 @@
     </div>
 
     <!-- RIGHT: Accordion form -->
-    <div class="right-panel">
+    <div class="right-panel" style="padding:0;display:flex;flex-direction:column;">
+      <div class="right-panel-scroll">
       <div class="right-panel-header">
         <h2>Contract Details</h2>
         <p>Complete all sections to create your contract</p>
@@ -1290,7 +1300,8 @@
         </div>
       </div>
 
-      <div class="confirm-btn-wrap" id="confirm-btn-wrap" style="display:none">
+      </div><!-- end right-panel-scroll -->
+      <div class="right-panel-footer" id="confirm-btn-wrap" style="display:none">
         <button class="btn btn-primary" onclick="showModal()">Confirm and create contract</button>
       </div>
     </div>
@@ -1375,8 +1386,8 @@
     </div>
   </div>
   <div class="navtabs">
-    <button class="navtab" onclick="goto('s1','Home')">Home</button>
-    <button class="navtab active" onclick="goto('s2','Contracts')">Contracts</button>
+    <button class="navtab" onclick="goto('s1')">Home</button>
+    <button class="navtab active" onclick="goto('s2')">Contracts</button>
     <button class="navtab">Tasks</button>
     <button class="navtab">Deliverables</button>
     <button class="navtab">Analytics</button>
@@ -1583,7 +1594,7 @@
 
 <script>
   // ── Screen navigation ──────────────────────────────────────
-  function goto(screenId, activeTab) {
+  function goto(screenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
     window.scrollTo(0, 0);
@@ -1611,11 +1622,6 @@
     document.getElementById('card-' + type).classList.add('selected');
   }
 
-  // ── Accordion toggle ───────────────────────────────────────
-  function toggleAccordion(header) {
-    header.parentElement.classList.toggle('open');
-  }
-
   // ── Panel tab switching ────────────────────────────────────
   function switchTab(btn, panelId) {
     const panel = btn.closest('.left-panel');
@@ -1632,6 +1638,107 @@
     field.style.display = (sel === 'Amendment' || sel === 'Addendum') ? '' : 'none';
   }
 
+  // ── Field error helpers ────────────────────────────────────
+  function showError(fieldId, errId) {
+    const el = document.getElementById(fieldId);
+    const err = document.getElementById(errId);
+    if (el) el.classList.add('field-error');
+    if (err) err.style.display = 'block';
+  }
+  function clearError(el) {
+    el.classList.remove('field-error');
+    const err = el.closest('.input-group')?.querySelector('.error-msg');
+    if (err) err.style.display = 'none';
+  }
+
+  // ── Step validation rules ──────────────────────────────────
+  const stepValidations = {
+    2: [
+      { id: 'f-bu',     err: 'err-bu',     check: v => v !== '' },
+      { id: 'f-cat',    err: 'err-cat',    check: v => v !== '' },
+      { id: 'f-subcat', err: 'err-subcat', check: v => v !== '' },
+    ],
+    3: [
+      { id: 'f-counterparty', err: 'err-counterparty', check: v => v.trim() !== '' },
+    ],
+    4: [
+      { id: 'f-start', err: 'err-start', check: v => v !== '' },
+      { id: 'f-end',   err: 'err-end',   check: v => v !== '' },
+      { id: 'f-value', err: 'err-value', check: v => v.trim() !== '' },
+    ],
+    5: [], // no required fields
+    6: [
+      { id: 'f-assignee', err: 'err-assignee', check: v => v.trim() !== '' },
+    ],
+    7: [], // no required fields
+  };
+
+  // ── Sequential step completion ─────────────────────────────
+  function completeStep(stepNum) {
+    const rules = stepValidations[stepNum] || [];
+    let valid = true;
+
+    rules.forEach(rule => {
+      const el = document.getElementById(rule.id);
+      const val = el ? el.value : '';
+      if (!rule.check(val)) {
+        showError(rule.id, rule.err);
+        valid = false;
+      }
+    });
+
+    if (!valid) return;
+
+    // Mark current step done
+    const current = document.getElementById('step-' + stepNum);
+    current.classList.remove('open');
+    const numEl = current.querySelector('.step-num');
+    numEl.classList.remove('active-step');
+    numEl.classList.add('done');
+    numEl.textContent = '✓';
+    current.querySelector('.accordion-title').style.color = 'var(--mid)';
+
+    // Add summary meta to completed step header
+    const meta = getStepSummary(stepNum);
+    let metaEl = current.querySelector('.accordion-meta');
+    if (!metaEl) {
+      metaEl = document.createElement('span');
+      metaEl.className = 'accordion-meta';
+      current.querySelector('.accordion-header').appendChild(metaEl);
+    }
+    metaEl.textContent = meta;
+
+    // Unlock & open next step (or show confirm button after step 7)
+    const nextNum = stepNum + 1;
+    const nextStep = document.getElementById('step-' + nextNum);
+    if (nextStep) {
+      nextStep.classList.remove('locked');
+      nextStep.classList.add('open');
+      const nextNum2 = nextStep.querySelector('.step-num');
+      nextNum2.classList.add('active-step');
+      // Scroll next step into view
+      setTimeout(() => nextStep.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    } else {
+      // All steps done — show confirm button
+      document.getElementById('confirm-btn-wrap').style.display = '';
+    }
+  }
+
+  // ── Step summary text ──────────────────────────────────────
+  function getStepSummary(stepNum) {
+    const get = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+    const getText = id => { const el = document.getElementById(id); return el ? (el.options ? el.options[el.selectedIndex]?.text : el.value) : ''; };
+    switch(stepNum) {
+      case 2: return getText('f-org') + ' · ' + getText('f-bu');
+      case 3: return get('f-counterparty') || 'Counterparty added';
+      case 4: return get('f-start') + ' → ' + get('f-end');
+      case 5: return getText('doc-type');
+      case 6: return get('f-assignee');
+      case 7: return 'Saved';
+      default: return '';
+    }
+  }
+
   // ── Modal ──────────────────────────────────────────────────
   function showModal() {
     document.getElementById('confirm-modal').style.display = 'flex';
@@ -1641,7 +1748,7 @@
   }
   function createContract() {
     hideModal();
-    goto('s6', 'Contracts');
+    goto('s6');
   }
 
   // Close modal on overlay click
