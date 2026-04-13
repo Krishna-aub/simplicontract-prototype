@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SimpliContract — Redesign Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green:      #2E7D32;
+    --green-l:    #81C784;
+    --green-bg:   #E8F5E9;
+    --amber:      #FF8F00;
+    --amber-bg:   #FFF8E1;
+    --red:        #C62828;
+    --red-bg:     #FFEBEE;
+    --teal:       #00897B;
+    --teal-bg:    #E0F2F1;
+    --dark:       #1A1A2E;
+    --mid:        #6B7280;
+    --light:      #9CA3AF;
+    --border:     #E5E7EB;
+    --surface:    #F8F9FA;
+    --white:      #FFFFFF;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--surface);
+    color: var(--dark);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── Screen system ─────────────────────────────────────────── */
+  .screen { display: none; flex-direction: column; min-height: 100vh; }
+  .screen.active { display: flex; }
+
+  /* ── Top utility bar ──────────────────────────────────────── */
+  .topbar {
+    height: 56px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-shrink: 0;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .logo-mark {
+    width: 28px; height: 28px;
+    background: var(--green);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 14px;
+  }
+  .logo-text { font-weight: 700; font-size: 15px; color: var(--dark); }
+  .topbar-search {
+    flex: 1;
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .topbar-search input {
+    width: 100%;
+    height: 32px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0 12px 0 34px;
+    font-size: 12px;
+    font-family: inherit;
+    background: var(--surface);
+    color: var(--mid);
+    outline: none;
+  }
+  .topbar-search::before {
+    content: '⌕';
+    position: absolute;
+    left: 11px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--light);
+    font-size: 16px;
+  }
+  .topbar-right {
+    display: flex; align-items: center; gap: 12px; margin-left: auto;
+  }
+  .notif-btn {
+    position: relative; background: none; border: none; cursor: pointer;
+    font-size: 18px; padding: 4px;
+  }
+  .notif-badge {
+    position: absolute; top: 0; right: 0;
+    background: var(--red); color: white;
+    font-size: 9px; font-weight: 700;
+    width: 16px; height: 16px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--green); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; cursor: pointer;
+  }
+
+  /* ── Navigation tabs ──────────────────────────────────────── */
+  .navtabs {
+    height: 46px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: stretch;
+    padding: 0 24px;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .navtab {
+    display: flex; align-items: center;
+    padding: 0 16px;
+    font-size: 13px; font-weight: 400;
+    color: var(--mid);
+    cursor: pointer;
+    border: none; background: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    font-family: inherit;
+    transition: color 0.15s;
+    white-space: nowrap;
+  }
+  .navtab:hover { color: var(--dark); }
+  .navtab.active { color: var(--green); font-weight: 600; border-bottom-color: var(--green); }
+
+  /* ── Lifecycle stepper ────────────────────────────────────── */
+  .stepper {
+    height: 56px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-shrink: 0;
+  }
+  .step-item {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .step-connector {
+    width: 80px; height: 2px;
+    background: var(--border);
+    margin: 0 4px;
+  }
+  .step-connector.done { background: var(--green); }
+  .step-circle {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    border: 2px solid var(--border);
+    background: var(--white);
+    color: var(--light);
+    flex-shrink: 0;
+  }
+  .step-circle.active { background: var(--green); border-color: var(--green); color: white; }
+  .step-circle.done   { background: var(--green); border-color: var(--green); color: white; font-size: 14px; }
+  .step-label { font-size: 12px; font-weight: 400; color: var(--light); }
+  .step-label.active { color: var(--green); font-weight: 600; }
+  .step-label.done   { color: var(--green); }
+
+  /* ── Page content wrapper ─────────────────────────────────── */
+  .page-content {
+    flex: 1;
+    background: var(--surface);
+    padding: 32px;
+    overflow-y: auto;
+  }
+
+  /* ── Cards / panels ───────────────────────────────────────── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  /* ── Buttons ──────────────────────────────────────────────── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0 18px; height: 36px;
+    border-radius: 6px; border: none;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+    transition: opacity 0.15s, background 0.15s;
+  }
+  .btn:hover { opacity: 0.88; }
+  .btn-primary { background: var(--green); color: white; }
+  .btn-outline { background: transparent; border: 1px solid var(--green); color: var(--green); }
+  .btn-ghost   { background: transparent; border: 1px solid var(--border); color: var(--mid); }
+  .btn-lg { height: 44px; padding: 0 28px; font-size: 14px; border-radius: 8px; }
+  .btn-sm { height: 30px; padding: 0 14px; font-size: 12px; }
+  .btn:disabled { background: var(--border); color: var(--light); cursor: not-allowed; opacity: 1; }
+
+  /* ── Pills / badges ───────────────────────────────────────── */
+  .pill {
+    display: inline-flex; align-items: center;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 500;
+    white-space: nowrap;
+  }
+  .pill-green  { background: var(--green-bg); color: var(--green); }
+  .pill-red    { background: var(--red-bg);   color: var(--red);   }
+  .pill-amber  { background: var(--amber-bg); color: var(--amber); }
+  .pill-outline { background: white; border: 1px solid var(--border); color: var(--mid); }
+
+  /* ── Form inputs ──────────────────────────────────────────── */
+  .input-group { display: flex; flex-direction: column; gap: 4px; }
+  .input-label { font-size: 11px; font-weight: 600; color: var(--mid); text-transform: uppercase; letter-spacing: 0.05em; }
+  .input-wrap { position: relative; }
+  select, input[type="text"], input[type="date"] {
+    width: 100%; height: 36px;
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 0 32px 0 10px;
+    font-family: inherit; font-size: 13px; color: var(--dark);
+    background: var(--white);
+    appearance: none; outline: none;
+    transition: border-color 0.15s;
+  }
+  select:focus, input:focus { border-color: var(--green); }
+  .ai-hint {
+    position: absolute; right: 28px; top: 50%; transform: translateY(-50%);
+    font-size: 10px; color: var(--teal); font-weight: 500;
+    pointer-events: none;
+  }
+  .select-arrow {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    color: var(--light); pointer-events: none; font-size: 10px;
+  }
+  .form-grid { display: grid; gap: 12px; }
+  .form-grid-2 { grid-template-columns: 1fr 1fr; }
+
+  /* ────────────────────────────────────────────────────────── */
+  /* SCREEN 1 — HOME                                           */
+  /* ────────────────────────────────────────────────────────── */
+  .metric-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 32px; }
+  .metric-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 24px 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+  }
+  .metric-card.amber { border-left: 4px solid var(--amber); }
+  .metric-card.red   { border-left: 4px solid var(--red); }
+  .metric-card.green { border-left: 4px solid var(--green); }
+  .metric-value { font-size: 40px; font-weight: 700; line-height: 1.1; margin-bottom: 6px; }
+  .metric-label { font-size: 13px; color: var(--mid); }
+
+  .section-heading { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+
+  .table-card { background: var(--white); border-radius: 8px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 11px; font-weight: 600;
+    color: var(--mid);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+  }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; cursor: pointer; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface); }
+  tbody td { padding: 12px 16px; font-size: 13px; }
+  td.mono { font-family: 'SF Mono', monospace; font-size: 12px; color: var(--green); }
+  td.muted { color: var(--mid); }
+
+  /* ────────────────────────────────────────────────────────── */
+  /* SCREEN 2 — CONTRACTS LIST                                 */
+  /* ────────────────────────────────────────────────────────── */
+  .contracts-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+  }
+  .contracts-header h1 { font-size: 20px; font-weight: 700; }
+  .filter-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .filter-bar input[type="text"] { max-width: 280px; }
+  .filter-bar select { max-width: 140px; }
+  .contracts-table-wrap { flex: 1; overflow-y: auto; background: var(--white); }
+  tr.child-row td { background: var(--surface); }
+  tr.child-row td:first-child { padding-left: 36px; position: relative; }
+  tr.child-row td:first-child::before {
+    content: '';
+    position: absolute; left: 24px; top: 0; bottom: 50%;
+    border-left: 2px solid var(--border);
+    border-bottom: 2px solid var(--border);
+    width: 8px;
+  }
+  .expand-btn { background: none; border: none; cursor: pointer; color: var(--mid); font-size: 12px; padding: 0 4px; }
+
+  /* ────────────────────────────────────────────────────────── */
+  /* SCREEN 3 — ORIGIN SELECTION                               */
+  /* ────────────────────────────────────────────────────────── */
+  .origin-content {
+    max-width: 980px; margin: 48px auto; padding: 0 24px;
+    text-align: center;
+  }
+  .origin-content h2 { font-size: 26px; font-weight: 700; margin-bottom: 10px; }
+  .origin-content p  { font-size: 14px; color: var(--mid); margin-bottom: 36px; }
+  .origin-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; text-align: left; }
+  .origin-card {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px 24px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .origin-card:hover { border-color: var(--green-l); }
+  .origin-card.selected { border-color: var(--green); box-shadow: 0 4px 16px rgba(46,125,50,0.12); }
+  .origin-card .check-badge {
+    position: absolute; top: 14px; right: 14px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--green); color: white;
+    display: none; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+  .origin-card.selected .check-badge { display: flex; }
+  .origin-icon {
+    width: 48px; height: 48px; border-radius: 10px;
+    background: var(--green-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; margin-bottom: 16px;
+  }
+  .origin-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  .origin-card p  { font-size: 12px; color: var(--mid); line-height: 1.6; margin-bottom: 16px; }
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    color: var(--light);
+    font-size: 12px;
+    background: var(--surface);
+    transition: border-color 0.2s;
+  }
+  .upload-zone:hover { border-color: var(--green-l); }
+  .template-select { margin-top: 0; }
+  .template-select select { width: 100%; }
+  .origin-footer {
+    display: flex; justify-content: flex-end;
+    margin-top: 32px;
+  }
+
+  /* ────────────────────────────────────────────────────────── */
+  /* SCREEN 4 — WORKSPACE                                      */
+  /* ────────────────────────────────────────────────────────── */
+  .workspace {
+    display: flex; flex: 1; overflow: hidden; min-height: 0;
+  }
+  /* Left panel */
+  .left-panel {
+    width: 360px; flex-shrink: 0;
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+  }
+  .panel-tabs {
+    display: flex; align-items: stretch;
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+  }
+  .panel-tab {
+    display: flex; align-items: center;
+    padding: 12px 14px 10px;
+    font-size: 13px; font-weight: 400; color: var(--mid);
+    cursor: pointer; border: none; background: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px; font-family: inherit;
+    transition: color 0.15s;
+  }
+  .panel-tab:hover { color: var(--dark); }
+  .panel-tab.active { color: var(--green); font-weight: 600; border-bottom-color: var(--green); }
+  .panel-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .panel-tab-content { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+  .panel-tab-content.active { display: flex; }
+  .nemo-label {
+    font-size: 12px; font-weight: 600; color: var(--teal);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .nemo-bubble {
+    background: var(--teal-bg);
+    border-radius: 0 10px 10px 10px;
+    padding: 14px 16px;
+    font-size: 13px; line-height: 1.6; color: var(--dark);
+  }
+  .processing-bar {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface); border-radius: 6px;
+    padding: 9px 12px; font-size: 12px; color: var(--mid);
+  }
+  .spinner {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--border);
+    border-top-color: var(--teal);
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .chat-input-wrap {
+    padding: 10px 12px;
+    border-top: 1px solid var(--border);
+    display: flex; gap: 8px; align-items: center;
+    background: var(--white);
+  }
+  .chat-input-wrap input {
+    flex: 1; height: 34px;
+    border: 1px solid var(--border); border-radius: 20px;
+    padding: 0 14px; font-size: 12px; font-family: inherit;
+    outline: none; background: var(--surface);
+  }
+  .chat-input-wrap input:focus { border-color: var(--teal); }
+  .chat-send { background: var(--teal); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 14px; flex-shrink: 0; }
+  .empty-panel { padding: 24px 16px; color: var(--light); font-size: 12px; line-height: 1.7; }
+  .nemo-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
+
+  /* Right panel — accordion */
+  .right-panel {
+    flex: 1; overflow-y: auto;
+    background: var(--surface);
+    padding: 24px;
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .right-panel-header { margin-bottom: 20px; }
+  .right-panel-header h2 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .right-panel-header p  { font-size: 12px; color: var(--mid); }
+
+  .accordion-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: opacity 0.2s;
+  }
+  .accordion-item.locked {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .accordion-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 16px;
+    user-select: none;
+    font-size: 13px;
+    cursor: default;
+  }
+  .accordion-left { display: flex; align-items: center; gap: 10px; }
+  .step-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--surface); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--mid);
+    flex-shrink: 0;
+  }
+  .step-num.done { background: var(--green); border-color: var(--green); color: white; }
+  .step-num.active-step { background: var(--green); border-color: var(--green); color: white; }
+  .accordion-title { font-weight: 500; color: var(--dark); font-size: 13px; }
+  .accordion-item.locked .accordion-title { color: var(--mid); }
+  .accordion-meta  { font-size: 12px; color: var(--mid); }
+  .accordion-chevron { color: var(--light); font-size: 12px; transition: transform 0.2s; }
+  .accordion-item.open .accordion-chevron { transform: rotate(180deg); }
+  .accordion-body {
+    display: none;
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    background: var(--white);
+  }
+  .accordion-item.open .accordion-body { display: block; }
+  .step-continue-btn {
+    width: 100%; height: 38px; margin-top: 16px;
+    background: var(--green); color: white;
+    border: none; border-radius: 6px;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.15s;
+  }
+  .step-continue-btn:hover { opacity: 0.88; }
+  .step-continue-btn:disabled {
+    background: var(--border); color: var(--light); cursor: not-allowed; opacity: 1;
+  }
+  .field-error { border-color: var(--red) !important; }
+  .error-msg { font-size: 11px; color: var(--red); margin-top: 3px; display: none; }
+  .confirm-btn-wrap {
+    margin-top: 8px;
+    position: sticky; bottom: 0;
+    background: var(--surface);
+    padding: 16px 0 0;
+  }
+  .confirm-btn-wrap .btn { width: 100%; height: 44px; font-size: 14px; }
+
+  /* ────────────────────────────────────────────────────────── */
+  /* SCREEN 5 — MODAL                                          */
+  /* ────────────────────────────────────────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(26,26,46,0.55);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200;
+  }
+  .modal {
+    background: var(--white);
+    border-radius: 16px;
+    width: 680px; max-width: calc(100vw - 48px);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+    overflow: hidden;
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 28px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-header h3 { font-size: 16px; font-weight: 700; }
+  .modal-close { background: none; border: none; cursor: pointer; font-size: 18px; color: var(--mid); line-height: 1; }
+  .modal-body { padding: 24px 28px; }
+  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 32px; }
+  .modal-field-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--light); margin-bottom: 3px; }
+  .modal-field-value { font-size: 14px; color: var(--dark); font-weight: 500; }
+  .modal-footer {
+    display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+    padding: 16px 28px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  /* ────────────────────────────────────────────────────────── */
+  /* SCREEN 6 — POST-CREATION                                  */
+  /* ────────────────────────────────────────────────────────── */
+  .detail-row {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-left { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .detail-row-label { font-size: 12px; color: var(--mid); }
+  .detail-row-value { font-size: 13px; font-weight: 500; }
+  .detail-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 12px; }
+  .detail-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .link-btn { font-size: 12px; color: var(--green); background: none; border: none; cursor: pointer; font-family: inherit; font-weight: 500; white-space: nowrap; }
+  .link-btn:hover { text-decoration: underline; }
+  .contract-heading {
+    display: flex; align-items: center; gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+  }
+  .contract-heading h3 { font-size: 14px; font-weight: 700; }
+
+  /* ── Misc utilities ───────────────────────────────────────── */
+  .text-green  { color: var(--green);  }
+  .text-amber  { color: var(--amber);  }
+  .text-red    { color: var(--red);    }
+  .text-mid    { color: var(--mid);    }
+  .text-teal   { color: var(--teal);   }
+  .mt-4  { margin-top: 4px; }
+  .mt-8  { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .flex  { display: flex; }
+  .flex-between { display: flex; align-items: center; justify-content: space-between; }
+  .flex-center  { display: flex; align-items: center; }
+  .gap-8  { gap: 8px; }
+  .gap-12 { gap: 12px; }
+
+  /* ── Responsive tweaks ────────────────────────────────────── */
+  @media (max-width: 900px) {
+    .metric-row { grid-template-columns: 1fr; }
+    .origin-cards { grid-template-columns: 1fr; }
+    .left-panel { width: 300px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 1 — HOME
+════════════════════════════════════════════════════════════ -->
+<div id="s1" class="screen active">
+  <!-- Top bar -->
+  <div class="topbar">
+    <a class="logo" href="#">
+      <div class="logo-mark">S</div>
+      <span class="logo-text">SimpliContract</span>
+    </a>
+    <div class="topbar-search">
+      <input type="text" placeholder="Search contracts, vendors, documents…" />
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
+      <div class="avatar">SM</div>
+    </div>
+  </div>
+  <!-- Nav tabs -->
+  <div class="navtabs">
+    <button class="navtab active" onclick="goto('s1','Home')">Home</button>
+    <button class="navtab" onclick="goto('s2','Contracts')">Contracts</button>
+    <button class="navtab">Tasks</button>
+    <button class="navtab">Deliverables</button>
+    <button class="navtab">Analytics</button>
+    <button class="navtab">Settings</button>
+  </div>
+  <!-- Content -->
+  <div class="page-content">
+    <div style="margin-bottom:28px">
+      <h1 style="font-size:22px;font-weight:700;margin-bottom:4px">Good morning, Surya</h1>
+      <p style="color:var(--mid);font-size:13px">Here's your contract activity overview.</p>
+    </div>
+    <div class="metric-row">
+      <div class="metric-card green">
+        <div class="metric-value text-green">247</div>
+        <div class="metric-label">Active Contracts</div>
+      </div>
+      <div class="metric-card amber">
+        <div class="metric-value text-amber">18</div>
+        <div class="metric-label">Expiring in 90 Days</div>
+      </div>
+      <div class="metric-card red">
+        <div class="metric-value text-red">5</div>
+        <div class="metric-label">Overdue Obligations</div>
+      </div>
+    </div>
+    <div class="section-heading">Recent Contracts</div>
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Contract Number</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Counterparty</th>
+            <th>Due Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr onclick="goto('s4','Contracts')">
+            <td class="mono">C-1259</td>
+            <td>FLIP_FINAL_TEST1_with_signature</td>
+            <td><span class="pill pill-green">Active</span></td>
+            <td class="muted">Test01</td>
+            <td class="muted">30-Jun-2026</td>
+          </tr>
+          <tr onclick="goto('s4','Contracts')">
+            <td class="mono">C-1258</td>
+            <td>FLIP_FINAL_TEST1</td>
+            <td><span class="pill pill-green">Active</span></td>
+            <td class="muted">Test01</td>
+            <td class="muted">15-May-2026</td>
+          </tr>
+          <tr onclick="goto('s4','Contracts')">
+            <td class="mono">C-1255</td>
+            <td>KR-Test-Document_1</td>
+            <td><span class="pill pill-green">Active</span></td>
+            <td class="muted">Test01</td>
+            <td class="muted">01-Apr-2027</td>
+          </tr>
+          <tr onclick="goto('s4','Contracts')">
+            <td class="mono">C-1256</td>
+            <td>KR-Test-Document_2</td>
+            <td><span class="pill pill-red">Expired</span></td>
+            <td class="muted">Test01</td>
+            <td class="muted">01-Apr-2026</td>
+          </tr>
+          <tr onclick="goto('s4','Contracts')">
+            <td class="mono">C-746</td>
+            <td>TestCreate</td>
+            <td><span class="pill pill-green">Active</span></td>
+            <td class="muted">Test67</td>
+            <td class="muted">26-Mar-2027</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 2 — CONTRACTS LIST
+════════════════════════════════════════════════════════════ -->
+<div id="s2" class="screen">
+  <div class="topbar">
+    <a class="logo" href="#">
+      <div class="logo-mark">S</div>
+      <span class="logo-text">SimpliContract</span>
+    </a>
+    <div class="topbar-search">
+      <input type="text" placeholder="Search contracts, vendors, documents…" />
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
+      <div class="avatar">SM</div>
+    </div>
+  </div>
+  <div class="navtabs">
+    <button class="navtab" onclick="goto('s1','Home')">Home</button>
+    <button class="navtab active" onclick="goto('s2','Contracts')">Contracts</button>
+    <button class="navtab">Tasks</button>
+    <button class="navtab">Deliverables</button>
+    <button class="navtab">Analytics</button>
+    <button class="navtab">Settings</button>
+  </div>
+  <div class="contracts-header">
+    <h1>Contracts</h1>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline">Import</button>
+      <button class="btn btn-primary" onclick="goto('s3','Contracts')">+ Add New</button>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <input type="text" placeholder="Search contracts…" style="max-width:260px" />
+    <div class="input-wrap" style="max-width:140px">
+      <select><option>Status</option><option>Active</option><option>Expired</option><option>Pending</option></select>
+      <span class="select-arrow">▾</span>
+    </div>
+    <div class="input-wrap" style="max-width:180px">
+      <select><option>Category</option><option>Wholesale Supply</option><option>VPL Agreement</option><option>Transportation</option></select>
+      <span class="select-arrow">▾</span>
+    </div>
+    <button class="btn btn-ghost btn-sm">📅 Date range</button>
+  </div>
+  <div class="contracts-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:32px"></th>
+          <th>Contract Number</th>
+          <th>Name</th>
+          <th>Created Date</th>
+          <th>Category</th>
+          <th>Client or Supplier</th>
+          <th>Status</th>
+          <th>Business Unit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr onclick="goto('s6','Contracts')">
+          <td><button class="expand-btn" onclick="toggleChild(event,'child-1259')">▾</button></td>
+          <td class="mono">C-1259</td>
+          <td>FLIP_FINAL_TEST1_with_signature</td>
+          <td class="muted">02-Apr-2026</td>
+          <td class="muted">Vendor | Wholesale Supply Agreement</td>
+          <td class="muted">Test01</td>
+          <td><span class="pill pill-green">Active</span></td>
+          <td class="muted">B2B(Wholesale)</td>
+        </tr>
+        <tr id="child-1259" class="child-row" style="display:none" onclick="goto('s6','Contracts')">
+          <td></td>
+          <td class="mono">--</td>
+          <td>FLIP_FINAL_TEST</td>
+          <td class="muted">02-Apr-2026</td>
+          <td class="muted">Vendor | Wholesale Supply Agreement</td>
+          <td class="muted">Test01</td>
+          <td><span class="pill pill-green">Active</span></td>
+          <td class="muted">B2B(Wholesale)</td>
+        </tr>
+        <tr onclick="goto('s6','Contracts')">
+          <td></td>
+          <td class="mono">C-1258</td>
+          <td>FLIP_FINAL_TEST1</td>
+          <td class="muted">02-Apr-2026</td>
+          <td class="muted">Vendor | Wholesale Supply Agreement</td>
+          <td class="muted">Test01</td>
+          <td><span class="pill pill-green">Active</span></td>
+          <td class="muted">B2B(Wholesale)</td>
+        </tr>
+        <tr onclick="goto('s6','Contracts')">
+          <td></td>
+          <td class="mono">C-1257</td>
+          <td style="padding-left:24px;color:var(--mid)">↳ Brilio_test_S.B.1</td>
+          <td class="muted">02-Apr-2026</td>
+          <td class="muted">Vendor | Wholesale Supply Agreement</td>
+          <td class="muted">Test01</td>
+          <td><span class="pill pill-green">Active</span></td>
+          <td class="muted">B2B(Wholesale)</td>
+        </tr>
+        <tr onclick="goto('s6','Contracts')">
+          <td></td>
+          <td class="mono">C-1255</td>
+          <td>KR-Test-Document_1</td>
+          <td class="muted">01-Apr-2026</td>
+          <td class="muted">Vendor | Wholesale Supply Agreement</td>
+          <td class="muted">Test01</td>
+          <td><span class="pill pill-green">Active</span></td>
+          <td class="muted">B2B(Wholesale)</td>
+        </tr>
+        <tr onclick="goto('s6','Contracts')">
+          <td></td>
+          <td class="mono">C-1256</td>
+          <td>KR-Test-Document_2</td>
+          <td class="muted">01-Apr-2026</td>
+          <td class="muted">Vendor | Wholesale Supply Agreement</td>
+          <td class="muted">Test01</td>
+          <td><span class="pill pill-red">Expired</span></td>
+          <td class="muted">B2B(Wholesale)</td>
+        </tr>
+        <tr onclick="goto('s6','Contracts')">
+          <td></td>
+          <td class="mono">C-1254</td>
+          <td>KR-Test-Document</td>
+          <td class="muted">01-Apr-2026</td>
+          <td class="muted">Vendor | Wholesale Supply Agreement</td>
+          <td class="muted">Test01</td>
+          <td><span class="pill pill-green">Active</span></td>
+          <td class="muted">B2B(Wholesale)</td>
+        </tr>
+        <tr onclick="goto('s6','Contracts')">
+          <td><button class="expand-btn" onclick="toggleChild(event,'child-746')">▾</button></td>
+          <td class="mono">C-746</td>
+          <td>TestCreate</td>
+          <td class="muted">16-Sep-2024</td>
+          <td class="muted">Vendor | 2Gud-VPL Agreement Template</td>
+          <td class="muted">Test67</td>
+          <td><span class="pill pill-green">Active</span></td>
+          <td class="muted">B2B(Wholesale)</td>
+        </tr>
+        <tr id="child-746" class="child-row" style="display:none">
+          <td></td>
+          <td class="mono">C-3860</td>
+          <td style="padding-left:24px;color:var(--mid)">↳ Test_Fk_Issue_AO</td>
+          <td class="muted">17-Jan-2023</td>
+          <td class="muted">Vendor | Wholesale Supply Agreement</td>
+          <td class="muted">Contessa Inc.</td>
+          <td><span class="pill pill-green">Active</span></td>
+          <td class="muted">B2B(Wholesale)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 3 — CONTRACT ORIGIN SELECTION
+════════════════════════════════════════════════════════════ -->
+<div id="s3" class="screen">
+  <div class="topbar">
+    <a class="logo" href="#">
+      <div class="logo-mark">S</div>
+      <span class="logo-text">SimpliContract</span>
+    </a>
+    <div class="topbar-search">
+      <input type="text" placeholder="Search contracts, vendors, documents…" />
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
+      <div class="avatar">SM</div>
+    </div>
+  </div>
+  <div class="navtabs">
+    <button class="navtab" onclick="goto('s1','Home')">Home</button>
+    <button class="navtab active" onclick="goto('s2','Contracts')">Contracts</button>
+    <button class="navtab">Tasks</button>
+    <button class="navtab">Deliverables</button>
+    <button class="navtab">Analytics</button>
+    <button class="navtab">Settings</button>
+  </div>
+  <!-- Stepper -->
+  <div class="stepper">
+    <div class="step-item">
+      <div class="step-circle active">1</div>
+      <span class="step-label active">Create</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item">
+      <div class="step-circle">2</div>
+      <span class="step-label">Review</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item">
+      <div class="step-circle">3</div>
+      <span class="step-label">Sign</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item">
+      <div class="step-circle">4</div>
+      <span class="step-label">Archive</span>
+    </div>
+  </div>
+  <div class="page-content" style="overflow-y:auto">
+    <div class="origin-content">
+      <h2>How would you like to start this contract?</h2>
+      <p>Choose your contract origin to get started.</p>
+      <div class="origin-cards">
+
+        <!-- Card 1 -->
+        <div class="origin-card" id="card-upload" onclick="selectOrigin('upload')">
+          <div class="check-badge">✓</div>
+          <div class="origin-icon">📄</div>
+          <h3>Start from your document</h3>
+          <p>You have drafted this contract offline. Upload your Word or PDF to bring it into SimpliContract.</p>
+          <div class="upload-zone">
+            📎 Add files or drop files here<br/>
+            <span style="font-size:11px;color:var(--light)">DOCX or PDF only · max 20MB</span>
+          </div>
+        </div>
+
+        <!-- Card 2 — pre-selected -->
+        <div class="origin-card selected" id="card-template" onclick="selectOrigin('template')">
+          <div class="check-badge">✓</div>
+          <div class="origin-icon">📋</div>
+          <h3>Start from a template</h3>
+          <p>Use a standard approved template as your starting point.</p>
+          <div class="template-select">
+            <div class="input-wrap">
+              <select id="template-select" onclick="event.stopPropagation()">
+                <option value="">Select template…</option>
+                <option value="wsa" selected>Wholesale Supply Agreement</option>
+                <option value="msa">Master Service Agreement</option>
+                <option value="nda">Non-Disclosure Agreement</option>
+                <option value="sow">Statement of Work</option>
+                <option value="po">Purchase Order</option>
+                <option value="amendment">Amendment</option>
+                <option value="addendum">Addendum</option>
+              </select>
+              <span class="select-arrow">▾</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="origin-card" id="card-vendor" onclick="selectOrigin('vendor')">
+          <div class="check-badge">✓</div>
+          <div class="origin-icon">🔄</div>
+          <h3>Use the vendor's contract</h3>
+          <p>The counterparty has sent you their version. Upload it for AI extraction and deviation analysis.</p>
+          <div class="upload-zone">
+            📎 Add files or drop files here<br/>
+            <span style="font-size:11px;color:var(--light)">DOCX or PDF only · max 20MB</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="origin-footer">
+        <button class="btn btn-primary btn-lg" id="next-btn" onclick="goto('s4','Contracts')">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 4 — WORKSPACE: DETAILS ENTRY
+════════════════════════════════════════════════════════════ -->
+<div id="s4" class="screen">
+  <div class="topbar">
+    <a class="logo" href="#">
+      <div class="logo-mark">S</div>
+      <span class="logo-text">SimpliContract</span>
+    </a>
+    <div class="topbar-search">
+      <input type="text" placeholder="Search contracts, vendors, documents…" />
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
+      <div class="avatar">SM</div>
+    </div>
+  </div>
+  <div class="navtabs">
+    <button class="navtab" onclick="goto('s1','Home')">Home</button>
+    <button class="navtab active" onclick="goto('s2','Contracts')">Contracts</button>
+    <button class="navtab">Tasks</button>
+    <button class="navtab">Deliverables</button>
+    <button class="navtab">Analytics</button>
+    <button class="navtab">Settings</button>
+  </div>
+  <div class="stepper">
+    <div class="step-item">
+      <div class="step-circle active">1</div>
+      <span class="step-label active">Create</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item">
+      <div class="step-circle">2</div>
+      <span class="step-label">Review</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item">
+      <div class="step-circle">3</div>
+      <span class="step-label">Sign</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item">
+      <div class="step-circle">4</div>
+      <span class="step-label">Archive</span>
+    </div>
+  </div>
+  <div class="workspace">
+    <!-- LEFT: Nemo panel -->
+    <div class="left-panel">
+      <div class="panel-tabs">
+        <button class="panel-tab active" onclick="switchTab(this,'nemo-panel')">✦ Nemo</button>
+        <button class="panel-tab" onclick="switchTab(this,'collab-panel')">Collaborate</button>
+        <button class="panel-tab" onclick="switchTab(this,'analysis-panel')">Analysis</button>
+      </div>
+      <div id="nemo-panel" class="panel-tab-content active" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+        <div class="panel-body" style="flex:1">
+          <div class="nemo-label">✦ Nemo</div>
+          <div class="nemo-bubble">
+            I've received your uploaded document. I'm extracting metadata and key terms now. I'll pre-fill what I can in the contract details on the right. Please review and complete any fields I've missed.
+          </div>
+          <div class="processing-bar">
+            <div class="spinner"></div>
+            Extracting metadata…
+          </div>
+        </div>
+        <div class="chat-input-wrap">
+          <input type="text" placeholder="Ask Nemo anything about this contract…" />
+          <button class="chat-send">↑</button>
+        </div>
+      </div>
+      <div id="collab-panel" class="panel-tab-content">
+        <div class="empty-panel">Collaboration threads will appear here once reviewers are added.</div>
+      </div>
+      <div id="analysis-panel" class="panel-tab-content">
+        <div class="empty-panel">Deviation analysis will appear here once the document is processed.</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Accordion form -->
+    <div class="right-panel">
+      <div class="right-panel-header">
+        <h2>Contract Details</h2>
+        <p>Complete all sections to create your contract</p>
+      </div>
+
+      <!-- Step 1 — auto-completed (from origin screen) -->
+      <div class="accordion-item" id="step-1">
+        <div class="accordion-header">
+          <div class="accordion-left">
+            <div class="step-num done">✓</div>
+            <span class="accordion-title" style="color:var(--mid)">Document origin</span>
+          </div>
+          <span class="accordion-meta">Template: Wholesale Supply Agreement</span>
+        </div>
+      </div>
+
+      <!-- Step 2 — active/open -->
+      <div class="accordion-item open" id="step-2">
+        <div class="accordion-header">
+          <div class="accordion-left">
+            <div class="step-num active-step">2</div>
+            <span class="accordion-title">Organisation context</span>
+          </div>
+          <span class="accordion-chevron">▾</span>
+        </div>
+        <div class="accordion-body">
+          <div class="form-grid form-grid-2" style="gap:12px">
+            <div class="input-group">
+              <label class="input-label">Organisation</label>
+              <div class="input-wrap">
+                <select id="f-org"><option value="Test01">Test01</option><option value="Test02">Test02</option></select>
+                <span class="ai-hint">AI suggested</span>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Region</label>
+              <div class="input-wrap">
+                <select id="f-region"><option value="india">India (Flipkart India Pvt Ltd)</option><option value="us">United States</option></select>
+                <span class="ai-hint">AI suggested</span>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Business Unit <span style="color:var(--red)">*</span></label>
+              <div class="input-wrap">
+                <select id="f-bu" onchange="clearError(this)">
+                  <option value="">Select…</option>
+                  <option value="b2b">B2B(Wholesale)</option>
+                  <option value="noncat">Non-Cat Procurement</option>
+                </select>
+                <span class="select-arrow">▾</span>
+              </div>
+              <span class="error-msg" id="err-bu">Please select a Business Unit</span>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Category <span style="color:var(--red)">*</span></label>
+              <div class="input-wrap">
+                <select id="f-cat" onchange="clearError(this)">
+                  <option value="">Select…</option>
+                  <option value="wsa">Vendor | Wholesale Supply Agreement</option>
+                  <option value="rct">Rate Card | Transportation</option>
+                </select>
+                <span class="select-arrow">▾</span>
+              </div>
+              <span class="error-msg" id="err-cat">Please select a Category</span>
+            </div>
+            <div class="input-group" style="grid-column:1/-1">
+              <label class="input-label">Sub-category <span style="color:var(--red)">*</span></label>
+              <div class="input-wrap">
+                <select id="f-subcat" onchange="clearError(this)">
+                  <option value="">Select…</option>
+                  <option value="wsa">Wholesale Supply Agreement</option>
+                  <option value="vpl">2Gud-VPL Agreement Template</option>
+                </select>
+                <span class="select-arrow">▾</span>
+              </div>
+              <span class="error-msg" id="err-subcat">Please select a Sub-category</span>
+            </div>
+          </div>
+          <button class="step-continue-btn" onclick="completeStep(2)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- Steps 3–7 locked -->
+      <div class="accordion-item locked" id="step-3">
+        <div class="accordion-header">
+          <div class="accordion-left"><div class="step-num">3</div><span class="accordion-title">Counterparty / Vendor</span></div>
+          <span class="accordion-chevron">▾</span>
+        </div>
+        <div class="accordion-body">
+          <div class="form-grid form-grid-2" style="gap:12px">
+            <div class="input-group" style="grid-column:1/-1">
+              <label class="input-label">Counterparty name <span style="color:var(--red)">*</span></label>
+              <div class="input-wrap"><input id="f-counterparty" type="text" placeholder="Search or create new counterparty…" oninput="clearError(this)" /></div>
+              <span class="error-msg" id="err-counterparty">Please enter a counterparty name</span>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Type</label>
+              <div class="input-wrap">
+                <select id="f-ctype"><option>Supplier</option><option>Client</option><option>Partner</option></select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Country</label>
+              <div class="input-wrap">
+                <select id="f-country"><option>India</option><option>USA</option><option>UK</option></select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Contact email</label>
+              <div class="input-wrap"><input id="f-cemail" type="text" placeholder="vendor@company.com" /></div>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Contact phone</label>
+              <div class="input-wrap"><input id="f-cphone" type="text" placeholder="+91 …" /></div>
+            </div>
+          </div>
+          <button class="step-continue-btn" onclick="completeStep(3)">Continue →</button>
+        </div>
+      </div>
+
+      <div class="accordion-item locked" id="step-4">
+        <div class="accordion-header">
+          <div class="accordion-left"><div class="step-num">4</div><span class="accordion-title">Contract terms</span></div>
+          <span class="accordion-chevron">▾</span>
+        </div>
+        <div class="accordion-body">
+          <div class="form-grid form-grid-2" style="gap:12px">
+            <div class="input-group">
+              <label class="input-label">Start date <span style="color:var(--red)">*</span></label>
+              <div class="input-wrap"><input id="f-start" type="date" oninput="clearError(this)" /></div>
+              <span class="error-msg" id="err-start">Please select a start date</span>
+            </div>
+            <div class="input-group">
+              <label class="input-label">End date <span style="color:var(--red)">*</span></label>
+              <div class="input-wrap"><input id="f-end" type="date" oninput="clearError(this)" /></div>
+              <span class="error-msg" id="err-end">Please select an end date</span>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Contract value <span style="color:var(--red)">*</span></label>
+              <div class="input-wrap"><input id="f-value" type="text" placeholder="₹ 0.00" oninput="clearError(this)" /></div>
+              <span class="error-msg" id="err-value">Please enter contract value</span>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Payment terms</label>
+              <div class="input-wrap">
+                <select id="f-payment"><option>Net 30</option><option>Net 60</option><option>Net 90</option></select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Renewal type</label>
+              <div class="input-wrap">
+                <select id="f-renewal"><option>Auto-renew</option><option>Manual</option><option>None</option></select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Opt-out notice (days)</label>
+              <div class="input-wrap"><input id="f-optout" type="text" placeholder="30" /></div>
+            </div>
+          </div>
+          <button class="step-continue-btn" onclick="completeStep(4)">Continue →</button>
+        </div>
+      </div>
+
+      <div class="accordion-item locked" id="step-5">
+        <div class="accordion-header">
+          <div class="accordion-left"><div class="step-num">5</div><span class="accordion-title">Document type and classification</span></div>
+          <span class="accordion-chevron">▾</span>
+        </div>
+        <div class="accordion-body">
+          <div class="form-grid" style="gap:12px">
+            <div class="input-group">
+              <label class="input-label">Document type</label>
+              <div class="input-wrap">
+                <select id="doc-type" onchange="toggleParentField()">
+                  <option>New</option><option>Renewal</option><option>Amendment</option>
+                  <option>Order Form</option><option>Addendum</option><option>Extension</option>
+                </select>
+                <span class="select-arrow">▾</span>
+              </div>
+            </div>
+            <div class="input-group" id="parent-field" style="display:none">
+              <label class="input-label">Link to parent contract</label>
+              <div class="input-wrap"><input type="text" placeholder="Search parent contract…" /></div>
+            </div>
+          </div>
+          <button class="step-continue-btn" onclick="completeStep(5)">Continue →</button>
+        </div>
+      </div>
+
+      <div class="accordion-item locked" id="step-6">
+        <div class="accordion-header">
+          <div class="accordion-left"><div class="step-num">6</div><span class="accordion-title">Assignee and workflow</span></div>
+          <span class="accordion-chevron">▾</span>
+        </div>
+        <div class="accordion-body">
+          <div class="form-grid form-grid-2" style="gap:12px">
+            <div class="input-group">
+              <label class="input-label">Assigned to <span style="color:var(--red)">*</span></label>
+              <div class="input-wrap"><input id="f-assignee" type="text" value="Surya Menon (Legal L)" oninput="clearError(this)" /></div>
+              <span class="error-msg" id="err-assignee">Please enter assignee</span>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Review due date</label>
+              <div class="input-wrap"><input type="date" /></div>
+            </div>
+            <div class="input-group" style="grid-column:1/-1">
+              <label class="input-label">Additional reviewers</label>
+              <div class="input-wrap"><input type="text" placeholder="Search people…" /></div>
+            </div>
+          </div>
+          <button class="step-continue-btn" onclick="completeStep(6)">Continue →</button>
+        </div>
+      </div>
+
+      <div class="accordion-item locked" id="step-7">
+        <div class="accordion-header">
+          <div class="accordion-left"><div class="step-num">7</div><span class="accordion-title">Spec users and notifications</span></div>
+          <span class="accordion-chevron">▾</span>
+        </div>
+        <div class="accordion-body">
+          <div class="form-grid" style="gap:12px">
+            <div class="input-group">
+              <label class="input-label">SPOC (up to 3)</label>
+              <div class="input-wrap"><input type="text" placeholder="Search person…" /></div>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Additional comments</label>
+              <div class="input-wrap"><input type="text" placeholder="Enter comments…" /></div>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Start date</label>
+              <div class="input-wrap"><input type="date" /></div>
+            </div>
+          </div>
+          <button class="step-continue-btn" onclick="completeStep(7)">Save &amp; Review →</button>
+        </div>
+      </div>
+
+      <div class="confirm-btn-wrap" id="confirm-btn-wrap" style="display:none">
+        <button class="btn btn-primary" onclick="showModal()">Confirm and create contract</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     MODAL — CONFIRMATION
+════════════════════════════════════════════════════════════ -->
+<div id="confirm-modal" class="modal-overlay" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Review your contract details before creating</h3>
+      <button class="modal-close" onclick="hideModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-grid">
+        <div>
+          <div class="modal-field-label">Organisation</div>
+          <div class="modal-field-value">Test01</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Contract start</div>
+          <div class="modal-field-value">02-Apr-2026</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Region</div>
+          <div class="modal-field-value">India (Flipkart India Pvt Ltd)</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Contract end</div>
+          <div class="modal-field-value">02-Apr-2027</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Business Unit</div>
+          <div class="modal-field-value">B2B (Wholesale)</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Contract value</div>
+          <div class="modal-field-value">₹ 5,00,000</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Category</div>
+          <div class="modal-field-value">Vendor | Wholesale Supply Agmt</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Renewal type</div>
+          <div class="modal-field-value">Auto-renew</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Counterparty</div>
+          <div class="modal-field-value">Test01</div>
+        </div>
+        <div>
+          <div class="modal-field-label">Assigned to</div>
+          <div class="modal-field-value">Surya Menon (Legal L)</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="hideModal()">Edit details</button>
+      <button class="btn btn-primary" onclick="createContract()">Create contract</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SCREEN 6 — CONTRACT WORKSPACE POST-CREATION
+════════════════════════════════════════════════════════════ -->
+<div id="s6" class="screen">
+  <div class="topbar">
+    <a class="logo" href="#">
+      <div class="logo-mark">S</div>
+      <span class="logo-text">SimpliContract</span>
+    </a>
+    <div class="topbar-search">
+      <input type="text" placeholder="Search contracts, vendors, documents…" />
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
+      <div class="avatar">SM</div>
+    </div>
+  </div>
+  <div class="navtabs">
+    <button class="navtab" onclick="goto('s1','Home')">Home</button>
+    <button class="navtab active" onclick="goto('s2','Contracts')">Contracts</button>
+    <button class="navtab">Tasks</button>
+    <button class="navtab">Deliverables</button>
+    <button class="navtab">Analytics</button>
+    <button class="navtab">Settings</button>
+  </div>
+  <!-- Stepper — Create done, Review active -->
+  <div class="stepper">
+    <div class="step-item">
+      <div class="step-circle done">✓</div>
+      <span class="step-label done">Create</span>
+    </div>
+    <div class="step-connector done"></div>
+    <div class="step-item">
+      <div class="step-circle active">2</div>
+      <span class="step-label active">Review</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item">
+      <div class="step-circle">3</div>
+      <span class="step-label">Sign</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item">
+      <div class="step-circle">4</div>
+      <span class="step-label">Archive</span>
+    </div>
+  </div>
+  <div class="workspace">
+    <!-- LEFT: Nemo panel -->
+    <div class="left-panel">
+      <div class="panel-tabs">
+        <button class="panel-tab active" onclick="switchTab(this,'nemo-panel-6')">✦ Nemo</button>
+        <button class="panel-tab" onclick="switchTab(this,'collab-panel-6')">Collaborate</button>
+        <button class="panel-tab" onclick="switchTab(this,'analysis-panel-6')">Analysis</button>
+      </div>
+      <div id="nemo-panel-6" class="panel-tab-content active" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+        <div class="panel-body" style="flex:1">
+          <div class="nemo-label">✦ Nemo</div>
+          <div class="nemo-bubble">
+            Your contract has been created. I've extracted <strong>20 clauses</strong> and matched them against your playbook. I found <strong>3 deviations</strong> — click the Analysis tab above to review them. The contract is ready for the review stage. Would you like me to route it to the assigned reviewer now?
+          </div>
+          <div class="nemo-actions">
+            <button class="btn btn-primary btn-sm" onclick="alert('Sent for review!')">Yes, send for review</button>
+            <button class="btn btn-ghost btn-sm" style="border:none;color:var(--mid)">I'll do it later</button>
+          </div>
+        </div>
+        <div class="chat-input-wrap">
+          <input type="text" placeholder="Ask Nemo anything about this contract…" />
+          <button class="chat-send">↑</button>
+        </div>
+      </div>
+      <div id="collab-panel-6" class="panel-tab-content">
+        <div class="empty-panel">Collaboration threads will appear here once reviewers are added.</div>
+      </div>
+      <div id="analysis-panel-6" class="panel-tab-content">
+        <div class="panel-body">
+          <div class="nemo-label" style="margin-bottom:8px">✦ Deviation Analysis</div>
+          <p style="font-size:12px;color:var(--mid);margin-bottom:12px">3 clauses deviate from your standard playbook positions.</p>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="card" style="padding:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                <span style="font-size:12px;font-weight:600">Payment Terms</span>
+                <span class="pill pill-amber">Deviation</span>
+              </div>
+              <p style="font-size:11px;color:var(--mid)">Contract specifies Net 60. Playbook standard is Net 30.</p>
+            </div>
+            <div class="card" style="padding:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                <span style="font-size:12px;font-weight:600">Termination Clause</span>
+                <span class="pill pill-amber">Deviation</span>
+              </div>
+              <p style="font-size:11px;color:var(--mid)">Notice period is 15 days. Standard position is 30 days.</p>
+            </div>
+            <div class="card" style="padding:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                <span style="font-size:12px;font-weight:600">Indemnity Cap</span>
+                <span class="pill pill-red">High Risk</span>
+              </div>
+              <p style="font-size:11px;color:var(--mid)">Uncapped indemnity. Playbook requires 2× contract value cap.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Contract detail view -->
+    <div class="right-panel" style="padding:0;background:var(--white)">
+      <div class="contract-heading">
+        <h3>C-1260 · FLIP_FINAL_TEST1_with_signature</h3>
+        <span class="pill pill-green">Active</span>
+      </div>
+      <div>
+        <div class="detail-row">
+          <div class="detail-left">
+            <span class="detail-row-label">Assignment Status</span>
+            <span class="detail-row-value text-green">Completed</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-left">
+            <span class="detail-row-label">Document Renewal</span>
+            <span class="detail-row-value text-amber">Renewal To Be Initiated</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-left">
+            <span class="detail-row-label">Additional Approval (0)</span>
+            <span class="detail-row-value" style="color:var(--light);font-size:12px">No additional approvals added yet</span>
+          </div>
+          <div class="detail-right">
+            <button class="link-btn">+ Create New</button>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-left">
+            <span class="detail-row-label">Task (0)</span>
+            <span class="detail-row-value" style="color:var(--light);font-size:12px">No tasks added yet</span>
+          </div>
+          <div class="detail-right">
+            <button class="link-btn">+ Create New</button>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-left">
+            <span class="detail-row-label">Clauses (20)</span>
+            <div class="detail-pills">
+              <span class="pill pill-outline">INTELLECTUAL PROP...</span>
+              <span class="pill pill-outline">Amendments</span>
+              <span class="pill pill-outline">CONFIDENTIA...</span>
+            </div>
+          </div>
+          <div class="detail-right">
+            <button class="link-btn">See More ▾</button>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-left">
+            <span class="detail-row-label">Clause Playbook (20)</span>
+            <div class="detail-pills">
+              <span class="pill pill-outline">FORCE MAJE...</span>
+              <span class="pill pill-outline">DELIVERY</span>
+              <span class="pill pill-outline">INTELLECTUAL PROP...</span>
+            </div>
+          </div>
+          <div class="detail-right">
+            <button class="link-btn">See More ▾</button>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-left">
+            <span class="detail-row-label">Deviations (3)</span>
+            <div class="detail-pills">
+              <span class="pill pill-amber">PAYMENT TERMS</span>
+              <span class="pill pill-amber">TERMINATION</span>
+              <span class="pill pill-amber">INDEMNITY</span>
+            </div>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-left">
+            <span class="detail-row-label">Additional Documents (0)</span>
+            <span class="detail-row-value" style="color:var(--light);font-size:12px">No additional documents</span>
+          </div>
+          <div class="detail-right">
+            <button class="link-btn">+ Upload</button>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-left">
+            <span class="detail-row-label">Version &amp; History</span>
+            <span class="detail-row-value text-green" style="font-size:12px">Last Updated By Surya Menon (Legal L)</span>
+            <span style="font-size:12px;color:var(--amber)">02-Apr-2026, 7:12 PM</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-left">
+            <span class="detail-row-label">Audit Log</span>
+            <span class="detail-row-value text-green" style="font-size:12px">Last Updated By Surya Menon (Legal L)</span>
+            <span style="font-size:12px;color:var(--amber)">02-Apr-2026, 7:12 PM</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-left">
+            <span class="detail-row-label">Related Documents (0)</span>
+            <span class="detail-row-value" style="color:var(--light);font-size:12px">No Related Documents</span>
+          </div>
+          <div class="detail-right">
+            <button class="link-btn">+ Link New</button>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-left">
+            <span class="detail-row-label">Deliverables (0)</span>
+            <span class="detail-row-value" style="color:var(--light);font-size:12px">No Deliverable</span>
+          </div>
+          <div class="detail-right">
+            <button class="link-btn">View Extra</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Screen navigation ──────────────────────────────────────
+  function goto(screenId, activeTab) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  // ── Expand/collapse child rows ─────────────────────────────
+  function toggleChild(e, rowId) {
+    e.stopPropagation();
+    const row = document.getElementById(rowId);
+    const btn = e.target;
+    if (row.style.display === 'none') {
+      row.style.display = '';
+      btn.textContent = '▴';
+    } else {
+      row.style.display = 'none';
+      btn.textContent = '▾';
+    }
+  }
+
+  // ── Origin card selection ──────────────────────────────────
+  function selectOrigin(type) {
+    ['upload','template','vendor'].forEach(t => {
+      document.getElementById('card-' + t).classList.remove('selected');
+    });
+    document.getElementById('card-' + type).classList.add('selected');
+  }
+
+  // ── Accordion toggle ───────────────────────────────────────
+  function toggleAccordion(header) {
+    header.parentElement.classList.toggle('open');
+  }
+
+  // ── Panel tab switching ────────────────────────────────────
+  function switchTab(btn, panelId) {
+    const panel = btn.closest('.left-panel');
+    panel.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    panel.querySelectorAll('.panel-tab-content').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(panelId).classList.add('active');
+  }
+
+  // ── Conditional parent field ───────────────────────────────
+  function toggleParentField() {
+    const sel = document.getElementById('doc-type').value;
+    const field = document.getElementById('parent-field');
+    field.style.display = (sel === 'Amendment' || sel === 'Addendum') ? '' : 'none';
+  }
+
+  // ── Modal ──────────────────────────────────────────────────
+  function showModal() {
+    document.getElementById('confirm-modal').style.display = 'flex';
+  }
+  function hideModal() {
+    document.getElementById('confirm-modal').style.display = 'none';
+  }
+  function createContract() {
+    hideModal();
+    goto('s6', 'Contracts');
+  }
+
+  // Close modal on overlay click
+  document.getElementById('confirm-modal').addEventListener('click', function(e) {
+    if (e.target === this) hideModal();
+  });
+</script>
+</body>
+</html>
