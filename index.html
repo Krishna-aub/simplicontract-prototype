@@ -382,7 +382,7 @@
   }
   /* Left panel */
   .left-panel {
-    width: 360px; flex-shrink: 0;
+    width: 460px; flex-shrink: 0;
     background: var(--white);
     border-right: 1px solid var(--border);
     display: flex; flex-direction: column;
@@ -586,6 +586,86 @@
     background: var(--white);
   }
   .contract-heading h3 { font-size: 14px; font-weight: 700; }
+
+  /* ── Contract document panel ─────────────────────────────── */
+  .contract-doc-panel {
+    flex: 1; overflow-y: auto;
+    background: #F0F0F0;
+    padding: 32px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .contract-doc {
+    background: var(--white);
+    width: 100%; max-width: 780px;
+    min-height: 100%;
+    border-radius: 4px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+    padding: 56px 64px;
+    font-family: 'Georgia', serif;
+  }
+  .contract-doc-title {
+    font-size: 18px; font-weight: 700;
+    text-align: center; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--dark);
+    margin-bottom: 6px;
+  }
+  .contract-doc-ref {
+    font-size: 12px; text-align: center; color: var(--mid);
+    font-family: 'Inter', sans-serif; margin-bottom: 32px;
+  }
+  .contract-doc-divider {
+    border: none; border-top: 2px solid var(--dark);
+    margin: 20px 0;
+  }
+  .contract-doc-parties {
+    font-size: 13px; line-height: 1.8; color: var(--dark);
+    margin-bottom: 28px;
+  }
+  .contract-doc-parties strong { font-weight: 700; }
+  .contract-clause-section { margin-bottom: 28px; }
+  .contract-clause-heading {
+    font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--dark); margin-bottom: 10px;
+    font-family: 'Inter', sans-serif;
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .clause-num {
+    font-size: 12px; color: var(--mid);
+    font-family: 'Inter', sans-serif; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .contract-clause-body {
+    font-size: 13px; line-height: 1.85; color: #333;
+    padding-left: 24px;
+  }
+  .contract-clause-sub {
+    margin-top: 10px; padding-left: 20px;
+    font-size: 13px; line-height: 1.85; color: #333;
+  }
+  .contract-clause-sub p { margin-bottom: 8px; }
+  .contract-placeholder {
+    display: inline-block;
+    background: #FFF8C5; border: 1px dashed #E0A800;
+    border-radius: 3px; padding: 1px 6px;
+    font-size: 12px; color: #856404;
+    font-family: 'Inter', sans-serif;
+  }
+  .contract-signature-block {
+    margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+  }
+  .sig-line {
+    border-top: 1px solid var(--dark); padding-top: 8px;
+    font-size: 12px; color: var(--mid); font-family: 'Inter', sans-serif;
+  }
+
+  /* ── Details tab panel ────────────────────────────────────── */
+  .details-panel-wrap {
+    flex: 1; overflow: hidden; display: flex; flex-direction: column;
+  }
+  .details-panel-scroll {
+    flex: 1; overflow-y: auto; padding: 16px;
+  }
 
   /* ── Misc utilities ───────────────────────────────────────── */
   .text-green  { color: var(--green);  }
@@ -1022,18 +1102,21 @@
     </div>
   </div>
   <div class="workspace">
-    <!-- LEFT: Nemo panel -->
+    <!-- LEFT: 4-tab panel -->
     <div class="left-panel">
       <div class="panel-tabs">
         <button class="panel-tab active" onclick="switchTab(this,'nemo-panel')">✦ Nemo</button>
+        <button class="panel-tab" onclick="switchTab(this,'details-panel')">Details</button>
         <button class="panel-tab" onclick="switchTab(this,'collab-panel')">Collaborate</button>
         <button class="panel-tab" onclick="switchTab(this,'analysis-panel')">Analysis</button>
       </div>
+
+      <!-- Nemo tab -->
       <div id="nemo-panel" class="panel-tab-content active" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
         <div class="panel-body" style="flex:1">
           <div class="nemo-label">✦ Nemo</div>
           <div class="nemo-bubble">
-            I've received your uploaded document. I'm extracting metadata and key terms now. I'll pre-fill what I can in the contract details on the right. Please review and complete any fields I've missed.
+            I've received your uploaded document. I'm extracting metadata and key terms now. I'll pre-fill what I can in the contract details. Please review and complete any fields I've missed.
           </div>
           <div class="processing-bar">
             <div class="spinner"></div>
@@ -1045,264 +1128,434 @@
           <button class="chat-send">↑</button>
         </div>
       </div>
+
+      <!-- Details tab — accordion form -->
+      <div id="details-panel" class="panel-tab-content" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+        <div class="details-panel-scroll">
+          <div style="margin-bottom:16px">
+            <h2 style="font-size:15px;font-weight:700;margin-bottom:2px">Contract Details</h2>
+            <p style="font-size:12px;color:var(--mid)">Complete all sections to create your contract</p>
+          </div>
+
+          <!-- Step 1 — auto-completed -->
+          <div class="accordion-item" id="step-1">
+            <div class="accordion-header">
+              <div class="accordion-left">
+                <div class="step-num done">✓</div>
+                <span class="accordion-title" style="color:var(--mid)">Document origin</span>
+              </div>
+              <span class="accordion-meta">Template: Wholesale Supply Agreement</span>
+            </div>
+          </div>
+
+          <!-- Step 2 — active -->
+          <div class="accordion-item open" id="step-2">
+            <div class="accordion-header">
+              <div class="accordion-left">
+                <div class="step-num active-step">2</div>
+                <span class="accordion-title">Organisation context</span>
+              </div>
+              <span class="accordion-chevron">▾</span>
+            </div>
+            <div class="accordion-body">
+              <div class="form-grid form-grid-2" style="gap:12px">
+                <div class="input-group">
+                  <label class="input-label">Organisation</label>
+                  <div class="input-wrap">
+                    <select id="f-org"><option value="Test01">Test01</option><option value="Test02">Test02</option></select>
+                    <span class="ai-hint">AI suggested</span>
+                    <span class="select-arrow">▾</span>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Region</label>
+                  <div class="input-wrap">
+                    <select id="f-region"><option value="india">India (Flipkart India Pvt Ltd)</option><option value="us">United States</option></select>
+                    <span class="ai-hint">AI suggested</span>
+                    <span class="select-arrow">▾</span>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Business Unit <span style="color:var(--red)">*</span></label>
+                  <div class="input-wrap">
+                    <select id="f-bu" onchange="clearError(this)">
+                      <option value="">Select…</option>
+                      <option value="b2b">B2B(Wholesale)</option>
+                      <option value="noncat">Non-Cat Procurement</option>
+                    </select>
+                    <span class="select-arrow">▾</span>
+                  </div>
+                  <span class="error-msg" id="err-bu">Please select a Business Unit</span>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Category <span style="color:var(--red)">*</span></label>
+                  <div class="input-wrap">
+                    <select id="f-cat" onchange="clearError(this)">
+                      <option value="">Select…</option>
+                      <option value="wsa">Vendor | Wholesale Supply Agreement</option>
+                      <option value="rct">Rate Card | Transportation</option>
+                    </select>
+                    <span class="select-arrow">▾</span>
+                  </div>
+                  <span class="error-msg" id="err-cat">Please select a Category</span>
+                </div>
+                <div class="input-group" style="grid-column:1/-1">
+                  <label class="input-label">Sub-category <span style="color:var(--red)">*</span></label>
+                  <div class="input-wrap">
+                    <select id="f-subcat" onchange="clearError(this)">
+                      <option value="">Select…</option>
+                      <option value="wsa">Wholesale Supply Agreement</option>
+                      <option value="vpl">2Gud-VPL Agreement Template</option>
+                    </select>
+                    <span class="select-arrow">▾</span>
+                  </div>
+                  <span class="error-msg" id="err-subcat">Please select a Sub-category</span>
+                </div>
+              </div>
+              <button class="step-continue-btn" onclick="completeStep(2)">Continue →</button>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="accordion-item locked" id="step-3">
+            <div class="accordion-header">
+              <div class="accordion-left"><div class="step-num">3</div><span class="accordion-title">Counterparty / Vendor</span></div>
+              <span class="accordion-chevron">▾</span>
+            </div>
+            <div class="accordion-body">
+              <div class="form-grid form-grid-2" style="gap:12px">
+                <div class="input-group" style="grid-column:1/-1">
+                  <label class="input-label">Counterparty name <span style="color:var(--red)">*</span></label>
+                  <div class="input-wrap"><input id="f-counterparty" type="text" placeholder="Search or create new counterparty…" oninput="clearError(this)" /></div>
+                  <span class="error-msg" id="err-counterparty">Please enter a counterparty name</span>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Type</label>
+                  <div class="input-wrap">
+                    <select id="f-ctype"><option>Supplier</option><option>Client</option><option>Partner</option></select>
+                    <span class="select-arrow">▾</span>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Country</label>
+                  <div class="input-wrap">
+                    <select id="f-country"><option>India</option><option>USA</option><option>UK</option></select>
+                    <span class="select-arrow">▾</span>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Contact email</label>
+                  <div class="input-wrap"><input id="f-cemail" type="text" placeholder="vendor@company.com" /></div>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Contact phone</label>
+                  <div class="input-wrap"><input id="f-cphone" type="text" placeholder="+91 …" /></div>
+                </div>
+              </div>
+              <button class="step-continue-btn" onclick="completeStep(3)">Continue →</button>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="accordion-item locked" id="step-4">
+            <div class="accordion-header">
+              <div class="accordion-left"><div class="step-num">4</div><span class="accordion-title">Contract terms</span></div>
+              <span class="accordion-chevron">▾</span>
+            </div>
+            <div class="accordion-body">
+              <div class="form-grid form-grid-2" style="gap:12px">
+                <div class="input-group">
+                  <label class="input-label">Start date <span style="color:var(--red)">*</span></label>
+                  <div class="input-wrap"><input id="f-start" type="date" oninput="clearError(this)" /></div>
+                  <span class="error-msg" id="err-start">Please select a start date</span>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">End date <span style="color:var(--red)">*</span></label>
+                  <div class="input-wrap"><input id="f-end" type="date" oninput="clearError(this)" /></div>
+                  <span class="error-msg" id="err-end">Please select an end date</span>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Contract value <span style="color:var(--red)">*</span></label>
+                  <div class="input-wrap"><input id="f-value" type="text" placeholder="₹ 0.00" oninput="clearError(this)" /></div>
+                  <span class="error-msg" id="err-value">Please enter contract value</span>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Payment terms</label>
+                  <div class="input-wrap">
+                    <select id="f-payment"><option>Net 30</option><option>Net 60</option><option>Net 90</option></select>
+                    <span class="select-arrow">▾</span>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Renewal type</label>
+                  <div class="input-wrap">
+                    <select id="f-renewal"><option>Auto-renew</option><option>Manual</option><option>None</option></select>
+                    <span class="select-arrow">▾</span>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Opt-out notice (days)</label>
+                  <div class="input-wrap"><input id="f-optout" type="text" placeholder="30" /></div>
+                </div>
+              </div>
+              <button class="step-continue-btn" onclick="completeStep(4)">Continue →</button>
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="accordion-item locked" id="step-5">
+            <div class="accordion-header">
+              <div class="accordion-left"><div class="step-num">5</div><span class="accordion-title">Document type</span></div>
+              <span class="accordion-chevron">▾</span>
+            </div>
+            <div class="accordion-body">
+              <div class="form-grid" style="gap:12px">
+                <div class="input-group">
+                  <label class="input-label">Document type</label>
+                  <div class="input-wrap">
+                    <select id="doc-type" onchange="toggleParentField()">
+                      <option>New</option><option>Renewal</option><option>Amendment</option>
+                      <option>Order Form</option><option>Addendum</option><option>Extension</option>
+                    </select>
+                    <span class="select-arrow">▾</span>
+                  </div>
+                </div>
+                <div class="input-group" id="parent-field" style="display:none">
+                  <label class="input-label">Link to parent contract</label>
+                  <div class="input-wrap"><input type="text" placeholder="Search parent contract…" /></div>
+                </div>
+              </div>
+              <button class="step-continue-btn" onclick="completeStep(5)">Continue →</button>
+            </div>
+          </div>
+
+          <!-- Step 6 -->
+          <div class="accordion-item locked" id="step-6">
+            <div class="accordion-header">
+              <div class="accordion-left"><div class="step-num">6</div><span class="accordion-title">Assignee and workflow</span></div>
+              <span class="accordion-chevron">▾</span>
+            </div>
+            <div class="accordion-body">
+              <div class="form-grid form-grid-2" style="gap:12px">
+                <div class="input-group">
+                  <label class="input-label">Assigned to <span style="color:var(--red)">*</span></label>
+                  <div class="input-wrap"><input id="f-assignee" type="text" value="Surya Menon (Legal L)" oninput="clearError(this)" /></div>
+                  <span class="error-msg" id="err-assignee">Please enter assignee</span>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Review due date</label>
+                  <div class="input-wrap"><input type="date" /></div>
+                </div>
+                <div class="input-group" style="grid-column:1/-1">
+                  <label class="input-label">Additional reviewers</label>
+                  <div class="input-wrap"><input type="text" placeholder="Search people…" /></div>
+                </div>
+              </div>
+              <button class="step-continue-btn" onclick="completeStep(6)">Continue →</button>
+            </div>
+          </div>
+
+          <!-- Step 7 -->
+          <div class="accordion-item locked" id="step-7">
+            <div class="accordion-header">
+              <div class="accordion-left"><div class="step-num">7</div><span class="accordion-title">Spec users &amp; notifications</span></div>
+              <span class="accordion-chevron">▾</span>
+            </div>
+            <div class="accordion-body">
+              <div class="form-grid" style="gap:12px">
+                <div class="input-group">
+                  <label class="input-label">SPOC (up to 3)</label>
+                  <div class="input-wrap"><input type="text" placeholder="Search person…" /></div>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Additional comments</label>
+                  <div class="input-wrap"><input type="text" placeholder="Enter comments…" /></div>
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Start date</label>
+                  <div class="input-wrap"><input type="date" /></div>
+                </div>
+              </div>
+              <button class="step-continue-btn" onclick="completeStep(7)">Save &amp; Review →</button>
+            </div>
+          </div>
+
+        </div><!-- end details-panel-scroll -->
+        <div class="right-panel-footer" id="confirm-btn-wrap" style="display:none">
+          <button class="btn btn-primary" onclick="showModal()">Confirm and create contract</button>
+        </div>
+      </div>
+
+      <!-- Collaborate tab -->
       <div id="collab-panel" class="panel-tab-content">
         <div class="empty-panel">Collaboration threads will appear here once reviewers are added.</div>
       </div>
+
+      <!-- Analysis tab -->
       <div id="analysis-panel" class="panel-tab-content">
         <div class="empty-panel">Deviation analysis will appear here once the document is processed.</div>
       </div>
     </div>
 
-    <!-- RIGHT: Accordion form -->
-    <div class="right-panel" style="padding:0;display:flex;flex-direction:column;">
-      <div class="right-panel-scroll">
-      <div class="right-panel-header">
-        <h2>Contract Details</h2>
-        <p>Complete all sections to create your contract</p>
-      </div>
+    <!-- RIGHT: Contract document preview -->
+    <div class="contract-doc-panel">
+      <div class="contract-doc">
+        <div class="contract-doc-title">Wholesale Supply Agreement</div>
+        <div class="contract-doc-ref">Contract Ref: <span class="contract-placeholder">[ Auto-generated on creation ]</span> &nbsp;·&nbsp; Date: <span class="contract-placeholder">[ Start Date ]</span></div>
+        <hr class="contract-doc-divider" />
 
-      <!-- Step 1 — auto-completed (from origin screen) -->
-      <div class="accordion-item" id="step-1">
-        <div class="accordion-header">
-          <div class="accordion-left">
-            <div class="step-num done">✓</div>
-            <span class="accordion-title" style="color:var(--mid)">Document origin</span>
-          </div>
-          <span class="accordion-meta">Template: Wholesale Supply Agreement</span>
+        <div class="contract-doc-parties">
+          <p>This Wholesale Supply Agreement ("<strong>Agreement</strong>") is entered into as of the Effective Date set forth above, by and between:</p>
+          <br/>
+          <p><strong>Flipkart India Private Limited</strong>, a company incorporated under the laws of India, having its registered office at Buildings Alyssa, Begonia &amp; Clover, Embassy Tech Village, Outer Ring Road, Bengaluru – 560 103, Karnataka, India ("<strong>Company</strong>" or "<strong>Flipkart</strong>"); and</p>
+          <br/>
+          <p><strong><span class="contract-placeholder">[ Counterparty Name ]</span></strong>, a company incorporated under the laws of <span class="contract-placeholder">[ Country ]</span>, having its registered office at <span class="contract-placeholder">[ Counterparty Address ]</span> ("<strong>Vendor</strong>").</p>
+          <br/>
+          <p>Company and Vendor are each referred to herein as a "<strong>Party</strong>" and collectively as the "<strong>Parties</strong>".</p>
         </div>
-      </div>
 
-      <!-- Step 2 — active/open -->
-      <div class="accordion-item open" id="step-2">
-        <div class="accordion-header">
-          <div class="accordion-left">
-            <div class="step-num active-step">2</div>
-            <span class="accordion-title">Organisation context</span>
+        <hr class="contract-doc-divider" style="border-top:1px solid var(--border)" />
+
+        <!-- Clause 1 -->
+        <div class="contract-clause-section">
+          <div class="contract-clause-heading">
+            <span class="clause-num">1.</span> Definitions and Interpretation
           </div>
-          <span class="accordion-chevron">▾</span>
-        </div>
-        <div class="accordion-body">
-          <div class="form-grid form-grid-2" style="gap:12px">
-            <div class="input-group">
-              <label class="input-label">Organisation</label>
-              <div class="input-wrap">
-                <select id="f-org"><option value="Test01">Test01</option><option value="Test02">Test02</option></select>
-                <span class="ai-hint">AI suggested</span>
-                <span class="select-arrow">▾</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Region</label>
-              <div class="input-wrap">
-                <select id="f-region"><option value="india">India (Flipkart India Pvt Ltd)</option><option value="us">United States</option></select>
-                <span class="ai-hint">AI suggested</span>
-                <span class="select-arrow">▾</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Business Unit <span style="color:var(--red)">*</span></label>
-              <div class="input-wrap">
-                <select id="f-bu" onchange="clearError(this)">
-                  <option value="">Select…</option>
-                  <option value="b2b">B2B(Wholesale)</option>
-                  <option value="noncat">Non-Cat Procurement</option>
-                </select>
-                <span class="select-arrow">▾</span>
-              </div>
-              <span class="error-msg" id="err-bu">Please select a Business Unit</span>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Category <span style="color:var(--red)">*</span></label>
-              <div class="input-wrap">
-                <select id="f-cat" onchange="clearError(this)">
-                  <option value="">Select…</option>
-                  <option value="wsa">Vendor | Wholesale Supply Agreement</option>
-                  <option value="rct">Rate Card | Transportation</option>
-                </select>
-                <span class="select-arrow">▾</span>
-              </div>
-              <span class="error-msg" id="err-cat">Please select a Category</span>
-            </div>
-            <div class="input-group" style="grid-column:1/-1">
-              <label class="input-label">Sub-category <span style="color:var(--red)">*</span></label>
-              <div class="input-wrap">
-                <select id="f-subcat" onchange="clearError(this)">
-                  <option value="">Select…</option>
-                  <option value="wsa">Wholesale Supply Agreement</option>
-                  <option value="vpl">2Gud-VPL Agreement Template</option>
-                </select>
-                <span class="select-arrow">▾</span>
-              </div>
-              <span class="error-msg" id="err-subcat">Please select a Sub-category</span>
+          <div class="contract-clause-body">
+            <p>In this Agreement, unless the context otherwise requires, the following terms shall have the meanings ascribed to them below:</p>
+            <div class="contract-clause-sub">
+              <p><strong>"Goods"</strong> means the products, merchandise, or commodities supplied by the Vendor to the Company as specified in the applicable Purchase Order.</p>
+              <p><strong>"Purchase Order" or "PO"</strong> means a written order issued by the Company to the Vendor specifying the Goods, quantities, delivery schedule, and applicable pricing.</p>
+              <p><strong>"Delivery Location"</strong> means the fulfilment centre, warehouse, or other facility designated by the Company in each Purchase Order.</p>
+              <p><strong>"Defective Goods"</strong> means any Goods that do not conform to the specifications, quality standards, or warranties set out in this Agreement or the applicable PO.</p>
             </div>
           </div>
-          <button class="step-continue-btn" onclick="completeStep(2)">Continue →</button>
         </div>
-      </div>
 
-      <!-- Steps 3–7 locked -->
-      <div class="accordion-item locked" id="step-3">
-        <div class="accordion-header">
-          <div class="accordion-left"><div class="step-num">3</div><span class="accordion-title">Counterparty / Vendor</span></div>
-          <span class="accordion-chevron">▾</span>
+        <!-- Clause 2 -->
+        <div class="contract-clause-section">
+          <div class="contract-clause-heading">
+            <span class="clause-num">2.</span> Term
+          </div>
+          <div class="contract-clause-body">
+            <p>This Agreement shall commence on <span class="contract-placeholder">[ Start Date ]</span> and shall remain in full force and effect until <span class="contract-placeholder">[ End Date ]</span>, unless earlier terminated in accordance with the provisions hereof ("<strong>Term</strong>"). The Agreement may be renewed by mutual written consent of the Parties for successive periods of twelve (12) months, subject to renegotiation of commercial terms.</p>
+          </div>
         </div>
-        <div class="accordion-body">
-          <div class="form-grid form-grid-2" style="gap:12px">
-            <div class="input-group" style="grid-column:1/-1">
-              <label class="input-label">Counterparty name <span style="color:var(--red)">*</span></label>
-              <div class="input-wrap"><input id="f-counterparty" type="text" placeholder="Search or create new counterparty…" oninput="clearError(this)" /></div>
-              <span class="error-msg" id="err-counterparty">Please enter a counterparty name</span>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Type</label>
-              <div class="input-wrap">
-                <select id="f-ctype"><option>Supplier</option><option>Client</option><option>Partner</option></select>
-                <span class="select-arrow">▾</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Country</label>
-              <div class="input-wrap">
-                <select id="f-country"><option>India</option><option>USA</option><option>UK</option></select>
-                <span class="select-arrow">▾</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Contact email</label>
-              <div class="input-wrap"><input id="f-cemail" type="text" placeholder="vendor@company.com" /></div>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Contact phone</label>
-              <div class="input-wrap"><input id="f-cphone" type="text" placeholder="+91 …" /></div>
+
+        <!-- Clause 3 -->
+        <div class="contract-clause-section">
+          <div class="contract-clause-heading">
+            <span class="clause-num">3.</span> Supply of Goods
+          </div>
+          <div class="contract-clause-body">
+            <div class="contract-clause-sub">
+              <p><strong>3.1</strong>&nbsp; The Vendor agrees to supply the Goods to the Company in accordance with the terms and conditions of this Agreement and any Purchase Orders issued hereunder.</p>
+              <p><strong>3.2</strong>&nbsp; Each Purchase Order shall constitute a binding contract between the Parties for the supply of the specified Goods, and the Vendor shall confirm acceptance of each PO within forty-eight (48) hours of receipt.</p>
+              <p><strong>3.3</strong>&nbsp; The Vendor shall ensure that all Goods supplied conform to the descriptions, specifications, and quality standards set forth in the applicable PO and as required by applicable law.</p>
+              <p><strong>3.4</strong>&nbsp; The Company reserves the right to modify, cancel, or place Purchase Orders based on its operational requirements, subject to reasonable advance notice to the Vendor.</p>
             </div>
           </div>
-          <button class="step-continue-btn" onclick="completeStep(3)">Continue →</button>
         </div>
-      </div>
 
-      <div class="accordion-item locked" id="step-4">
-        <div class="accordion-header">
-          <div class="accordion-left"><div class="step-num">4</div><span class="accordion-title">Contract terms</span></div>
-          <span class="accordion-chevron">▾</span>
-        </div>
-        <div class="accordion-body">
-          <div class="form-grid form-grid-2" style="gap:12px">
-            <div class="input-group">
-              <label class="input-label">Start date <span style="color:var(--red)">*</span></label>
-              <div class="input-wrap"><input id="f-start" type="date" oninput="clearError(this)" /></div>
-              <span class="error-msg" id="err-start">Please select a start date</span>
-            </div>
-            <div class="input-group">
-              <label class="input-label">End date <span style="color:var(--red)">*</span></label>
-              <div class="input-wrap"><input id="f-end" type="date" oninput="clearError(this)" /></div>
-              <span class="error-msg" id="err-end">Please select an end date</span>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Contract value <span style="color:var(--red)">*</span></label>
-              <div class="input-wrap"><input id="f-value" type="text" placeholder="₹ 0.00" oninput="clearError(this)" /></div>
-              <span class="error-msg" id="err-value">Please enter contract value</span>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Payment terms</label>
-              <div class="input-wrap">
-                <select id="f-payment"><option>Net 30</option><option>Net 60</option><option>Net 90</option></select>
-                <span class="select-arrow">▾</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Renewal type</label>
-              <div class="input-wrap">
-                <select id="f-renewal"><option>Auto-renew</option><option>Manual</option><option>None</option></select>
-                <span class="select-arrow">▾</span>
-              </div>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Opt-out notice (days)</label>
-              <div class="input-wrap"><input id="f-optout" type="text" placeholder="30" /></div>
+        <!-- Clause 4 -->
+        <div class="contract-clause-section">
+          <div class="contract-clause-heading">
+            <span class="clause-num">4.</span> Pricing and Payment Terms
+          </div>
+          <div class="contract-clause-body">
+            <div class="contract-clause-sub">
+              <p><strong>4.1</strong>&nbsp; The price for the Goods shall be as agreed between the Parties in the applicable Purchase Order. Unless otherwise stated, all prices are inclusive of applicable taxes and exclusive of delivery charges.</p>
+              <p><strong>4.2</strong>&nbsp; The Company shall make payment within <span class="contract-placeholder">[ Payment Terms ]</span> days from the date of receipt of a valid tax invoice, provided that the Goods have been received in satisfactory condition and the invoice complies with the requirements set forth herein.</p>
+              <p><strong>4.3</strong>&nbsp; The total contract value shall not exceed <strong><span class="contract-placeholder">[ Contract Value ]</span></strong> during the Term, unless mutually agreed in writing by both Parties.</p>
+              <p><strong>4.4</strong>&nbsp; In the event of a dispute regarding any invoice, the Company shall notify the Vendor in writing within fifteen (15) days of receipt, and the undisputed portion shall be paid by the applicable due date.</p>
             </div>
           </div>
-          <button class="step-continue-btn" onclick="completeStep(4)">Continue →</button>
         </div>
-      </div>
 
-      <div class="accordion-item locked" id="step-5">
-        <div class="accordion-header">
-          <div class="accordion-left"><div class="step-num">5</div><span class="accordion-title">Document type and classification</span></div>
-          <span class="accordion-chevron">▾</span>
-        </div>
-        <div class="accordion-body">
-          <div class="form-grid" style="gap:12px">
-            <div class="input-group">
-              <label class="input-label">Document type</label>
-              <div class="input-wrap">
-                <select id="doc-type" onchange="toggleParentField()">
-                  <option>New</option><option>Renewal</option><option>Amendment</option>
-                  <option>Order Form</option><option>Addendum</option><option>Extension</option>
-                </select>
-                <span class="select-arrow">▾</span>
-              </div>
-            </div>
-            <div class="input-group" id="parent-field" style="display:none">
-              <label class="input-label">Link to parent contract</label>
-              <div class="input-wrap"><input type="text" placeholder="Search parent contract…" /></div>
+        <!-- Clause 5 -->
+        <div class="contract-clause-section">
+          <div class="contract-clause-heading">
+            <span class="clause-num">5.</span> Delivery and Risk
+          </div>
+          <div class="contract-clause-body">
+            <div class="contract-clause-sub">
+              <p><strong>5.1</strong>&nbsp; The Vendor shall deliver the Goods to the Delivery Location on or before the delivery date specified in the applicable Purchase Order.</p>
+              <p><strong>5.2</strong>&nbsp; Risk of loss or damage to the Goods shall pass to the Company upon receipt and acceptance of the Goods at the Delivery Location.</p>
+              <p><strong>5.3</strong>&nbsp; Title to the Goods shall vest in the Company upon full payment of the applicable invoice.</p>
             </div>
           </div>
-          <button class="step-continue-btn" onclick="completeStep(5)">Continue →</button>
         </div>
-      </div>
 
-      <div class="accordion-item locked" id="step-6">
-        <div class="accordion-header">
-          <div class="accordion-left"><div class="step-num">6</div><span class="accordion-title">Assignee and workflow</span></div>
-          <span class="accordion-chevron">▾</span>
+        <!-- Clause 6 -->
+        <div class="contract-clause-section">
+          <div class="contract-clause-heading">
+            <span class="clause-num">6.</span> Warranties and Quality Assurance
+          </div>
+          <div class="contract-clause-body">
+            <p>The Vendor represents and warrants to the Company that all Goods supplied hereunder: (a) are of merchantable quality and fit for their intended purpose; (b) conform to all applicable specifications and legal requirements; (c) are free from defects in materials and workmanship; and (d) do not infringe the intellectual property rights of any third party. In the event of Defective Goods, the Company may, at its sole discretion, require replacement, repair, or a full refund of the purchase price.</p>
+          </div>
         </div>
-        <div class="accordion-body">
-          <div class="form-grid form-grid-2" style="gap:12px">
-            <div class="input-group">
-              <label class="input-label">Assigned to <span style="color:var(--red)">*</span></label>
-              <div class="input-wrap"><input id="f-assignee" type="text" value="Surya Menon (Legal L)" oninput="clearError(this)" /></div>
-              <span class="error-msg" id="err-assignee">Please enter assignee</span>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Review due date</label>
-              <div class="input-wrap"><input type="date" /></div>
-            </div>
-            <div class="input-group" style="grid-column:1/-1">
-              <label class="input-label">Additional reviewers</label>
-              <div class="input-wrap"><input type="text" placeholder="Search people…" /></div>
+
+        <!-- Clause 7 -->
+        <div class="contract-clause-section">
+          <div class="contract-clause-heading">
+            <span class="clause-num">7.</span> Intellectual Property
+          </div>
+          <div class="contract-clause-body">
+            <p>All intellectual property rights in the Goods, including any trademarks, designs, or proprietary formulations, shall remain vested in the Vendor unless expressly assigned in writing. The Vendor grants to the Company a non-exclusive, royalty-free licence to use such intellectual property solely for the purpose of marketing, distributing, and selling the Goods through the Company's platforms during the Term.</p>
+          </div>
+        </div>
+
+        <!-- Clause 8 -->
+        <div class="contract-clause-section">
+          <div class="contract-clause-heading">
+            <span class="clause-num">8.</span> Confidentiality
+          </div>
+          <div class="contract-clause-body">
+            <p>Each Party agrees to keep confidential and not to disclose to any third party any Confidential Information of the other Party without prior written consent. "<strong>Confidential Information</strong>" means all non-public business, technical, financial, or other information disclosed by one Party to the other, whether orally or in writing. This obligation shall survive termination of this Agreement for a period of three (3) years.</p>
+          </div>
+        </div>
+
+        <!-- Clause 9 -->
+        <div class="contract-clause-section">
+          <div class="contract-clause-heading">
+            <span class="clause-num">9.</span> Termination
+          </div>
+          <div class="contract-clause-body">
+            <div class="contract-clause-sub">
+              <p><strong>9.1</strong>&nbsp; Either Party may terminate this Agreement for convenience by providing thirty (30) days' prior written notice to the other Party.</p>
+              <p><strong>9.2</strong>&nbsp; Either Party may terminate this Agreement immediately upon written notice if the other Party commits a material breach and fails to remedy such breach within fifteen (15) days of receiving written notice thereof.</p>
+              <p><strong>9.3</strong>&nbsp; Upon termination, all outstanding Purchase Orders that have been accepted shall be fulfilled unless otherwise mutually agreed in writing.</p>
             </div>
           </div>
-          <button class="step-continue-btn" onclick="completeStep(6)">Continue →</button>
         </div>
-      </div>
 
-      <div class="accordion-item locked" id="step-7">
-        <div class="accordion-header">
-          <div class="accordion-left"><div class="step-num">7</div><span class="accordion-title">Spec users and notifications</span></div>
-          <span class="accordion-chevron">▾</span>
-        </div>
-        <div class="accordion-body">
-          <div class="form-grid" style="gap:12px">
-            <div class="input-group">
-              <label class="input-label">SPOC (up to 3)</label>
-              <div class="input-wrap"><input type="text" placeholder="Search person…" /></div>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Additional comments</label>
-              <div class="input-wrap"><input type="text" placeholder="Enter comments…" /></div>
-            </div>
-            <div class="input-group">
-              <label class="input-label">Start date</label>
-              <div class="input-wrap"><input type="date" /></div>
-            </div>
+        <!-- Clause 10 -->
+        <div class="contract-clause-section">
+          <div class="contract-clause-heading">
+            <span class="clause-num">10.</span> Governing Law and Dispute Resolution
           </div>
-          <button class="step-continue-btn" onclick="completeStep(7)">Save &amp; Review →</button>
+          <div class="contract-clause-body">
+            <p>This Agreement shall be governed by and construed in accordance with the laws of India, without regard to its conflict of law provisions. Any dispute arising out of or in connection with this Agreement shall first be attempted to be resolved through good faith negotiation between senior representatives of the Parties. If unresolved within thirty (30) days, the dispute shall be referred to binding arbitration in Bengaluru, Karnataka, under the Arbitration and Conciliation Act, 1996.</p>
+          </div>
         </div>
-      </div>
 
-      </div><!-- end right-panel-scroll -->
-      <div class="right-panel-footer" id="confirm-btn-wrap" style="display:none">
-        <button class="btn btn-primary" onclick="showModal()">Confirm and create contract</button>
+        <hr class="contract-doc-divider" />
+
+        <!-- Signature block -->
+        <div class="contract-signature-block">
+          <div>
+            <p style="font-size:12px;font-family:'Inter',sans-serif;margin-bottom:32px"><strong>For and on behalf of Flipkart India Private Limited</strong></p>
+            <div class="sig-line">Authorised Signatory</div>
+            <p style="font-size:11px;color:var(--mid);font-family:'Inter',sans-serif;margin-top:6px">Name: <span class="contract-placeholder">[ Signatory Name ]</span><br/>Designation: <span class="contract-placeholder">[ Designation ]</span><br/>Date: _______________</p>
+          </div>
+          <div>
+            <p style="font-size:12px;font-family:'Inter',sans-serif;margin-bottom:32px"><strong>For and on behalf of <span class="contract-placeholder">[ Counterparty Name ]</span></strong></p>
+            <div class="sig-line">Authorised Signatory</div>
+            <p style="font-size:11px;color:var(--mid);font-family:'Inter',sans-serif;margin-top:6px">Name: _______________<br/>Designation: _______________<br/>Date: _______________</p>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
