@@ -793,14 +793,104 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .collab-card-body { font-size: 12px; color: var(--dark); margin-top: 3px; }
-  /* Floating comment button */
-  .comment-float-btn {
-    background: var(--dark); color: white; border: none;
-    padding: 5px 12px; border-radius: 20px; font-size: 12px;
-    cursor: pointer; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    font-family: inherit;
+  /* ── Selection floating toolbar ──────────────────────────── */
+  .sel-toolbar {
+    display: flex; align-items: center; gap: 2px;
+    background: var(--dark); border-radius: 8px;
+    padding: 4px 5px; box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    white-space: nowrap;
   }
-  .comment-float-btn:hover { background: #111; }
+  .sel-toolbar-btn {
+    background: none; border: none; color: white; cursor: pointer;
+    font-size: 11px; font-weight: 500; font-family: inherit;
+    padding: 4px 9px; border-radius: 5px; transition: background 0.12s;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .sel-toolbar-btn:hover { background: rgba(255,255,255,0.15); }
+  .sel-toolbar-sep { width: 1px; height: 16px; background: rgba(255,255,255,0.2); flex-shrink:0; }
+  /* ── Inline comment box ───────────────────────────────────── */
+  .comment-box {
+    background: var(--white); border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15); padding: 16px;
+    width: 280px;
+  }
+  .comment-box-title { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 12px; }
+  .comment-box textarea {
+    width: 100%; min-height: 72px; border: 1px solid var(--border);
+    border-radius: 8px; padding: 9px 11px; font-size: 13px; font-family: inherit;
+    resize: none; outline: none; color: var(--dark); box-sizing: border-box;
+  }
+  .comment-box textarea:focus { border-color: var(--teal); }
+  .comment-box-actions {
+    display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px;
+  }
+  /* ── Comment card in Collaborate list ────────────────────── */
+  .cmt-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+  }
+  .cmt-card-main { padding: 12px 14px; }
+  .cmt-card-header {
+    display: flex; align-items: center; gap: 9px; margin-bottom: 10px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  }
+  .cmt-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--green); color: white; font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .cmt-author { font-size: 12px; font-weight: 700; color: var(--dark); }
+  .cmt-time { font-size: 11px; color: var(--light); }
+  .cmt-dot { width: 8px; height: 8px; border-radius: 50%; background: #2196F3; margin-left: auto; flex-shrink:0; }
+  .cmt-body { font-size: 12px; color: var(--dark); line-height: 1.6; margin-bottom: 8px; }
+  .cmt-quote {
+    font-size: 11px; color: var(--mid); font-style: italic;
+    background: var(--surface); border-left: 3px solid var(--border);
+    padding: 4px 8px; border-radius: 3px; margin-bottom: 8px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .cmt-footer { display: flex; align-items: center; justify-content: space-between; }
+  .cmt-replies-toggle {
+    font-size: 11px; color: #1565C0; font-weight: 500; cursor: pointer; background: none;
+    border: none; font-family: inherit; padding: 0; display: flex; align-items: center; gap: 3px;
+  }
+  .cmt-replies-toggle:hover { text-decoration: underline; }
+  .cmt-reply-btn {
+    font-size: 11px; color: var(--mid); background: none; border: none;
+    font-family: inherit; cursor: pointer; padding: 0; font-weight: 500;
+  }
+  .cmt-reply-btn:hover { color: var(--dark); }
+  .cmt-replies { border-top: 1px solid var(--border); }
+  .cmt-reply-card {
+    padding: 10px 14px; border-bottom: 1px solid var(--border);
+    display: flex; gap: 9px;
+  }
+  .cmt-reply-card:last-child { border-bottom: none; }
+  .cmt-reply-card .cmt-avatar { width: 24px; height: 24px; font-size: 9px; }
+  .cmt-reply-body { font-size: 12px; color: var(--dark); line-height: 1.5; }
+  .cmt-reply-input-wrap {
+    padding: 10px 14px; border-top: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .cmt-reply-input {
+    width: 100%; border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 10px; font-size: 12px; font-family: inherit; resize: none;
+    outline: none; box-sizing: border-box; min-height: 38px;
+  }
+  .cmt-reply-input:focus { border-color: var(--teal); }
+  .cmt-reply-actions { display: flex; justify-content: flex-end; gap: 6px; }
+  /* ── Nemo context pill ────────────────────────────────────── */
+  .nemo-ctx-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #E3F2FD; border: 1px solid #90CAF9; border-radius: 6px;
+    padding: 4px 8px; font-size: 11px; color: #1565C0; max-width: 100%;
+    margin-bottom: 6px;
+  }
+  .nemo-ctx-pill span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+  .nemo-ctx-pill button {
+    background: none; border: none; cursor: pointer; color: #1565C0;
+    font-size: 13px; padding: 0; line-height: 1; flex-shrink: 0;
+  }
   .modal-footer {
     display: flex; justify-content: flex-end; gap: 10px;
     padding: 14px 20px; border-top: 1px solid var(--border);
@@ -1929,6 +2019,12 @@
           </div>
           <!-- Input area -->
           <div class="composer-body">
+            <div id="nemo-ctx-wrap" style="display:none">
+              <div class="nemo-ctx-pill">
+                <span id="nemo-ctx-text"></span>
+                <button onclick="clearNemoCtx()" title="Remove">✕</button>
+              </div>
+            </div>
             <div class="composer-agent-row">
               <span class="composer-at">@</span>
               <span class="composer-agent-chip" id="active-agent">NemoSummary</span>
@@ -2125,16 +2221,30 @@
 
     <!-- RIGHT: Contract document (populated on creation) -->
     <div class="contract-doc-panel" id="contract-doc-panel">
-      <!-- Floating comment button (shown on text selection) -->
-      <div id="comment-float" style="display:none;position:absolute;z-index:400">
-        <button class="comment-float-btn" onclick="openInlineComment()">💬 Comment</button>
-        <div id="comment-float-input" style="display:none">
-          <textarea id="comment-float-text" placeholder="Add a comment…" style="width:220px;min-height:64px;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;font-family:inherit;resize:none;outline:none;display:block;margin-bottom:6px"></textarea>
-          <div style="display:flex;justify-content:flex-end;gap:6px">
-            <button class="btn btn-ghost btn-sm" style="font-size:11px;height:28px" onclick="cancelInlineComment()">Cancel</button>
-            <button class="btn btn-primary btn-sm" style="font-size:11px;height:28px" onclick="submitInlineComment()">Post</button>
+      <!-- Selection floating toolbar -->
+      <div id="sel-toolbar" style="display:none;position:fixed;z-index:9999">
+        <div class="sel-toolbar">
+          <button class="sel-toolbar-btn" onclick="selAskNemo()">✦ Ask Nemo</button>
+          <div class="sel-toolbar-sep"></div>
+          <button class="sel-toolbar-btn" onclick="selComment()">💬 Comment</button>
+          <div class="sel-toolbar-sep"></div>
+          <button class="sel-toolbar-btn" onclick="selApproval()">🔖 Approval</button>
+        </div>
+      </div>
+      <!-- Inline comment box -->
+      <div id="comment-box" style="display:none;position:fixed;z-index:9999">
+        <div class="comment-box">
+          <div class="comment-box-title">Add comment</div>
+          <textarea id="comment-box-text" placeholder="Comment or tag others with @"></textarea>
+          <div class="comment-box-actions">
+            <button class="btn btn-ghost btn-sm" onclick="cancelInlineComment()">Cancel</button>
+            <button class="btn btn-primary btn-sm" onclick="submitInlineComment()">Add Comment</button>
           </div>
         </div>
+        <!-- keep old ids for compat -->
+        <div id="comment-float-input" style="display:none"></div>
+        <div style="display:none"><textarea id="comment-float-text"></textarea></div>
+        <div style="display:none"><div id="comment-float"></div></div>
       </div>
       <div class="contract-doc">
         <div class="contract-doc-title">Wholesale Supply Agreement</div>
@@ -2674,52 +2784,211 @@
     });
   }
 
-  // ── Inline text-selection comments ────────────────────────
+  // ── Text-selection interaction ─────────────────────────────
   var _selectionRange = null;
+  var _selectionText  = '';
+
   document.addEventListener('mouseup', function(e) {
     var panel = document.getElementById('contract-doc-panel');
     if (!panel || !panel.contains(e.target)) return;
+    // Ignore clicks on our own overlays
+    if (e.target.closest('#sel-toolbar') || e.target.closest('#comment-box')) return;
     var sel = window.getSelection();
     if (!sel || sel.isCollapsed || !sel.toString().trim()) return;
     _selectionRange = sel.getRangeAt(0).cloneRange();
+    _selectionText  = sel.toString().trim();
     var rect = sel.getRangeAt(0).getBoundingClientRect();
-    var panelRect = panel.getBoundingClientRect();
-    var float = document.getElementById('comment-float');
-    var floatInput = document.getElementById('comment-float-input');
-    floatInput.style.display = 'none';
-    document.getElementById('comment-float-text').value = '';
-    float.style.display = 'block';
-    float.style.top = (rect.top - panelRect.top + panel.scrollTop - 44) + 'px';
-    float.style.left = Math.min(rect.left - panelRect.left, panelRect.width - 240) + 'px';
+    var tb = document.getElementById('sel-toolbar');
+    tb.style.display = 'block';
+    // Position above selection, centred
+    var tbW = 260;
+    var left = rect.left + (rect.width / 2) - (tbW / 2);
+    left = Math.max(8, Math.min(left, window.innerWidth - tbW - 8));
+    tb.style.left = left + 'px';
+    tb.style.top  = (rect.top - 46 + window.scrollY) + 'px';
   });
+
   document.addEventListener('mousedown', function(e) {
-    var float = document.getElementById('comment-float');
-    if (float && !float.contains(e.target) && !document.getElementById('contract-doc-panel').contains(e.target)) {
-      float.style.display = 'none';
+    if (!e.target.closest('#sel-toolbar') && !e.target.closest('#comment-box')) {
+      document.getElementById('sel-toolbar').style.display = 'none';
     }
   });
-  function openInlineComment() {
-    document.querySelector('#comment-float .comment-float-btn').style.display = 'none';
-    document.getElementById('comment-float-input').style.display = 'block';
-    document.getElementById('comment-float-text').focus();
+
+  // ── Ask Nemo ───────────────────────────────────────────────
+  function selAskNemo() {
+    document.getElementById('sel-toolbar').style.display = 'none';
+    window.getSelection && window.getSelection().removeAllRanges();
+    // Switch to Nemo tab
+    var nemoBtn = document.querySelector("[onclick*='nemo-panel-6']");
+    if (nemoBtn) nemoBtn.click();
+    // Set context pill
+    var wrap = document.getElementById('nemo-ctx-wrap');
+    var span = document.getElementById('nemo-ctx-text');
+    if (wrap && span) {
+      span.textContent = _selectionText.length > 60 ? _selectionText.substring(0,60) + '…' : _selectionText;
+      span.title = _selectionText;
+      wrap.style.display = 'block';
+    }
+    // Focus textarea
+    var ta = document.getElementById('nemo-composer-input');
+    if (ta) { ta.value = ''; ta.focus(); }
   }
+
+  function clearNemoCtx() {
+    document.getElementById('nemo-ctx-wrap').style.display = 'none';
+    document.getElementById('nemo-ctx-text').textContent = '';
+  }
+
+  // ── Comment ────────────────────────────────────────────────
+  function selComment() {
+    document.getElementById('sel-toolbar').style.display = 'none';
+    var rect = _selectionRange ? _selectionRange.getBoundingClientRect() : null;
+    var box = document.getElementById('comment-box');
+    box.style.display = 'block';
+    document.getElementById('comment-box-text').value = '';
+    if (rect) {
+      var boxW = 296;
+      var left = rect.left + (rect.width / 2) - (boxW / 2);
+      left = Math.max(8, Math.min(left, window.innerWidth - boxW - 8));
+      var top  = rect.bottom + 8 + window.scrollY;
+      box.style.left = left + 'px';
+      box.style.top  = top  + 'px';
+    }
+    setTimeout(function(){ document.getElementById('comment-box-text').focus(); }, 50);
+  }
+
   function cancelInlineComment() {
-    document.getElementById('comment-float').style.display = 'none';
-    document.querySelector('#comment-float .comment-float-btn').style.display = '';
+    document.getElementById('comment-box').style.display = 'none';
     window.getSelection && window.getSelection().removeAllRanges();
   }
+
   function submitInlineComment() {
-    var text = document.getElementById('comment-float-text').value.trim();
-    var quote = _selectionRange ? _selectionRange.toString().trim() : '';
+    var text = document.getElementById('comment-box-text').value.trim();
     if (!text) return;
-    document.getElementById('comment-float').style.display = 'none';
-    document.querySelector('#comment-float .comment-float-btn').style.display = '';
+    document.getElementById('comment-box').style.display = 'none';
     window.getSelection && window.getSelection().removeAllRanges();
-    // Switch to Collaborate tab and add card
-    var collabBtn = document.querySelector('[onclick*="collab-panel-6"]');
+    var quote = _selectionText || '';
+    // Switch to Collaborate tab
+    var collabBtn = document.querySelector("[onclick*='collab-panel-6']");
     if (collabBtn) collabBtn.click();
-    addCollabCard('badge-comment', 'Comment', text, 'Surya Menon', quote);
+    addCommentCard(text, quote);
   }
+
+  // ── Additional Approval from selection ─────────────────────
+  function selApproval() {
+    document.getElementById('sel-toolbar').style.display = 'none';
+    window.getSelection && window.getSelection().removeAllRanges();
+    openCollabModal('approval');
+    // Pre-fill Notes with selected text
+    setTimeout(function(){
+      var notes = document.querySelector('#modal-approval textarea');
+      if (notes) notes.value = _selectionText;
+    }, 50);
+  }
+
+  // ── Rich comment card ──────────────────────────────────────
+  var _cmtId = 0;
+  function addCommentCard(text, quote) {
+    var list  = document.getElementById('collab-list');
+    var empty = document.getElementById('collab-empty');
+    var pills = document.getElementById('collab-pills');
+    var search = document.getElementById('collab-search');
+    var id = 'cmt-' + (++_cmtId);
+    var quoteHtml = quote
+      ? '<div class="cmt-quote">"' + quote.substring(0,100) + (quote.length>100?'…':'') + '"</div>'
+      : '';
+    var card = document.createElement('div');
+    card.className = 'cmt-card collab-card';
+    card.dataset.type  = 'comment';
+    card.dataset.title = text.toLowerCase();
+    card.innerHTML =
+      '<div class="cmt-card-main">' +
+        '<div class="cmt-card-header">' +
+          '<div class="cmt-avatar">SM</div>' +
+          '<div>' +
+            '<div class="cmt-author">Surya Menon</div>' +
+            '<div class="cmt-time">Just now</div>' +
+          '</div>' +
+          '<div class="cmt-dot"></div>' +
+        '</div>' +
+        quoteHtml +
+        '<div class="cmt-body">' + text + '</div>' +
+        '<div class="cmt-footer">' +
+          '<button class="cmt-replies-toggle" id="' + id + '-toggle" onclick="cmtToggleReplies(\'' + id + '\')" style="visibility:hidden">0 replies ↓</button>' +
+          '<button class="cmt-reply-btn" onclick="cmtShowReplyInput(\'' + id + '\')">Reply</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="cmt-replies" id="' + id + '-replies" style="display:none"></div>' +
+      '<div class="cmt-reply-input-wrap" id="' + id + '-input-wrap" style="display:none">' +
+        '<textarea class="cmt-reply-input" id="' + id + '-input" placeholder="Reply or add others with @" rows="1"></textarea>' +
+        '<div class="cmt-reply-actions">' +
+          '<button class="btn btn-ghost btn-sm" onclick="cmtCancelReply(\'' + id + '\')">Cancel</button>' +
+          '<button class="btn btn-primary btn-sm" onclick="cmtSubmitReply(\'' + id + '\')">Reply</button>' +
+        '</div>' +
+      '</div>';
+    list.prepend(card);
+    list.style.display = 'flex';
+    empty.style.display = 'none';
+    pills.style.display = 'flex';
+    search.disabled = false;
+    collabApplyFilter(_collabActiveFilter, document.getElementById('collab-search').value);
+  }
+
+  function cmtToggleReplies(id) {
+    var wrap = document.getElementById(id + '-replies');
+    var btn  = document.getElementById(id + '-toggle');
+    if (!wrap) return;
+    var open = wrap.style.display !== 'none';
+    wrap.style.display = open ? 'none' : 'block';
+    var count = wrap.querySelectorAll('.cmt-reply-card').length;
+    btn.textContent = count + ' repl' + (count === 1 ? 'y' : 'ies') + (open ? ' ↓' : ' ↑');
+  }
+
+  function cmtShowReplyInput(id) {
+    var wrap = document.getElementById(id + '-input-wrap');
+    if (!wrap) return;
+    wrap.style.display = 'flex';
+    wrap.style.flexDirection = 'column';
+    setTimeout(function(){ document.getElementById(id + '-input').focus(); }, 50);
+  }
+
+  function cmtCancelReply(id) {
+    var wrap = document.getElementById(id + '-input-wrap');
+    if (wrap) { wrap.style.display = 'none'; }
+    var inp = document.getElementById(id + '-input');
+    if (inp) inp.value = '';
+  }
+
+  function cmtSubmitReply(id) {
+    var inp = document.getElementById(id + '-input');
+    var text = inp ? inp.value.trim() : '';
+    if (!text) return;
+    inp.value = '';
+    document.getElementById(id + '-input-wrap').style.display = 'none';
+    var repliesWrap = document.getElementById(id + '-replies');
+    repliesWrap.style.display = 'block';
+    var reply = document.createElement('div');
+    reply.className = 'cmt-reply-card';
+    reply.innerHTML =
+      '<div class="cmt-avatar">SM</div>' +
+      '<div>' +
+        '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">' +
+          '<span class="cmt-author">Surya Menon</span>' +
+          '<span class="cmt-time">Just now</span>' +
+        '</div>' +
+        '<div class="cmt-reply-body">' + text + '</div>' +
+      '</div>';
+    repliesWrap.appendChild(reply);
+    // Update toggle button
+    var toggleBtn = document.getElementById(id + '-toggle');
+    var count = repliesWrap.querySelectorAll('.cmt-reply-card').length;
+    toggleBtn.style.visibility = 'visible';
+    toggleBtn.textContent = count + ' repl' + (count === 1 ? 'y' : 'ies') + ' ↑';
+  }
+
+  // legacy compat
+  function openInlineComment() {}
+  function cancelInlineComment() { document.getElementById('comment-box').style.display = 'none'; }
 
   // Close collab dropdown on outside click
   document.addEventListener('click', function(e) {
