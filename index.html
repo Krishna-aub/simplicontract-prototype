@@ -707,9 +707,9 @@
   .collab-pill.active { background: var(--dark); color: white; border-color: var(--dark); }
   .collab-highlight { background: #FFF176; border-radius: 2px; }
   .aa-clause-dropdown {
-    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    position: fixed;
     background: var(--white); border: 1px solid var(--border); border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 200; max-height: 160px; overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999; max-height: 160px; overflow-y: auto;
   }
   .aa-clause-opt {
     padding: 8px 12px; font-size: 12px; color: var(--dark); cursor: pointer;
@@ -1705,7 +1705,7 @@
           <div style="position:relative">
             <input id="aa-clause-search" type="text" class="collab-search-input" placeholder="Search clauses…"
               style="border-radius:6px;padding:0 12px 0 10px;height:34px"
-              oninput="aaClauseSearch(this.value)" onfocus="document.getElementById('aa-clause-dropdown').style.display='block'" />
+              oninput="aaClauseSearch(this.value)" onfocus="aaClauseSearchFocus()" />
             <div id="aa-clause-dropdown" class="aa-clause-dropdown" style="display:none"></div>
           </div>
           <!-- selected clause pills -->
@@ -2499,16 +2499,30 @@
     'Warranties','Liability','Delivery','Amendments','Assignment','Notices'];
   var _aaSelected = [];
 
+  function aaPositionDropdown() {
+    var inp = document.getElementById('aa-clause-search');
+    var dd = document.getElementById('aa-clause-dropdown');
+    var r = inp.getBoundingClientRect();
+    dd.style.top = (r.bottom + 4) + 'px';
+    dd.style.left = r.left + 'px';
+    dd.style.width = r.width + 'px';
+  }
+
   function aaClauseSearch(q) {
     var dd = document.getElementById('aa-clause-dropdown');
-    var val = q.trim().toLowerCase();
+    var val = (q || '').trim().toLowerCase();
     var matches = _aaClauses.filter(function(c){ return c.toLowerCase().includes(val); });
     if (!matches.length) { dd.style.display = 'none'; return; }
     dd.innerHTML = matches.map(function(c) {
       var sel = _aaSelected.indexOf(c) > -1;
       return '<div class="aa-clause-opt' + (sel ? ' disabled' : '') + '" onclick="aaClauseSelect(\'' + c.replace(/'/g,"\\'") + '\')">' + c + (sel ? ' ✓' : '') + '</div>';
     }).join('');
+    aaPositionDropdown();
     dd.style.display = 'block';
+  }
+
+  function aaClauseSearchFocus() {
+    aaClauseSearch(document.getElementById('aa-clause-search').value);
   }
 
   function aaClauseSelect(name) {
