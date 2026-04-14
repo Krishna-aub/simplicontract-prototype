@@ -880,6 +880,87 @@
   .cmt-reply-input:focus { border-color: var(--teal); }
   .cmt-reply-actions { display: flex; justify-content: flex-end; gap: 6px; }
   /* ── Nemo context pill ────────────────────────────────────── */
+  /* ── Collab detail view ──────────────────────────────────── */
+  .cd-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px; border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .cd-back {
+    background: none; border: none; cursor: pointer;
+    font-size: 16px; color: var(--mid); padding: 2px 6px; border-radius: 4px;
+    line-height: 1; transition: background 0.12s;
+  }
+  .cd-back:hover { background: var(--surface); }
+  .cd-header-title { font-size: 13px; font-weight: 700; color: var(--dark); }
+  .cd-body { flex: 1; overflow-y: auto; min-height: 0; }
+  .cd-footer {
+    flex-shrink: 0; border-top: 1px solid var(--border);
+    padding: 10px 14px; display: flex; gap: 7px; flex-wrap: wrap;
+  }
+  /* Detail field rows */
+  .cd-section { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  .cd-section-label {
+    font-size: 10px; font-weight: 700; color: var(--light);
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;
+  }
+  .cd-field { display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start; }
+  .cd-field:last-child { margin-bottom: 0; }
+  .cd-field-label { font-size: 11px; color: var(--light); min-width: 100px; flex-shrink: 0; padding-top: 1px; }
+  .cd-field-value { font-size: 12px; color: var(--dark); font-weight: 500; }
+  .cd-field-value.empty { color: var(--light); font-style: italic; font-weight: 400; }
+  /* Clause table in detail */
+  .cd-clause-table { width: 100%; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-top: 6px; }
+  .cd-clause-hdr { display: grid; grid-template-columns: 1fr 2fr; background: var(--surface); padding: 6px 10px; font-size: 10px; font-weight: 700; color: var(--mid); border-bottom: 1px solid var(--border); }
+  .cd-clause-row { display: grid; grid-template-columns: 1fr 2fr; padding: 7px 10px; font-size: 12px; border-bottom: 1px solid var(--border); }
+  .cd-clause-row:last-child { border-bottom: none; }
+  /* Chat interface */
+  .cd-chat-msgs { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .cd-msg { max-width: 85%; }
+  .cd-msg.mine { align-self: flex-end; }
+  .cd-msg.theirs { align-self: flex-start; }
+  .cd-msg-bubble {
+    padding: 8px 11px; border-radius: 12px; font-size: 12px; line-height: 1.5;
+  }
+  .cd-msg.mine .cd-msg-bubble { background: var(--green); color: white; border-bottom-right-radius: 3px; }
+  .cd-msg.theirs .cd-msg-bubble { background: var(--surface); color: var(--dark); border-bottom-left-radius: 3px; }
+  .cd-msg-meta { font-size: 10px; color: var(--light); margin-top: 3px; }
+  .cd-msg.mine .cd-msg-meta { text-align: right; }
+  .cd-chat-input-wrap {
+    display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .cd-chat-input {
+    flex: 1; border: 1px solid var(--border); border-radius: 20px;
+    padding: 7px 12px; font-size: 12px; font-family: inherit;
+    outline: none; resize: none; background: var(--surface);
+  }
+  .cd-chat-input:focus { border-color: var(--teal); background: var(--white); }
+  .cd-chat-send {
+    background: var(--green); color: white; border: none; border-radius: 50%;
+    width: 32px; height: 32px; cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  /* Action buttons */
+  .cd-action-btn {
+    flex: 1; min-width: 0; padding: 7px 10px; border-radius: 8px;
+    font-size: 11px; font-weight: 600; font-family: inherit; cursor: pointer;
+    border: 1px solid var(--border); background: var(--white); color: var(--dark);
+    transition: background 0.12s;
+  }
+  .cd-action-btn:hover { background: var(--surface); }
+  .cd-action-btn.approve { background: var(--green); color: white; border-color: var(--green); }
+  .cd-action-btn.approve:hover { background: #2E7D32; }
+  .cd-action-btn.reject { background: white; color: #C62828; border-color: #EF9A9A; }
+  .cd-action-btn.reject:hover { background: #FFEBEE; }
+  /* Send note inline */
+  .cd-note-wrap { padding: 10px 14px; border-top: 1px solid var(--border); }
+  .cd-note-textarea {
+    width: 100%; border: 1px solid var(--border); border-radius: 6px;
+    padding: 7px 10px; font-size: 12px; font-family: inherit; resize: none;
+    outline: none; box-sizing: border-box; min-height: 60px;
+  }
+  .cd-note-textarea:focus { border-color: var(--teal); }
   /* Contract text highlight on comment select */
   .contract-sel-highlight {
     background: #FFF176; border-radius: 2px; padding: 1px 0;
@@ -2159,7 +2240,16 @@
       </div>
       <div id="details-summary" style="display:none"></div>
 
-      <div id="collab-panel-6" class="panel-tab-content">
+      <div id="collab-panel-6" class="panel-tab-content" style="position:relative">
+        <!-- Detail view overlay (replaces list when an item is opened) -->
+        <div id="collab-detail" style="display:none;position:absolute;inset:0;z-index:20;background:var(--white);flex-direction:column;overflow:hidden">
+          <div class="cd-header">
+            <button class="cd-back" onclick="closeCollabDetail()">←</button>
+            <span class="cd-header-title" id="cd-title"></span>
+          </div>
+          <div class="cd-body" id="cd-body"></div>
+          <div class="cd-footer" id="cd-footer" style="display:none"></div>
+        </div>
         <!-- Header: search + add button -->
         <div class="collab-header">
           <div class="collab-search-wrap">
@@ -2632,23 +2722,58 @@
   });
   function closeCollabModal(type) {
     var modal = document.getElementById('modal-' + type);
-    // Gather form values
-    var title = '', badgeClass = '', badgeLabel = '';
+    var title = '', badgeClass = '', badgeLabel = '', itemData = {};
+    var g = function(sel) { var el = modal.querySelector(sel); return el ? el.value.trim() : ''; };
+    var gSel = function(sel) { var el = modal.querySelector(sel); return el && el.selectedIndex > 0 ? el.options[el.selectedIndex].text : ''; };
     if (type === 'chat') {
-      var t = modal.querySelector('input[placeholder="Enter a title for the chat"]');
-      title = (t && t.value.trim()) ? t.value.trim() : 'New Chat';
+      title = g('input[placeholder="Enter a title for the chat"]') || 'New Chat';
       badgeClass = 'badge-chat'; badgeLabel = 'Chat';
+      itemData = {
+        type:'chat', title:title,
+        participants: g('input[placeholder="Type and select email(s)…"]'),
+        message: g('textarea[placeholder="Type a message…"]'),
+        contract: 'C-1260 — Wholesale Supply Agreement'
+      };
     } else if (type === 'task') {
-      var t = modal.querySelector('input[placeholder="Enter task title…"]');
-      title = (t && t.value.trim()) ? t.value.trim() : 'New Task';
+      title = g('input[placeholder="Enter task title…"]') || 'New Task';
       badgeClass = 'badge-task'; badgeLabel = 'Task';
+      var selEls = modal.querySelectorAll('select');
+      itemData = {
+        type:'task', title:title,
+        taskType:    selEls[0] && selEls[0].selectedIndex > 0 ? selEls[0].options[selEls[0].selectedIndex].text : '',
+        taskSubType: selEls[1] && selEls[1].selectedIndex > 0 ? selEls[1].options[selEls[1].selectedIndex].text : '',
+        dueDate:     g('input[type="date"]'),
+        priority:    selEls[2] ? selEls[2].options[selEls[2].selectedIndex].text : 'Medium',
+        assignedTo:  g('input[placeholder="Search people…"]'),
+        notes:       g('textarea[placeholder="Add notes…"]'),
+        contract:    'C-1260 — Wholesale Supply Agreement'
+      };
     } else if (type === 'approval') {
-      var t = modal.querySelector('select');
-      title = (t && t.value) ? t.options[t.selectedIndex].text : 'Additional Approval';
+      var selEls = modal.querySelectorAll('select');
+      title = (selEls[0] && selEls[0].selectedIndex > 0) ? selEls[0].options[selEls[0].selectedIndex].text : 'Additional Approval';
       badgeClass = 'badge-approval'; badgeLabel = 'Approval';
+      // Capture clause descriptions from the rendered table
+      var clauseDescs = {};
+      (modal.querySelectorAll('#aa-clause-rows > div') || []).forEach(function(row) {
+        var name = row.querySelector('span') ? row.querySelector('span').textContent : '';
+        var desc = row.querySelector('input') ? row.querySelector('input').value : '';
+        if (name) clauseDescs[name] = desc;
+      });
+      itemData = {
+        type:'approval', title:title,
+        aaType:    (selEls[0] && selEls[0].selectedIndex > 0) ? selEls[0].options[selEls[0].selectedIndex].text : '',
+        aaSubtype: (selEls[1] && selEls[1].selectedIndex > 0) ? selEls[1].options[selEls[1].selectedIndex].text : '',
+        dueDate:   g('input[type="date"]'),
+        priority:  (selEls[2] && selEls[2].selectedIndex > 0) ? selEls[2].options[selEls[2].selectedIndex].text : '',
+        clauses:   _aaSelected.slice(),
+        clauseDescs: clauseDescs,
+        approver:  g('input[placeholder="Search approver…"]'),
+        notes:     g('textarea'),
+        contract:  'C-1260 — Wholesale Supply Agreement'
+      };
     }
     modal.style.display = 'none';
-    addCollabCard(badgeClass, badgeLabel, title, 'Surya Menon', '');
+    addCollabCard(badgeClass, badgeLabel, title, 'Surya Menon', '', itemData);
   }
 
   /* ── Additional Approval clause selector ── */
@@ -2731,17 +2856,24 @@
 
   var _collabActiveFilter = 'all';
 
-  function addCollabCard(badgeClass, badgeLabel, title, author, quote) {
+  var _collabItemStore = {};
+  var _collabItemCounter = 0;
+
+  function addCollabCard(badgeClass, badgeLabel, title, author, quote, itemData) {
     var list   = document.getElementById('collab-list');
     var empty  = document.getElementById('collab-empty');
     var pills  = document.getElementById('collab-pills');
     var search = document.getElementById('collab-search');
     var type   = badgeClass.replace('badge-','');
+    var itemId = 'ci-' + (++_collabItemCounter);
+    if (itemData) { itemData.author = author; itemData.time = 'Just now'; _collabItemStore[itemId] = itemData; }
     var quoteHtml = quote ? '<div class="collab-card-quote">"' + quote.substring(0, 80) + (quote.length > 80 ? '…' : '') + '"</div>' : '';
     var card = document.createElement('div');
     card.className = 'collab-card';
     card.dataset.type = type;
     card.dataset.title = title.toLowerCase();
+    card.dataset.itemId = itemId;
+    card.style.cursor = 'pointer';
     card.innerHTML =
       '<div class="collab-card-top">' +
         '<span class="collab-badge ' + badgeClass + '">' + badgeLabel + '</span>' +
@@ -2750,6 +2882,7 @@
       '</div>' +
       quoteHtml +
       '<div class="collab-card-meta">by ' + author + '</div>';
+    card.onclick = function() { openCollabDetail(this); };
     list.appendChild(card);
     list.style.display = 'flex';
     empty.style.display = 'none';
@@ -2892,6 +3025,170 @@
       var notes = document.querySelector('#modal-approval textarea');
       if (notes) notes.value = _selectionText;
     }, 50);
+  }
+
+  // ── Collab detail view ────────────────────────────────────
+  function openCollabDetail(card) {
+    var itemId = card.dataset.itemId;
+    var data = _collabItemStore[itemId];
+    if (!data) return;
+    var det  = document.getElementById('collab-detail');
+    var body = document.getElementById('cd-body');
+    var footer = document.getElementById('cd-footer');
+    document.getElementById('cd-title').textContent = data.title;
+    body.innerHTML = '';
+    footer.style.display = 'none';
+    footer.innerHTML = '';
+    if (data.type === 'chat') {
+      renderChatDetail(body, data);
+    } else if (data.type === 'task') {
+      renderTaskDetail(body, data);
+      renderActionFooter(footer, data);
+    } else if (data.type === 'approval') {
+      renderApprovalDetail(body, data);
+      renderActionFooter(footer, data);
+    }
+    det.style.display = 'flex';
+  }
+
+  function closeCollabDetail() {
+    document.getElementById('collab-detail').style.display = 'none';
+  }
+
+  function fv(val, fallback) {
+    return (val && val.trim()) ? val.trim() : (fallback || '—');
+  }
+
+  function cdField(label, value) {
+    var cls = (value && value !== '—') ? '' : ' empty';
+    return '<div class="cd-field"><span class="cd-field-label">' + label + '</span><span class="cd-field-value' + cls + '">' + (value || '—') + '</span></div>';
+  }
+
+  function renderTaskDetail(body, data) {
+    var html = '<div class="cd-section">';
+    html += '<div class="cd-section-label">Task Details</div>';
+    html += cdField('Title', fv(data.title));
+    html += cdField('Task Type', fv(data.taskType));
+    html += cdField('Sub Type', fv(data.taskSubType));
+    html += cdField('Due Date', fv(data.dueDate));
+    html += cdField('Priority', fv(data.priority));
+    html += cdField('Assigned To', fv(data.assignedTo));
+    html += cdField('Contract', fv(data.contract));
+    html += '</div>';
+    if (data.notes) {
+      html += '<div class="cd-section">';
+      html += '<div class="cd-section-label">Notes</div>';
+      html += '<div style="font-size:12px;color:var(--dark);line-height:1.6">' + data.notes + '</div>';
+      html += '</div>';
+    }
+    html += '<div id="cd-note-section" style="display:none" class="cd-note-wrap">';
+    html += '<div class="cd-section-label" style="margin-bottom:6px">Send a Note</div>';
+    html += '<textarea class="cd-note-textarea" id="cd-note-input" placeholder="Type your note…"></textarea>';
+    html += '<div style="display:flex;justify-content:flex-end;gap:6px;margin-top:6px">';
+    html += '<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'cd-note-section\').style.display=\'none\'">Cancel</button>';
+    html += '<button class="btn btn-primary btn-sm" onclick="cdSendNote()">Send</button>';
+    html += '</div></div>';
+    body.innerHTML = html;
+  }
+
+  function renderApprovalDetail(body, data) {
+    var html = '<div class="cd-section">';
+    html += '<div class="cd-section-label">Approval Details</div>';
+    html += cdField('AA Type', fv(data.aaType));
+    html += cdField('AA Subtype', fv(data.aaSubtype));
+    html += cdField('Due Date', fv(data.dueDate));
+    html += cdField('Priority', fv(data.priority));
+    html += cdField('Approver', fv(data.approver));
+    html += cdField('Contract', fv(data.contract));
+    html += '</div>';
+    if (data.clauses && data.clauses.length) {
+      html += '<div class="cd-section">';
+      html += '<div class="cd-section-label">Clauses</div>';
+      html += '<div class="cd-clause-table">';
+      html += '<div class="cd-clause-hdr"><span>CLAUSE</span><span>DESCRIPTION</span></div>';
+      data.clauses.forEach(function(c) {
+        var desc = (data.clauseDescs && data.clauseDescs[c]) ? data.clauseDescs[c] : '—';
+        html += '<div class="cd-clause-row"><span style="color:var(--dark);font-weight:500">' + c + '</span><span style="color:var(--mid)">' + desc + '</span></div>';
+      });
+      html += '</div></div>';
+    }
+    if (data.notes) {
+      html += '<div class="cd-section">';
+      html += '<div class="cd-section-label">Notes</div>';
+      html += '<div style="font-size:12px;color:var(--dark);line-height:1.6">' + data.notes + '</div>';
+      html += '</div>';
+    }
+    html += '<div id="cd-note-section" style="display:none" class="cd-note-wrap">';
+    html += '<div class="cd-section-label" style="margin-bottom:6px">Send a Note</div>';
+    html += '<textarea class="cd-note-textarea" id="cd-note-input" placeholder="Type your note…"></textarea>';
+    html += '<div style="display:flex;justify-content:flex-end;gap:6px;margin-top:6px">';
+    html += '<button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'cd-note-section\').style.display=\'none\'">Cancel</button>';
+    html += '<button class="btn btn-primary btn-sm" onclick="cdSendNote()">Send</button>';
+    html += '</div></div>';
+    body.innerHTML = html;
+  }
+
+  function renderChatDetail(body, data) {
+    body.style.display = 'flex';
+    body.style.flexDirection = 'column';
+    var msgs = '<div class="cd-chat-msgs" id="cd-chat-msgs">';
+    // Initial message if any
+    if (data.message) {
+      msgs += '<div class="cd-msg mine"><div class="cd-msg-bubble">' + data.message + '</div><div class="cd-msg-meta">Surya Menon · Just now</div></div>';
+    } else {
+      msgs += '<div style="text-align:center;color:var(--light);font-size:11px;padding:20px 0">Chat started — say hello</div>';
+    }
+    msgs += '</div>';
+    var input = '<div class="cd-chat-input-wrap">' +
+      '<textarea class="cd-chat-input" id="cd-chat-input" placeholder="Type a message…" rows="1" onkeydown="cdChatKey(event)"></textarea>' +
+      '<button class="cd-chat-send" onclick="cdSendMsg()">↑</button>' +
+      '</div>';
+    body.innerHTML = msgs + input;
+  }
+
+  function renderActionFooter(footer, data) {
+    footer.style.display = 'flex';
+    footer.innerHTML =
+      '<button class="cd-action-btn" onclick="cdShowNote()">📝 Note</button>' +
+      '<button class="cd-action-btn" onclick="cdNewChat()">💬 Chat</button>' +
+      '<button class="cd-action-btn reject" onclick="cdAction(\'reject\')">✕ Reject</button>' +
+      '<button class="cd-action-btn approve" onclick="cdAction(\'approve\')">✓ Approve</button>';
+  }
+
+  function cdShowNote() {
+    var s = document.getElementById('cd-note-section');
+    if (s) { s.style.display = 'block'; document.getElementById('cd-note-input').focus(); }
+  }
+  function cdSendNote() {
+    var inp = document.getElementById('cd-note-input');
+    if (!inp || !inp.value.trim()) return;
+    inp.value = '';
+    document.getElementById('cd-note-section').style.display = 'none';
+    // visual feedback
+    var body = document.getElementById('cd-body');
+    var fb = document.createElement('div');
+    fb.style.cssText = 'margin:10px 14px;padding:8px 10px;background:#E8F5E9;border-radius:6px;font-size:12px;color:#2E7D32';
+    fb.textContent = 'Note sent.';
+    body.appendChild(fb);
+    setTimeout(function(){ if(fb.parentNode) fb.parentNode.removeChild(fb); }, 2500);
+  }
+  function cdNewChat() { openCollabModal('chat'); closeCollabDetail(); }
+  function cdAction(action) {
+    var footer = document.getElementById('cd-footer');
+    footer.innerHTML = '<div style="font-size:12px;font-weight:600;color:' + (action==='approve'?'var(--green)':'#C62828') + ';padding:4px 0">' +
+      (action==='approve' ? '✓ Approved' : '✕ Rejected') + ' — Surya Menon · Just now</div>';
+  }
+  function cdChatKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();cdSendMsg();} }
+  function cdSendMsg() {
+    var inp = document.getElementById('cd-chat-input');
+    var msgs = document.getElementById('cd-chat-msgs');
+    if (!inp || !inp.value.trim() || !msgs) return;
+    var bubble = document.createElement('div');
+    bubble.className = 'cd-msg mine';
+    bubble.innerHTML = '<div class="cd-msg-bubble">' + inp.value.trim() + '</div><div class="cd-msg-meta">Surya Menon · Just now</div>';
+    msgs.appendChild(bubble);
+    msgs.scrollTop = msgs.scrollHeight;
+    inp.value = '';
   }
 
   // ── Rich comment card ──────────────────────────────────────
