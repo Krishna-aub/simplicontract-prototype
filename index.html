@@ -167,6 +167,10 @@
   .stepper-steps {
     display: flex; align-items: center; gap: 0;
   }
+  .stepper-steps .step-connector { width: 44px; }
+  .stepper-steps .step-circle { width: 22px; height: 22px; font-size: 10px; }
+  .stepper-steps .step-circle.done { font-size: 12px; }
+  .stepper-steps .step-label { font-size: 11px; }
   .step-item {
     display: flex; align-items: center; gap: 8px;
   }
@@ -1853,7 +1857,6 @@
     <div class="stepper-back" onclick="goto('s2')">
       <div class="stepper-back-arrow">←</div>
       <div class="stepper-back-text">
-        <span class="stepper-back-label">Back to Contracts</span>
         <span class="stepper-back-name">Wholesale Supply Agreement</span>
       </div>
     </div>
