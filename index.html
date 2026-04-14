@@ -415,22 +415,95 @@
     flex-shrink: 0;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .chat-input-wrap {
+  /* ── Nemo Composer ─────────────────────────────────────────── */
+  .nemo-composer {
     flex-shrink: 0;
-    padding: 10px 12px;
-    border-top: 1px solid var(--border);
-    display: flex; gap: 8px; align-items: center;
+    margin: 10px 12px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
     background: var(--white);
-    box-shadow: 0 -4px 12px rgba(0,0,0,0.04);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    overflow: visible;
+    position: relative;
   }
-  .chat-input-wrap input {
-    flex: 1; height: 34px;
-    border: 1px solid var(--border); border-radius: 20px;
-    padding: 0 14px; font-size: 12px; font-family: inherit;
-    outline: none; background: var(--surface);
+  .agent-picker {
+    position: absolute; bottom: calc(100% + 8px); left: 0; right: 0;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    padding: 8px 6px;
+    z-index: 200;
   }
-  .chat-input-wrap input:focus { border-color: var(--teal); }
-  .chat-send { background: var(--teal); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 14px; flex-shrink: 0; }
+  .agent-picker-label {
+    font-size: 10px; font-weight: 600; color: var(--light);
+    text-transform: uppercase; letter-spacing: 0.6px;
+    padding: 2px 10px 6px;
+  }
+  .agent-option {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; border-radius: 8px; cursor: pointer;
+    transition: background 0.1s;
+  }
+  .agent-option:hover, .agent-option.active { background: var(--surface); }
+  .agent-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--teal); flex-shrink: 0;
+  }
+  .agent-name { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .agent-desc { font-size: 11px; color: var(--light); margin-left: auto; }
+  .composer-body { padding: 10px 12px 4px; }
+  .composer-agent-row {
+    display: flex; align-items: center; gap: 5px; margin-bottom: 5px;
+  }
+  .composer-at { font-size: 13px; color: var(--teal); font-weight: 600; }
+  .composer-agent-chip {
+    background: #E3F2FD; color: #1565C0;
+    font-size: 12px; font-weight: 600;
+    padding: 2px 9px; border-radius: 20px;
+    cursor: pointer; user-select: none;
+  }
+  .composer-agent-chip:hover { background: #BBDEFB; }
+  .composer-textarea {
+    width: 100%; border: none; outline: none; resize: none;
+    font-size: 13px; font-family: inherit; color: var(--dark);
+    background: transparent; line-height: 1.5;
+    min-height: 44px; max-height: 120px;
+    overflow-y: auto;
+  }
+  .composer-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 10px 8px;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+  }
+  .composer-mode-toggle {
+    display: flex; align-items: center;
+    background: var(--surface); border-radius: 20px;
+    padding: 2px; gap: 1px;
+  }
+  .cmode-btn {
+    padding: 4px 11px; border-radius: 18px; border: none;
+    font-size: 11px; font-weight: 600; cursor: pointer;
+    background: transparent; color: var(--mid);
+    font-family: inherit; transition: all 0.15s;
+  }
+  .cmode-btn.active { background: var(--white); color: var(--dark); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  .composer-tools { display: flex; align-items: center; gap: 4px; }
+  .composer-tool {
+    background: none; border: none; cursor: pointer;
+    font-size: 15px; padding: 4px 5px; color: var(--mid);
+    border-radius: 6px; transition: background 0.1s;
+  }
+  .composer-tool:hover { background: var(--surface); }
+  .composer-send-btn {
+    background: var(--teal); border: none; color: white;
+    width: 28px; height: 28px; border-radius: 50%;
+    cursor: pointer; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background 0.15s;
+  }
+  .composer-send-btn:hover { background: #00695C; }
   .empty-panel { padding: 24px 16px; color: var(--light); font-size: 12px; line-height: 1.7; }
   .nemo-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
 
@@ -1465,9 +1538,57 @@
             <button class="btn btn-ghost btn-sm" style="border:none;color:var(--mid)">I'll do it later</button>
           </div>
         </div>
-        <div class="chat-input-wrap">
-          <input type="text" placeholder="Ask Nemo anything about this contract…" />
-          <button class="chat-send">↑</button>
+        <!-- Nemo Composer -->
+        <div class="nemo-composer">
+          <!-- @ agent picker dropdown -->
+          <div class="agent-picker" id="agent-picker" style="display:none">
+            <div class="agent-picker-label">Switch agent</div>
+            <div class="agent-option active" onclick="selectAgent('NemoSummary')">
+              <span class="agent-dot"></span><span class="agent-name">NemoSummary</span>
+              <span class="agent-desc">Summarise this contract</span>
+            </div>
+            <div class="agent-option" onclick="selectAgent('NemoInsights')">
+              <span class="agent-dot"></span><span class="agent-name">NemoInsights</span>
+              <span class="agent-desc">Key risks &amp; obligations</span>
+            </div>
+            <div class="agent-option" onclick="selectAgent('NemoAnalysis')">
+              <span class="agent-dot"></span><span class="agent-name">NemoAnalysis</span>
+              <span class="agent-desc">Deviation &amp; playbook check</span>
+            </div>
+            <div class="agent-option" onclick="selectAgent('NemoChat')">
+              <span class="agent-dot"></span><span class="agent-name">NemoChat</span>
+              <span class="agent-desc">Free-form Q&amp;A</span>
+            </div>
+            <div class="agent-option" onclick="selectAgent('NemoWorkflow')">
+              <span class="agent-dot"></span><span class="agent-name">NemoWorkflow</span>
+              <span class="agent-desc">Trigger actions &amp; approvals</span>
+            </div>
+          </div>
+          <!-- Input area -->
+          <div class="composer-body">
+            <div class="composer-agent-row">
+              <span class="composer-at">@</span>
+              <span class="composer-agent-chip" id="active-agent">NemoSummary</span>
+              <span style="color:var(--light);font-size:12px">:</span>
+            </div>
+            <textarea class="composer-textarea" id="nemo-composer-input"
+              placeholder="Ask Nemo anything about this contract…"
+              rows="2"
+              oninput="handleComposerInput(this)"
+              onkeydown="handleComposerKey(event)"></textarea>
+          </div>
+          <!-- Toolbar -->
+          <div class="composer-toolbar">
+            <div class="composer-mode-toggle">
+              <button class="cmode-btn active" id="cmode-ask" onclick="setComposerMode('ask')">✦ Ask</button>
+              <button class="cmode-btn" id="cmode-act" onclick="setComposerMode('act')">⚡ Act</button>
+            </div>
+            <div class="composer-tools">
+              <button class="composer-tool" title="Attach file">📎</button>
+              <button class="composer-tool" title="Voice input">🎤</button>
+              <button class="composer-send-btn" onclick="sendNemoMessage()" title="Send">↑</button>
+            </div>
+          </div>
         </div>
       </div>
       <!-- Details tab -->
@@ -1962,6 +2083,47 @@
 
     goto('s6');
   }
+
+  // ── Nemo Composer ─────────────────────────────────────────
+  function handleComposerInput(el) {
+    var v = el.value;
+    var picker = document.getElementById('agent-picker');
+    if (v.endsWith('@')) { picker.style.display = 'block'; }
+    else { picker.style.display = 'none'; }
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+  function handleComposerKey(e) {
+    if (e.key === 'Escape') document.getElementById('agent-picker').style.display = 'none';
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendNemoMessage(); }
+  }
+  function selectAgent(name) {
+    document.getElementById('active-agent').textContent = name;
+    document.getElementById('agent-picker').style.display = 'none';
+    var inp = document.getElementById('nemo-composer-input');
+    inp.value = inp.value.replace(/@$/, '');
+    inp.focus();
+    document.querySelectorAll('.agent-option').forEach(function(o) {
+      o.classList.toggle('active', o.querySelector('.agent-name').textContent === name);
+    });
+  }
+  function setComposerMode(mode) {
+    document.getElementById('cmode-ask').classList.toggle('active', mode === 'ask');
+    document.getElementById('cmode-act').classList.toggle('active', mode === 'act');
+  }
+  function sendNemoMessage() {
+    var inp = document.getElementById('nemo-composer-input');
+    var msg = inp.value.trim();
+    if (!msg) return;
+    inp.value = ''; inp.style.height = 'auto';
+    document.getElementById('agent-picker').style.display = 'none';
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.nemo-composer')) {
+      var p = document.getElementById('agent-picker');
+      if (p) p.style.display = 'none';
+    }
+  });
 
   // Close modal on overlay click
   document.getElementById('confirm-modal').addEventListener('click', function(e) {
