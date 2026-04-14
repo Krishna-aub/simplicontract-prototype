@@ -37,7 +37,7 @@
   }
 
   /* ── Screen system ─────────────────────────────────────────── */
-  .screen { display: none; flex-direction: column; min-height: 100vh; }
+  .screen { display: none; flex-direction: column; height: 100vh; overflow: hidden; }
   .screen.active { display: flex; }
 
   /* ── Top utility bar ──────────────────────────────────────── */
@@ -386,6 +386,7 @@
     background: var(--white);
     border-right: 1px solid var(--border);
     display: flex; flex-direction: column;
+    overflow: hidden; min-height: 0;
   }
   .panel-tabs {
     display: flex; align-items: stretch;
