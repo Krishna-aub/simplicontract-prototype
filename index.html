@@ -576,6 +576,20 @@
   .detail-row-label { font-size: 12px; color: var(--mid); }
   .detail-row-value { font-size: 13px; font-weight: 500; }
   .detail-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 12px; }
+  .detail-section-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0 4px;
+    border-top: 1px solid var(--border);
+  }
+  .detail-section-row:first-child { border-top: none; }
+  .detail-section-label { font-size: 13px; font-weight: 600; color: var(--dark); }
+  .clause-pill {
+    display: inline-flex; align-items: center;
+    padding: 4px 10px; border-radius: 20px;
+    border: 1px solid #1565C0; color: #1565C0;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.3px;
+    cursor: pointer;
+  }
   .detail-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
   .link-btn { font-size: 12px; color: var(--green); background: none; border: none; cursor: pointer; font-family: inherit; font-weight: 500; white-space: nowrap; }
   .link-btn:hover { text-decoration: underline; }
@@ -1477,10 +1491,11 @@
     <div class="left-panel">
       <div class="panel-tabs">
         <button class="panel-tab active" onclick="switchTab(this,'nemo-panel-6')">✦ Nemo</button>
+        <button class="panel-tab" onclick="switchTab(this,'details-panel-6')">Details</button>
         <button class="panel-tab" onclick="switchTab(this,'collab-panel-6')">Collaborate</button>
         <button class="panel-tab" onclick="switchTab(this,'analysis-panel-6')">Analysis</button>
       </div>
-      <div id="nemo-panel-6" class="panel-tab-content active" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <div id="nemo-panel-6" class="panel-tab-content active">
         <div class="panel-body" style="flex:1">
           <div class="nemo-label">✦ Nemo</div>
           <div class="nemo-bubble">
@@ -1496,7 +1511,105 @@
           <button class="chat-send">↑</button>
         </div>
       </div>
-      <!-- details-summary kept hidden for JS population but not shown as tab -->
+      <!-- Details tab -->
+      <div id="details-panel-6" class="panel-tab-content">
+        <div class="details-panel-scroll" style="font-size:13px">
+
+          <!-- Assignment Status -->
+          <div class="detail-section-row">
+            <div class="detail-section-label">Assignment Status</div>
+            <div style="color:#1565C0;font-weight:500" id="d6-assign-status">Completed</div>
+          </div>
+
+          <!-- Document Renewal -->
+          <div class="detail-section-row">
+            <div class="detail-section-label">Document Renewal</div>
+            <div style="color:#1565C0;font-weight:500">Renewal To Be Initiated</div>
+          </div>
+
+          <!-- Additional Approval -->
+          <div class="detail-section-row">
+            <div class="detail-section-label">Additional Approval <span style="color:var(--mid);font-weight:400">(0)</span></div>
+            <div style="color:var(--green);font-weight:500;cursor:pointer">+ Create New</div>
+          </div>
+          <div style="font-size:12px;color:var(--light);padding:0 0 12px">No additional approvals added yet</div>
+
+          <!-- Task -->
+          <div class="detail-section-row">
+            <div class="detail-section-label">Task <span style="color:var(--mid);font-weight:400">(0)</span></div>
+            <div style="color:var(--green);font-weight:500;cursor:pointer">+ Create New</div>
+          </div>
+          <div style="font-size:12px;color:var(--light);padding:0 0 12px">No tasks added yet</div>
+
+          <!-- Clauses -->
+          <div class="detail-section-row">
+            <div class="detail-section-label">Clauses <span style="color:var(--mid);font-weight:400">(20)</span></div>
+            <div style="color:var(--green);font-weight:500;cursor:pointer">See More ▾</div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;padding-bottom:12px">
+            <span class="clause-pill">INTELLECTUAL PROP…</span>
+            <span class="clause-pill">Amendments</span>
+            <span class="clause-pill">CONFIDENTIA…</span>
+          </div>
+
+          <!-- Clause Playbook -->
+          <div class="detail-section-row">
+            <div class="detail-section-label">Clause Playbook <span style="color:var(--mid);font-weight:400">(20)</span></div>
+            <div style="color:var(--green);font-weight:500;cursor:pointer">See More ▾</div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;padding-bottom:12px">
+            <span class="clause-pill">FORCE MAJE…</span>
+            <span class="clause-pill">DELIVERY</span>
+            <span class="clause-pill">INTELLECTUAL PROP…</span>
+          </div>
+
+          <!-- Deviations -->
+          <div class="detail-section-row">
+            <div class="detail-section-label">Deviations <span style="color:var(--mid);font-weight:400">(0)</span></div>
+          </div>
+          <div style="font-size:12px;color:var(--light);padding:0 0 12px">No deviations</div>
+
+          <!-- Additional Documents -->
+          <div class="detail-section-row">
+            <div class="detail-section-label">Additional Documents <span style="color:var(--mid);font-weight:400">(0)</span></div>
+            <div style="color:var(--green);font-weight:500;cursor:pointer">+ Upload</div>
+          </div>
+          <div style="font-size:12px;color:var(--light);padding:0 0 12px">No additional documents</div>
+
+          <!-- Version & History -->
+          <div class="detail-section-row">
+            <div class="detail-section-label">Version &amp; History</div>
+          </div>
+          <div style="padding-bottom:12px">
+            <div style="color:#1565C0;font-size:12px">Last Updated By <strong>Surya Menon (Legal L)</strong></div>
+            <div style="color:#1565C0;font-size:12px;margin-top:2px" id="d6-last-updated">14-Apr-2026, 7:12 PM</div>
+          </div>
+
+          <!-- Audit Log -->
+          <div class="detail-section-row">
+            <div class="detail-section-label">Audit Log</div>
+          </div>
+          <div style="padding-bottom:12px">
+            <div style="color:#1565C0;font-size:12px">Last Updated By <strong>Surya Menon (Legal L)</strong></div>
+            <div style="color:#1565C0;font-size:12px;margin-top:2px">14-Apr-2026, 7:12 PM</div>
+          </div>
+
+          <!-- Related Documents -->
+          <div class="detail-section-row">
+            <div class="detail-section-label">Related Documents <span style="color:var(--mid);font-weight:400">(0)</span></div>
+            <div style="color:var(--green);font-weight:500;cursor:pointer">+ Link New</div>
+          </div>
+          <div style="font-size:12px;color:var(--light);padding:0 0 12px">No Related Documents</div>
+
+          <!-- Deliverables -->
+          <div class="detail-section-row">
+            <div class="detail-section-label">Deliverables <span style="color:var(--mid);font-weight:400">(0)</span></div>
+            <div style="color:var(--green);font-weight:500;cursor:pointer">View Extra</div>
+          </div>
+          <div style="font-size:12px;color:var(--light);padding:0 0 12px">No Deliverable</div>
+
+        </div>
+      </div>
       <div id="details-summary" style="display:none"></div>
 
       <div id="collab-panel-6" class="panel-tab-content">
