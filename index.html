@@ -953,6 +953,8 @@
   .cd-action-btn.approve:hover { background: #2E7D32; }
   .cd-action-btn.reject { background: white; color: #C62828; border-color: #EF9A9A; }
   .cd-action-btn.reject:hover { background: #FFEBEE; }
+  .cd-action-btn.remind { background: white; color: var(--teal); border-color: #80CBC4; }
+  .cd-action-btn.remind:hover { background: var(--teal-bg); }
   /* Send note inline */
   .cd-note-wrap { padding: 10px 14px; border-top: 1px solid var(--border); }
   .cd-note-textarea {
@@ -2773,7 +2775,8 @@
       };
     }
     modal.style.display = 'none';
-    addCollabCard(badgeClass, badgeLabel, title, 'Riya Ramani', '', itemData);
+    itemData.createdByMe = true;
+    addCollabCard(badgeClass, badgeLabel, title, 'Surya Menon', '', itemData);
   }
 
   /* ── Additional Approval clause selector ── */
@@ -3134,7 +3137,9 @@
     var msgs = '<div class="cd-chat-msgs" id="cd-chat-msgs">';
     // Initial message if any
     if (data.message) {
-      msgs += '<div class="cd-msg theirs"><div class="cd-msg-bubble">' + data.message + '</div><div class="cd-msg-meta">Riya Ramani · Just now</div></div>';
+      var side = data.createdByMe ? 'mine' : 'theirs';
+      var sender = data.createdByMe ? 'Surya Menon' : 'Riya Ramani';
+      msgs += '<div class="cd-msg ' + side + '"><div class="cd-msg-bubble">' + data.message + '</div><div class="cd-msg-meta">' + sender + ' · Just now</div></div>';
     } else {
       msgs += '<div style="text-align:center;color:var(--light);font-size:11px;padding:20px 0">Chat started — say hello</div>';
     }
@@ -3148,11 +3153,18 @@
 
   function renderActionFooter(footer, data) {
     footer.style.display = 'flex';
-    footer.innerHTML =
-      '<button class="cd-action-btn" onclick="cdShowNote()">📝 Note</button>' +
-      '<button class="cd-action-btn" onclick="cdNewChat()">💬 Chat</button>' +
-      '<button class="cd-action-btn reject" onclick="cdAction(\'reject\')">✕ Reject</button>' +
-      '<button class="cd-action-btn approve" onclick="cdAction(\'approve\')">✓ Approve</button>';
+    if (data.createdByMe) {
+      footer.innerHTML =
+        '<button class="cd-action-btn" onclick="cdShowNote()">📝 Note</button>' +
+        '<button class="cd-action-btn" onclick="cdNewChat()">💬 Chat</button>' +
+        '<button class="cd-action-btn remind" onclick="cdAction(\'remind\')">🔔 Remind</button>';
+    } else {
+      footer.innerHTML =
+        '<button class="cd-action-btn" onclick="cdShowNote()">📝 Note</button>' +
+        '<button class="cd-action-btn" onclick="cdNewChat()">💬 Chat</button>' +
+        '<button class="cd-action-btn reject" onclick="cdAction(\'reject\')">✕ Reject</button>' +
+        '<button class="cd-action-btn approve" onclick="cdAction(\'approve\')">✓ Approve</button>';
+    }
   }
 
   function cdShowNote() {
@@ -3175,8 +3187,12 @@
   function cdNewChat() { openCollabModal('chat'); closeCollabDetail(); }
   function cdAction(action) {
     var footer = document.getElementById('cd-footer');
-    footer.innerHTML = '<div style="font-size:12px;font-weight:600;color:' + (action==='approve'?'var(--green)':'#C62828') + ';padding:4px 0">' +
-      (action==='approve' ? '✓ Approved' : '✕ Rejected') + ' — Surya Menon · Just now</div>';
+    if (action === 'remind') {
+      footer.innerHTML = '<div style="font-size:12px;font-weight:600;color:var(--teal);padding:4px 0">🔔 Reminder sent · Just now</div>';
+    } else {
+      footer.innerHTML = '<div style="font-size:12px;font-weight:600;color:' + (action==='approve'?'var(--green)':'#C62828') + ';padding:4px 0">' +
+        (action==='approve' ? '✓ Approved' : '✕ Rejected') + ' — Surya Menon · Just now</div>';
+    }
   }
   function cdChatKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();cdSendMsg();} }
   function cdSendMsg() {
