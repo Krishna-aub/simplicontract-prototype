@@ -675,6 +675,37 @@
     align-items: center; justify-content: center;
     padding: 32px 24px; text-align: center;
   }
+  .collab-search-wrap {
+    flex: 1; position: relative; margin-right: 8px;
+  }
+  .collab-search-icon {
+    position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
+    color: var(--light); font-size: 15px; pointer-events: none;
+  }
+  .collab-search-input {
+    width: 100%; height: 32px; border: 1px solid var(--border);
+    border-radius: 20px; padding: 0 12px 0 30px;
+    font-size: 12px; font-family: inherit; outline: none;
+    background: var(--surface); color: var(--dark);
+    transition: border-color 0.15s, opacity 0.15s;
+    box-sizing: border-box;
+  }
+  .collab-search-input:focus { border-color: var(--teal); background: var(--white); }
+  .collab-search-input:disabled { opacity: 0.45; cursor: not-allowed; }
+  .collab-pills {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 8px 12px 6px; border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .collab-pill {
+    padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border);
+    font-size: 11px; font-weight: 500; color: var(--mid);
+    background: var(--white); cursor: pointer; transition: all 0.12s;
+    font-family: inherit;
+  }
+  .collab-pill:hover { border-color: var(--teal); color: var(--teal); }
+  .collab-pill.active { background: var(--dark); color: white; border-color: var(--dark); }
+  .collab-highlight { background: #FFF176; border-radius: 2px; }
   .collab-list {
     flex: 1; overflow-y: auto; padding: 10px 10px 16px;
     display: flex; flex-direction: column; gap: 8px;
@@ -1964,10 +1995,16 @@
       <div id="details-summary" style="display:none"></div>
 
       <div id="collab-panel-6" class="panel-tab-content">
-        <!-- Header bar -->
+        <!-- Header: search + add button -->
         <div class="collab-header">
-          <span style="font-size:13px;font-weight:600;color:var(--dark)">Collaborate</span>
-          <div style="position:relative">
+          <div class="collab-search-wrap">
+            <span class="collab-search-icon">⌕</span>
+            <input id="collab-search" class="collab-search-input" type="text"
+              placeholder="Search activity…"
+              disabled
+              oninput="collabSearch(this.value)" />
+          </div>
+          <div style="position:relative;flex-shrink:0">
             <button class="collab-add-btn" id="collab-add-btn" onclick="toggleCollabDropdown()" title="Add">＋</button>
             <div class="collab-dropdown" id="collab-dropdown" style="display:none">
               <div class="collab-dd-item" onclick="openCollabModal('chat')">💬 New Chat</div>
@@ -1975,6 +2012,14 @@
               <div class="collab-dd-item" onclick="openCollabModal('approval')">🔖 Additional Approval</div>
             </div>
           </div>
+        </div>
+        <!-- Filter pills (hidden in empty state) -->
+        <div class="collab-pills" id="collab-pills" style="display:none">
+          <button class="collab-pill active" data-type="all" onclick="collabFilter(this,'all')">All</button>
+          <button class="collab-pill" data-type="chat" onclick="collabFilter(this,'chat')">💬 Chats</button>
+          <button class="collab-pill" data-type="task" onclick="collabFilter(this,'task')">✅ Tasks</button>
+          <button class="collab-pill" data-type="approval" onclick="collabFilter(this,'approval')">🔖 Approvals</button>
+          <button class="collab-pill" data-type="comment" onclick="collabFilter(this,'comment')">✏️ Comments</button>
         </div>
         <!-- Activity list -->
         <div class="collab-list" id="collab-list" style="display:none"></div>
@@ -2418,24 +2463,67 @@
     addCollabCard(badgeClass, badgeLabel, title, 'Surya Menon', '');
   }
 
+  var _collabActiveFilter = 'all';
+
   function addCollabCard(badgeClass, badgeLabel, title, author, quote) {
-    var list = document.getElementById('collab-list');
-    var empty = document.getElementById('collab-empty');
-    var now = 'Just now';
+    var list   = document.getElementById('collab-list');
+    var empty  = document.getElementById('collab-empty');
+    var pills  = document.getElementById('collab-pills');
+    var search = document.getElementById('collab-search');
+    var type   = badgeClass.replace('badge-','');
     var quoteHtml = quote ? '<div class="collab-card-quote">"' + quote.substring(0, 80) + (quote.length > 80 ? '…' : '') + '"</div>' : '';
     var card = document.createElement('div');
     card.className = 'collab-card';
+    card.dataset.type = type;
+    card.dataset.title = title.toLowerCase();
     card.innerHTML =
       '<div class="collab-card-top">' +
         '<span class="collab-badge ' + badgeClass + '">' + badgeLabel + '</span>' +
         '<span class="collab-card-title">' + title + '</span>' +
-        '<span class="collab-card-time">' + now + '</span>' +
+        '<span class="collab-card-time">Just now</span>' +
       '</div>' +
       quoteHtml +
       '<div class="collab-card-meta">by ' + author + '</div>';
     list.appendChild(card);
     list.style.display = 'flex';
     empty.style.display = 'none';
+    pills.style.display = 'flex';
+    search.disabled = false;
+    // Re-apply current filter
+    collabApplyFilter(_collabActiveFilter, document.getElementById('collab-search').value);
+  }
+
+  function collabFilter(btn, type) {
+    _collabActiveFilter = type;
+    document.querySelectorAll('.collab-pill').forEach(function(p){ p.classList.remove('active'); });
+    btn.classList.add('active');
+    collabApplyFilter(type, document.getElementById('collab-search').value);
+  }
+
+  function collabSearch(query) {
+    collabApplyFilter(_collabActiveFilter, query);
+  }
+
+  function collabApplyFilter(type, query) {
+    var q = (query || '').toLowerCase().trim();
+    document.querySelectorAll('#collab-list .collab-card').forEach(function(card) {
+      var typeMatch = (type === 'all') || (card.dataset.type === type);
+      var textMatch = !q || card.dataset.title.includes(q) ||
+                      (card.querySelector('.collab-card-quote') || {textContent:''}).textContent.toLowerCase().includes(q) ||
+                      (card.querySelector('.collab-card-body') || {textContent:''}).textContent.toLowerCase().includes(q);
+      card.style.display = (typeMatch && textMatch) ? '' : 'none';
+      // Highlight matching text in title
+      var titleEl = card.querySelector('.collab-card-title');
+      if (titleEl) {
+        var raw = titleEl.dataset.raw || (titleEl.dataset.raw = titleEl.textContent);
+        if (q && raw.toLowerCase().includes(q)) {
+          var re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+          titleEl.innerHTML = raw.replace(re, '<mark class="collab-highlight">$1</mark>');
+        } else {
+          titleEl.textContent = raw;
+        }
+      }
+    });
   }
 
   // ── Inline text-selection comments ────────────────────────
