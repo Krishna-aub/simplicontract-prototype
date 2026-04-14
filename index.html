@@ -706,6 +706,26 @@
   .collab-pill:hover { border-color: var(--teal); color: var(--teal); }
   .collab-pill.active { background: var(--dark); color: white; border-color: var(--dark); }
   .collab-highlight { background: #FFF176; border-radius: 2px; }
+  .aa-clause-dropdown {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    background: var(--white); border: 1px solid var(--border); border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 200; max-height: 160px; overflow-y: auto;
+  }
+  .aa-clause-opt {
+    padding: 8px 12px; font-size: 12px; color: var(--dark); cursor: pointer;
+  }
+  .aa-clause-opt:hover { background: var(--surface); }
+  .aa-clause-opt.disabled { color: var(--light); cursor: default; pointer-events: none; }
+  .aa-selected-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 8px 3px 10px; border-radius: 20px;
+    border: 1px solid #1565C0; color: #1565C0;
+    font-size: 11px; font-weight: 500; background: #E3F2FD;
+  }
+  .aa-selected-pill button {
+    background: none; border: none; cursor: pointer; padding: 0; line-height:1;
+    color: #1565C0; font-size: 13px; display: flex; align-items: center;
+  }
   .collab-list {
     flex: 1; overflow-y: auto; padding: 10px 10px 16px;
     display: flex; flex-direction: column; gap: 8px;
@@ -1668,38 +1688,34 @@
             <span class="select-arrow">▾</span>
           </div>
         </div>
-        <div class="input-group" style="grid-column:1/-1">
-          <label class="input-label">Defined Clauses <span style="color:var(--light);font-weight:400">— clause list with description per clause</span></label>
-          <div style="border:1px solid var(--border);border-radius:6px;overflow:hidden">
-            <div style="display:grid;grid-template-columns:1fr 2fr;background:var(--surface);padding:7px 12px;font-size:11px;font-weight:600;color:var(--mid);border-bottom:1px solid var(--border)">
-              <span>CLAUSE</span><span>DESCRIPTION</span>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 2fr;padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px;gap:8px">
-              <span style="color:var(--dark)">Payment Terms</span>
-              <input type="text" placeholder="Describe deviation…" style="border:none;outline:none;font-size:12px;font-family:inherit;color:var(--mid)" />
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 2fr;padding:8px 12px;font-size:12px;gap:8px">
-              <span style="color:var(--dark)">Termination</span>
-              <input type="text" placeholder="Describe deviation…" style="border:none;outline:none;font-size:12px;font-family:inherit;color:var(--mid)" />
-            </div>
+        <div class="input-group">
+          <label class="input-label">Due Date</label>
+          <div class="input-wrap"><input type="date" /></div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Priority</label>
+          <div class="input-wrap">
+            <select><option value="">Select…</option><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select>
+            <span class="select-arrow">▾</span>
           </div>
         </div>
+        <!-- Clause selector -->
         <div class="input-group" style="grid-column:1/-1">
-          <label class="input-label">Approver Comments</label>
-          <div style="border:1px solid var(--border);border-radius:6px;overflow:hidden">
-            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;background:var(--surface);padding:7px 12px;font-size:11px;font-weight:600;color:var(--mid);border-bottom:1px solid var(--border)">
-              <span>COMMENT</span><span>ACCEPT</span><span>REJECT</span>
+          <label class="input-label">Clauses <span style="color:var(--light);font-weight:400">— search and select clauses requiring approval</span></label>
+          <div style="position:relative">
+            <input id="aa-clause-search" type="text" class="collab-search-input" placeholder="Search clauses…"
+              style="border-radius:6px;padding:0 12px 0 10px;height:34px"
+              oninput="aaClauseSearch(this.value)" onfocus="document.getElementById('aa-clause-dropdown').style.display='block'" />
+            <div id="aa-clause-dropdown" class="aa-clause-dropdown" style="display:none"></div>
+          </div>
+          <!-- selected clause pills -->
+          <div id="aa-clause-pills" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
+          <!-- selected clauses table -->
+          <div id="aa-clause-table-wrap" style="display:none;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-top:4px">
+            <div style="display:grid;grid-template-columns:1fr 2fr 20px;background:var(--surface);padding:7px 12px;font-size:11px;font-weight:600;color:var(--mid);border-bottom:1px solid var(--border)">
+              <span>CLAUSE</span><span>DESCRIPTION FOR APPROVAL</span><span></span>
             </div>
-            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px;align-items:center;gap:8px">
-              <input type="text" placeholder="Approver comment…" style="border:none;outline:none;font-size:12px;font-family:inherit" />
-              <input type="radio" name="ap1" style="margin:auto" />
-              <input type="radio" name="ap1" style="margin:auto" />
-            </div>
-            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;padding:8px 12px;font-size:12px;align-items:center;gap:8px">
-              <input type="text" placeholder="Approver comment…" style="border:none;outline:none;font-size:12px;font-family:inherit" />
-              <input type="radio" name="ap2" style="margin:auto" />
-              <input type="radio" name="ap2" style="margin:auto" />
-            </div>
+            <div id="aa-clause-rows"></div>
           </div>
         </div>
         <div class="input-group">
@@ -1710,10 +1726,15 @@
           <label class="input-label">Approver</label>
           <div class="input-wrap"><input type="text" placeholder="Search approver…" /></div>
         </div>
+        <div class="input-group" style="grid-column:1/-1">
+          <label class="input-label">Notes</label>
+          <textarea placeholder="Add any notes or context for the approver…"
+            style="width:100%;min-height:72px;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12px;font-family:inherit;resize:vertical;outline:none;color:var(--dark);background:var(--white);box-sizing:border-box"></textarea>
+        </div>
       </div>
       <div style="display:flex;gap:10px;padding-top:4px">
         <button class="btn btn-primary" style="flex:1" onclick="closeCollabModal('approval')">Proceed</button>
-        <button class="btn btn-ghost" style="flex:1" onclick="closeCollabModal('approval')">Cancel Task</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="closeCollabModal('approval')">Cancel</button>
       </div>
     </div>
   </div>
@@ -2441,7 +2462,16 @@
   function openCollabModal(type) {
     document.getElementById('collab-dropdown').style.display = 'none';
     document.getElementById('modal-' + type).style.display = 'flex';
+    if (type === 'approval') aaResetClauses();
   }
+
+  document.addEventListener('click', function(e) {
+    var dd = document.getElementById('aa-clause-dropdown');
+    var inp = document.getElementById('aa-clause-search');
+    if (dd && inp && !dd.contains(e.target) && e.target !== inp) {
+      dd.style.display = 'none';
+    }
+  });
   function closeCollabModal(type) {
     var modal = document.getElementById('modal-' + type);
     // Gather form values
@@ -2461,6 +2491,70 @@
     }
     modal.style.display = 'none';
     addCollabCard(badgeClass, badgeLabel, title, 'Surya Menon', '');
+  }
+
+  /* ── Additional Approval clause selector ── */
+  var _aaClauses = ['Payment Terms','Termination','Confidentiality','Indemnity',
+    'Intellectual Property','Force Majeure','Governing Law','Dispute Resolution',
+    'Warranties','Liability','Delivery','Amendments','Assignment','Notices'];
+  var _aaSelected = [];
+
+  function aaClauseSearch(q) {
+    var dd = document.getElementById('aa-clause-dropdown');
+    var val = q.trim().toLowerCase();
+    var matches = _aaClauses.filter(function(c){ return c.toLowerCase().includes(val); });
+    if (!matches.length) { dd.style.display = 'none'; return; }
+    dd.innerHTML = matches.map(function(c) {
+      var sel = _aaSelected.indexOf(c) > -1;
+      return '<div class="aa-clause-opt' + (sel ? ' disabled' : '') + '" onclick="aaClauseSelect(\'' + c.replace(/'/g,"\\'") + '\')">' + c + (sel ? ' ✓' : '') + '</div>';
+    }).join('');
+    dd.style.display = 'block';
+  }
+
+  function aaClauseSelect(name) {
+    if (_aaSelected.indexOf(name) > -1) return;
+    _aaSelected.push(name);
+    document.getElementById('aa-clause-search').value = '';
+    document.getElementById('aa-clause-dropdown').style.display = 'none';
+    aaRenderPills();
+    aaRenderTable();
+  }
+
+  function aaClauseRemove(name) {
+    _aaSelected = _aaSelected.filter(function(c){ return c !== name; });
+    aaRenderPills();
+    aaRenderTable();
+  }
+
+  function aaRenderPills() {
+    var wrap = document.getElementById('aa-clause-pills');
+    wrap.innerHTML = _aaSelected.map(function(c) {
+      return '<span class="aa-selected-pill">' + c +
+        '<button onclick="aaClauseRemove(\'' + c.replace(/'/g,"\\'") + '\')" title="Remove">✕</button></span>';
+    }).join('');
+  }
+
+  function aaRenderTable() {
+    var wrap = document.getElementById('aa-clause-table-wrap');
+    var rows = document.getElementById('aa-clause-rows');
+    if (!_aaSelected.length) { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+    rows.innerHTML = _aaSelected.map(function(c, i) {
+      var border = i < _aaSelected.length - 1 ? 'border-bottom:1px solid var(--border);' : '';
+      return '<div style="display:grid;grid-template-columns:1fr 2fr 20px;padding:8px 12px;font-size:12px;gap:8px;align-items:center;' + border + '">' +
+        '<span style="color:var(--dark)">' + c + '</span>' +
+        '<input type="text" placeholder="Describe deviation…" style="border:none;outline:none;font-size:12px;font-family:inherit;color:var(--mid)" />' +
+        '<span onclick="aaClauseRemove(\'' + c.replace(/'/g,"\\'") + '\')" style="cursor:pointer;color:var(--light);font-size:14px;line-height:1" title="Remove">✕</span>' +
+        '</div>';
+    }).join('');
+  }
+
+  function aaResetClauses() {
+    _aaSelected = [];
+    document.getElementById('aa-clause-search').value = '';
+    document.getElementById('aa-clause-dropdown').style.display = 'none';
+    aaRenderPills();
+    aaRenderTable();
   }
 
   var _collabActiveFilter = 'all';
