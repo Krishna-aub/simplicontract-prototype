@@ -642,6 +642,41 @@
   }
   .detail-section-row:first-child { border-top: none; }
   .detail-section-label { font-size: 13px; font-weight: 600; color: var(--dark); }
+  /* ── Collaborate panel ────────────────────────────────────── */
+  .collab-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px 10px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .collab-add-btn {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--green); color: white; border: none;
+    font-size: 18px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    line-height: 1; transition: background 0.15s;
+  }
+  .collab-add-btn:hover { background: #1B5E20; }
+  .collab-dropdown {
+    position: absolute; right: 0; top: calc(100% + 6px);
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    min-width: 190px; z-index: 300; padding: 5px;
+  }
+  .collab-dd-item {
+    padding: 9px 12px; font-size: 13px; color: var(--dark);
+    border-radius: 7px; cursor: pointer; transition: background 0.1s;
+  }
+  .collab-dd-item:hover { background: var(--surface); }
+  .collab-empty {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 32px 24px; text-align: center;
+  }
+  .modal-footer {
+    display: flex; justify-content: flex-end; gap: 10px;
+    padding: 14px 20px; border-top: 1px solid var(--border);
+  }
   .clause-pill {
     display: inline-flex; align-items: center;
     padding: 4px 10px; border-radius: 20px;
@@ -1418,6 +1453,205 @@
 </div>
 
 <!-- ════════════════════════════════════════════════════════════
+     MODAL — NEW CHAT
+════════════════════════════════════════════════════════════ -->
+<div id="modal-chat" class="modal-overlay" style="display:none">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h3>New Chat</h3>
+      <button class="modal-close" onclick="closeCollabModal('chat')">✕</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:16px">
+      <div class="input-group">
+        <label class="input-label">Add Participant(s) <span style="color:var(--red)">*</span></label>
+        <div class="input-wrap"><input type="text" placeholder="Type and select email(s)…" /></div>
+        <span style="font-size:11px;color:var(--light)">For non-system users, press Enter after typing email.</span>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Chat Title <span style="color:var(--red)">*</span></label>
+        <div class="input-wrap"><input type="text" placeholder="Enter a title for the chat" /></div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Reply Format <span style="color:var(--red)">*</span></label>
+        <div class="input-wrap">
+          <select><option>Comment</option><option>Email</option><option>Internal Note</option></select>
+          <span class="select-arrow">▾</span>
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Type a Message</label>
+        <div style="position:relative">
+          <textarea style="width:100%;min-height:80px;border:1px solid var(--border);border-radius:6px;padding:10px 40px 10px 12px;font-size:13px;font-family:inherit;resize:vertical;outline:none" placeholder="Type a message…"></textarea>
+          <button style="position:absolute;right:10px;bottom:10px;background:var(--border);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:13px">→</button>
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mid);cursor:pointer">
+        <input type="checkbox" /> Make this a private chat
+        <span style="color:var(--light)">(Chat will be visible to participants only)</span>
+      </label>
+      <div style="color:var(--green);font-size:13px;font-weight:500;cursor:pointer;text-decoration:underline">+ Add Attachment</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeCollabModal('chat')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeCollabModal('chat')">Create Chat</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     MODAL — ASSIGN TASK
+════════════════════════════════════════════════════════════ -->
+<div id="modal-task" class="modal-overlay" style="display:none">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <h3>Assign Task</h3>
+      <button class="modal-close" onclick="closeCollabModal('task')">✕</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:14px">
+      <div class="form-grid form-grid-2" style="gap:12px">
+        <div class="input-group" style="grid-column:1/-1">
+          <label class="input-label">Task Name / Title <span style="color:var(--red)">*</span></label>
+          <div class="input-wrap"><input type="text" placeholder="Enter task title…" /></div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Task Type <span style="color:var(--mid);font-weight:400">(Vendor Approval, etc.)</span></label>
+          <div class="input-wrap">
+            <select><option value="">Select…</option><option>Vendor Approval</option><option>Legal Review</option><option>Finance Sign-off</option><option>Compliance Check</option></select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Task Sub Type</label>
+          <div class="input-wrap">
+            <select><option value="">Select…</option><option>Internal</option><option>External</option></select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Due Date <span style="color:var(--red)">*</span></label>
+          <div class="input-wrap"><input type="date" /></div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Priority</label>
+          <div class="input-wrap">
+            <select><option>Medium</option><option>High</option><option>Low</option></select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Assigned Person</label>
+          <div class="input-wrap"><input type="text" placeholder="Search people…" /></div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Request Date</label>
+          <div class="input-wrap"><input type="date" /></div>
+        </div>
+        <div class="input-group" style="grid-column:1/-1">
+          <label class="input-label">Vendor Details <span style="color:var(--light);font-weight:400">(Name, Address, Pin, Email, State)</span></label>
+          <div class="input-wrap"><input type="text" placeholder="Enter vendor details…" /></div>
+        </div>
+        <div class="input-group" style="grid-column:1/-1">
+          <label class="input-label">Users to be Notified (CC)</label>
+          <div class="input-wrap"><input type="text" placeholder="Search people…" /></div>
+        </div>
+        <div class="input-group" style="grid-column:1/-1">
+          <label class="input-label">Associated Contract</label>
+          <div class="input-wrap"><input type="text" value="C-1260 — Wholesale Supply Agreement" readonly style="color:var(--mid)" /></div>
+        </div>
+        <div class="input-group" style="grid-column:1/-1">
+          <label class="input-label">Attached Documents</label>
+          <div style="color:var(--green);font-size:13px;font-weight:500;cursor:pointer;text-decoration:underline">+ Attach file</div>
+        </div>
+        <div class="input-group" style="grid-column:1/-1">
+          <label class="input-label">Notes</label>
+          <div class="input-wrap"><textarea style="width:100%;min-height:60px;border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:13px;font-family:inherit;resize:vertical;outline:none" placeholder="Add notes…"></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeCollabModal('task')">Cancel</button>
+      <button class="btn btn-primary" onclick="closeCollabModal('task')">Assign Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     MODAL — ADDITIONAL APPROVAL
+════════════════════════════════════════════════════════════ -->
+<div id="modal-approval" class="modal-overlay" style="display:none">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <h3>Additional Approval</h3>
+      <button class="modal-close" onclick="closeCollabModal('approval')">✕</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:14px">
+      <div class="form-grid form-grid-2" style="gap:12px">
+        <div class="input-group">
+          <label class="input-label">AA Type <span style="color:var(--mid);font-weight:400">(Exceptional Approval, etc.)</span></label>
+          <div class="input-wrap">
+            <select><option value="">Select…</option><option>Exceptional Approval</option><option>Clause Deviation</option><option>Value Override</option></select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">AA Subtype</label>
+          <div class="input-wrap">
+            <select><option value="">Select…</option><option>One-time</option><option>Recurring</option></select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+        <div class="input-group" style="grid-column:1/-1">
+          <label class="input-label">Defined Clauses <span style="color:var(--light);font-weight:400">— clause list with description per clause</span></label>
+          <div style="border:1px solid var(--border);border-radius:6px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:1fr 2fr;background:var(--surface);padding:7px 12px;font-size:11px;font-weight:600;color:var(--mid);border-bottom:1px solid var(--border)">
+              <span>CLAUSE</span><span>DESCRIPTION</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 2fr;padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px;gap:8px">
+              <span style="color:var(--dark)">Payment Terms</span>
+              <input type="text" placeholder="Describe deviation…" style="border:none;outline:none;font-size:12px;font-family:inherit;color:var(--mid)" />
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 2fr;padding:8px 12px;font-size:12px;gap:8px">
+              <span style="color:var(--dark)">Termination</span>
+              <input type="text" placeholder="Describe deviation…" style="border:none;outline:none;font-size:12px;font-family:inherit;color:var(--mid)" />
+            </div>
+          </div>
+        </div>
+        <div class="input-group" style="grid-column:1/-1">
+          <label class="input-label">Approver Comments</label>
+          <div style="border:1px solid var(--border);border-radius:6px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;background:var(--surface);padding:7px 12px;font-size:11px;font-weight:600;color:var(--mid);border-bottom:1px solid var(--border)">
+              <span>COMMENT</span><span>ACCEPT</span><span>REJECT</span>
+            </div>
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px;align-items:center;gap:8px">
+              <input type="text" placeholder="Approver comment…" style="border:none;outline:none;font-size:12px;font-family:inherit" />
+              <input type="radio" name="ap1" style="margin:auto" />
+              <input type="radio" name="ap1" style="margin:auto" />
+            </div>
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;padding:8px 12px;font-size:12px;align-items:center;gap:8px">
+              <input type="text" placeholder="Approver comment…" style="border:none;outline:none;font-size:12px;font-family:inherit" />
+              <input type="radio" name="ap2" style="margin:auto" />
+              <input type="radio" name="ap2" style="margin:auto" />
+            </div>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Expiry Attachment</label>
+          <div style="color:var(--green);font-size:13px;font-weight:500;cursor:pointer;text-decoration:underline">+ Attach file</div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Approver</label>
+          <div class="input-wrap"><input type="text" placeholder="Search approver…" /></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;padding-top:4px">
+        <button class="btn btn-primary" style="flex:1" onclick="closeCollabModal('approval')">Proceed</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="closeCollabModal('approval')">Cancel Task</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
      MODAL — CONFIRMATION
 ════════════════════════════════════════════════════════════ -->
 <div id="confirm-modal" class="modal-overlay" style="display:none">
@@ -1692,8 +1926,26 @@
       </div>
       <div id="details-summary" style="display:none"></div>
 
-      <div id="collab-panel-6" class="panel-tab-content">
-        <div class="empty-panel">Collaboration threads will appear here once reviewers are added.</div>
+      <div id="collab-panel-6" class="panel-tab-content" style="position:relative">
+        <!-- Header bar -->
+        <div class="collab-header">
+          <span style="font-size:13px;font-weight:600;color:var(--dark)">Collaborate</span>
+          <div style="position:relative">
+            <button class="collab-add-btn" id="collab-add-btn" onclick="toggleCollabDropdown()" title="Add">＋</button>
+            <div class="collab-dropdown" id="collab-dropdown" style="display:none">
+              <div class="collab-dd-item" onclick="openCollabModal('chat')">💬 New Chat</div>
+              <div class="collab-dd-item" onclick="openCollabModal('task')">✅ Assign Task</div>
+              <div class="collab-dd-item" onclick="openCollabModal('approval')">🔖 Additional Approval</div>
+            </div>
+          </div>
+        </div>
+        <!-- Empty state -->
+        <div class="collab-empty" id="collab-empty">
+          <div style="font-size:36px;margin-bottom:12px;opacity:0.3">🤝</div>
+          <div style="font-size:13px;font-weight:600;color:var(--dark);margin-bottom:6px">No activity yet</div>
+          <div style="font-size:12px;color:var(--light);margin-bottom:20px;line-height:1.6">Create a chat, assign a task, or<br/>request an additional approval.</div>
+          <button class="btn btn-primary btn-sm" onclick="toggleCollabDropdown()">Start Collaborating</button>
+        </div>
       </div>
       <div id="analysis-panel-6" class="panel-tab-content">
         <div class="panel-body">
@@ -2083,6 +2335,26 @@
 
     goto('s6');
   }
+
+  // ── Collaborate panel ─────────────────────────────────────
+  function toggleCollabDropdown() {
+    var dd = document.getElementById('collab-dropdown');
+    dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+  }
+  function openCollabModal(type) {
+    document.getElementById('collab-dropdown').style.display = 'none';
+    document.getElementById('modal-' + type).style.display = 'flex';
+  }
+  function closeCollabModal(type) {
+    document.getElementById('modal-' + type).style.display = 'none';
+  }
+  // Close collab dropdown on outside click
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#collab-add-btn') && !e.target.closest('#collab-dropdown')) {
+      var dd = document.getElementById('collab-dropdown');
+      if (dd) dd.style.display = 'none';
+    }
+  });
 
   // ── Nemo Composer ─────────────────────────────────────────
   function handleComposerInput(el) {
