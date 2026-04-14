@@ -46,9 +46,9 @@
     background: var(--white);
     border-bottom: 1px solid var(--border);
     display: flex;
-    align-items: center;
+    align-items: stretch;
     padding: 0 24px;
-    gap: 16px;
+    gap: 0;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -60,44 +60,29 @@
     gap: 8px;
     text-decoration: none;
     flex-shrink: 0;
+    margin-right: 16px;
   }
   .logo-mark {
-    width: 28px; height: 28px;
+    width: 32px; height: 32px;
     background: var(--green);
-    border-radius: 6px;
+    border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    color: white; font-weight: 700; font-size: 14px;
+    color: white; font-weight: 700; font-size: 16px;
   }
-  .logo-text { font-weight: 700; font-size: 15px; color: var(--dark); }
-  .topbar-search {
-    flex: 1;
-    max-width: 420px;
-    margin: 0 auto;
-    position: relative;
-  }
-  .topbar-search input {
-    width: 100%;
-    height: 32px;
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 0 12px 0 34px;
-    font-size: 12px;
-    font-family: inherit;
-    background: var(--surface);
-    color: var(--mid);
-    outline: none;
-  }
-  .topbar-search::before {
-    content: '⌕';
-    position: absolute;
-    left: 11px; top: 50%;
-    transform: translateY(-50%);
-    color: var(--light);
-    font-size: 16px;
+  .topbar-nav {
+    display: flex; align-items: stretch;
+    gap: 4px; flex: 1;
   }
   .topbar-right {
-    display: flex; align-items: center; gap: 12px; margin-left: auto;
+    display: flex; align-items: center; gap: 10px; margin-left: auto;
   }
+  .search-icon-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 20px; padding: 4px 6px; color: var(--mid);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 6px; transition: background 0.15s;
+  }
+  .search-icon-btn:hover { background: var(--surface); color: var(--dark); }
   .notif-btn {
     position: relative; background: none; border: none; cursor: pointer;
     font-size: 18px; padding: 4px;
@@ -713,26 +698,20 @@
 <div id="s1" class="screen active">
   <!-- Top bar -->
   <div class="topbar">
-    <a class="logo" href="#">
-      <div class="logo-mark">S</div>
-      <span class="logo-text">SimpliContract</span>
-    </a>
-    <div class="topbar-search">
-      <input type="text" placeholder="Search contracts, vendors, documents…" />
+    <a class="logo" href="#"><div class="logo-mark">S</div></a>
+    <div class="topbar-nav">
+      <button class="navtab active" onclick="goto('s1')">Home</button>
+      <button class="navtab" onclick="goto('s2')">Contracts</button>
+      <button class="navtab">Tasks</button>
+      <button class="navtab">Deliverables</button>
+      <button class="navtab">Analytics</button>
+      <button class="navtab">Settings</button>
     </div>
     <div class="topbar-right">
+      <button class="search-icon-btn" title="Search">⌕</button>
       <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
       <div class="avatar">SM</div>
     </div>
-  </div>
-  <!-- Nav tabs -->
-  <div class="navtabs">
-    <button class="navtab active" onclick="goto('s1')">Home</button>
-    <button class="navtab" onclick="goto('s2')">Contracts</button>
-    <button class="navtab">Tasks</button>
-    <button class="navtab">Deliverables</button>
-    <button class="navtab">Analytics</button>
-    <button class="navtab">Settings</button>
   </div>
   <!-- Content -->
   <div class="page-content">
@@ -813,25 +792,20 @@
 ════════════════════════════════════════════════════════════ -->
 <div id="s2" class="screen">
   <div class="topbar">
-    <a class="logo" href="#">
-      <div class="logo-mark">S</div>
-      <span class="logo-text">SimpliContract</span>
-    </a>
-    <div class="topbar-search">
-      <input type="text" placeholder="Search contracts, vendors, documents…" />
+    <a class="logo" href="#"><div class="logo-mark">S</div></a>
+    <div class="topbar-nav">
+      <button class="navtab" onclick="goto('s1')">Home</button>
+      <button class="navtab active" onclick="goto('s2')">Contracts</button>
+      <button class="navtab">Tasks</button>
+      <button class="navtab">Deliverables</button>
+      <button class="navtab">Analytics</button>
+      <button class="navtab">Settings</button>
     </div>
     <div class="topbar-right">
+      <button class="search-icon-btn" title="Search">⌕</button>
       <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
       <div class="avatar">SM</div>
     </div>
-  </div>
-  <div class="navtabs">
-    <button class="navtab" onclick="goto('s1')">Home</button>
-    <button class="navtab active" onclick="goto('s2')">Contracts</button>
-    <button class="navtab">Tasks</button>
-    <button class="navtab">Deliverables</button>
-    <button class="navtab">Analytics</button>
-    <button class="navtab">Settings</button>
   </div>
   <div class="contracts-header">
     <h1>Contracts</h1>
@@ -967,25 +941,20 @@
 ════════════════════════════════════════════════════════════ -->
 <div id="s3" class="screen">
   <div class="topbar">
-    <a class="logo" href="#">
-      <div class="logo-mark">S</div>
-      <span class="logo-text">SimpliContract</span>
-    </a>
-    <div class="topbar-search">
-      <input type="text" placeholder="Search contracts, vendors, documents…" />
+    <a class="logo" href="#"><div class="logo-mark">S</div></a>
+    <div class="topbar-nav">
+      <button class="navtab" onclick="goto('s1')">Home</button>
+      <button class="navtab active" onclick="goto('s2')">Contracts</button>
+      <button class="navtab">Tasks</button>
+      <button class="navtab">Deliverables</button>
+      <button class="navtab">Analytics</button>
+      <button class="navtab">Settings</button>
     </div>
     <div class="topbar-right">
+      <button class="search-icon-btn" title="Search">⌕</button>
       <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
       <div class="avatar">SM</div>
     </div>
-  </div>
-  <div class="navtabs">
-    <button class="navtab" onclick="goto('s1')">Home</button>
-    <button class="navtab active" onclick="goto('s2')">Contracts</button>
-    <button class="navtab">Tasks</button>
-    <button class="navtab">Deliverables</button>
-    <button class="navtab">Analytics</button>
-    <button class="navtab">Settings</button>
   </div>
   <!-- Stepper -->
   <div class="stepper">
@@ -1075,25 +1044,20 @@
 ════════════════════════════════════════════════════════════ -->
 <div id="s4" class="screen">
   <div class="topbar">
-    <a class="logo" href="#">
-      <div class="logo-mark">S</div>
-      <span class="logo-text">SimpliContract</span>
-    </a>
-    <div class="topbar-search">
-      <input type="text" placeholder="Search contracts, vendors, documents…" />
+    <a class="logo" href="#"><div class="logo-mark">S</div></a>
+    <div class="topbar-nav">
+      <button class="navtab" onclick="goto('s1')">Home</button>
+      <button class="navtab active" onclick="goto('s2')">Contracts</button>
+      <button class="navtab">Tasks</button>
+      <button class="navtab">Deliverables</button>
+      <button class="navtab">Analytics</button>
+      <button class="navtab">Settings</button>
     </div>
     <div class="topbar-right">
+      <button class="search-icon-btn" title="Search">⌕</button>
       <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
       <div class="avatar">SM</div>
     </div>
-  </div>
-  <div class="navtabs">
-    <button class="navtab" onclick="goto('s1')">Home</button>
-    <button class="navtab active" onclick="goto('s2')">Contracts</button>
-    <button class="navtab">Tasks</button>
-    <button class="navtab">Deliverables</button>
-    <button class="navtab">Analytics</button>
-    <button class="navtab">Settings</button>
   </div>
   <div class="stepper">
     <div class="step-item">
@@ -1445,25 +1409,20 @@
 ════════════════════════════════════════════════════════════ -->
 <div id="s6" class="screen">
   <div class="topbar">
-    <a class="logo" href="#">
-      <div class="logo-mark">S</div>
-      <span class="logo-text">SimpliContract</span>
-    </a>
-    <div class="topbar-search">
-      <input type="text" placeholder="Search contracts, vendors, documents…" />
+    <a class="logo" href="#"><div class="logo-mark">S</div></a>
+    <div class="topbar-nav">
+      <button class="navtab" onclick="goto('s1')">Home</button>
+      <button class="navtab active" onclick="goto('s2')">Contracts</button>
+      <button class="navtab">Tasks</button>
+      <button class="navtab">Deliverables</button>
+      <button class="navtab">Analytics</button>
+      <button class="navtab">Settings</button>
     </div>
     <div class="topbar-right">
+      <button class="search-icon-btn" title="Search">⌕</button>
       <button class="notif-btn">🔔<span class="notif-badge">3</span></button>
       <div class="avatar">SM</div>
     </div>
-  </div>
-  <div class="navtabs">
-    <button class="navtab" onclick="goto('s1')">Home</button>
-    <button class="navtab active" onclick="goto('s2')">Contracts</button>
-    <button class="navtab">Tasks</button>
-    <button class="navtab">Deliverables</button>
-    <button class="navtab">Analytics</button>
-    <button class="navtab">Settings</button>
   </div>
   <!-- Stepper — Create done, Review active -->
   <div class="stepper">
