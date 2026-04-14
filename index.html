@@ -675,6 +675,49 @@
     align-items: center; justify-content: center;
     padding: 32px 24px; text-align: center;
   }
+  .collab-list {
+    flex: 1; overflow-y: auto; padding: 10px 10px 16px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .collab-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 10px; padding: 11px 13px;
+    cursor: pointer; transition: box-shadow 0.15s;
+  }
+  .collab-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .collab-card-top {
+    display: flex; align-items: center; gap: 7px; margin-bottom: 5px;
+  }
+  .collab-badge {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.3px;
+    padding: 2px 8px; border-radius: 20px; flex-shrink: 0;
+  }
+  .badge-chat     { background: #E3F2FD; color: #1565C0; }
+  .badge-task     { background: #E8F5E9; color: #2E7D32; }
+  .badge-approval { background: #F3E5F5; color: #6A1B9A; }
+  .badge-comment  { background: #FFF8E1; color: #E65100; }
+  .collab-card-title {
+    font-size: 13px; font-weight: 600; color: var(--dark);
+    flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .collab-card-time { font-size: 11px; color: var(--light); flex-shrink: 0; }
+  .collab-card-meta { font-size: 11px; color: var(--mid); }
+  .collab-card-quote {
+    font-size: 11px; color: var(--mid); font-style: italic;
+    background: var(--surface); border-left: 3px solid var(--border);
+    padding: 4px 8px; border-radius: 0 4px 4px 0;
+    margin: 4px 0; line-height: 1.5;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .collab-card-body { font-size: 12px; color: var(--dark); margin-top: 3px; }
+  /* Floating comment button */
+  .comment-float-btn {
+    background: var(--dark); color: white; border: none;
+    padding: 5px 12px; border-radius: 20px; font-size: 12px;
+    cursor: pointer; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    font-family: inherit;
+  }
+  .comment-float-btn:hover { background: #111; }
   .modal-footer {
     display: flex; justify-content: flex-end; gap: 10px;
     padding: 14px 20px; border-top: 1px solid var(--border);
@@ -1920,7 +1963,7 @@
       </div>
       <div id="details-summary" style="display:none"></div>
 
-      <div id="collab-panel-6" class="panel-tab-content" style="position:relative">
+      <div id="collab-panel-6" class="panel-tab-content">
         <!-- Header bar -->
         <div class="collab-header">
           <span style="font-size:13px;font-weight:600;color:var(--dark)">Collaborate</span>
@@ -1933,6 +1976,8 @@
             </div>
           </div>
         </div>
+        <!-- Activity list -->
+        <div class="collab-list" id="collab-list" style="display:none"></div>
         <!-- Empty state -->
         <div class="collab-empty" id="collab-empty">
           <div style="font-size:36px;margin-bottom:12px;opacity:0.3">🤝</div>
@@ -1973,7 +2018,18 @@
     </div>
 
     <!-- RIGHT: Contract document (populated on creation) -->
-    <div class="contract-doc-panel">
+    <div class="contract-doc-panel" id="contract-doc-panel">
+      <!-- Floating comment button (shown on text selection) -->
+      <div id="comment-float" style="display:none;position:absolute;z-index:400">
+        <button class="comment-float-btn" onclick="openInlineComment()">💬 Comment</button>
+        <div id="comment-float-input" style="display:none">
+          <textarea id="comment-float-text" placeholder="Add a comment…" style="width:220px;min-height:64px;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;font-family:inherit;resize:none;outline:none;display:block;margin-bottom:6px"></textarea>
+          <div style="display:flex;justify-content:flex-end;gap:6px">
+            <button class="btn btn-ghost btn-sm" style="font-size:11px;height:28px" onclick="cancelInlineComment()">Cancel</button>
+            <button class="btn btn-primary btn-sm" style="font-size:11px;height:28px" onclick="submitInlineComment()">Post</button>
+          </div>
+        </div>
+      </div>
       <div class="contract-doc">
         <div class="contract-doc-title">Wholesale Supply Agreement</div>
         <div class="contract-doc-ref">Contract Ref: <span id="doc-ref">C-1260</span> &nbsp;·&nbsp; Date: <span id="doc-date"></span></div>
@@ -2331,6 +2387,8 @@
   }
 
   // ── Collaborate panel ─────────────────────────────────────
+  var _pendingCommentQuote = '';
+
   function toggleCollabDropdown() {
     var dd = document.getElementById('collab-dropdown');
     dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
@@ -2340,8 +2398,93 @@
     document.getElementById('modal-' + type).style.display = 'flex';
   }
   function closeCollabModal(type) {
-    document.getElementById('modal-' + type).style.display = 'none';
+    var modal = document.getElementById('modal-' + type);
+    // Gather form values
+    var title = '', badgeClass = '', badgeLabel = '';
+    if (type === 'chat') {
+      var t = modal.querySelector('input[placeholder="Enter a title for the chat"]');
+      title = (t && t.value.trim()) ? t.value.trim() : 'New Chat';
+      badgeClass = 'badge-chat'; badgeLabel = 'Chat';
+    } else if (type === 'task') {
+      var t = modal.querySelector('input[placeholder="Enter task title…"]');
+      title = (t && t.value.trim()) ? t.value.trim() : 'New Task';
+      badgeClass = 'badge-task'; badgeLabel = 'Task';
+    } else if (type === 'approval') {
+      var t = modal.querySelector('select');
+      title = (t && t.value) ? t.options[t.selectedIndex].text : 'Additional Approval';
+      badgeClass = 'badge-approval'; badgeLabel = 'Approval';
+    }
+    modal.style.display = 'none';
+    addCollabCard(badgeClass, badgeLabel, title, 'Surya Menon', '');
   }
+
+  function addCollabCard(badgeClass, badgeLabel, title, author, quote) {
+    var list = document.getElementById('collab-list');
+    var empty = document.getElementById('collab-empty');
+    var now = 'Just now';
+    var quoteHtml = quote ? '<div class="collab-card-quote">"' + quote.substring(0, 80) + (quote.length > 80 ? '…' : '') + '"</div>' : '';
+    var card = document.createElement('div');
+    card.className = 'collab-card';
+    card.innerHTML =
+      '<div class="collab-card-top">' +
+        '<span class="collab-badge ' + badgeClass + '">' + badgeLabel + '</span>' +
+        '<span class="collab-card-title">' + title + '</span>' +
+        '<span class="collab-card-time">' + now + '</span>' +
+      '</div>' +
+      quoteHtml +
+      '<div class="collab-card-meta">by ' + author + '</div>';
+    list.appendChild(card);
+    list.style.display = 'flex';
+    empty.style.display = 'none';
+  }
+
+  // ── Inline text-selection comments ────────────────────────
+  var _selectionRange = null;
+  document.addEventListener('mouseup', function(e) {
+    var panel = document.getElementById('contract-doc-panel');
+    if (!panel || !panel.contains(e.target)) return;
+    var sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.toString().trim()) return;
+    _selectionRange = sel.getRangeAt(0).cloneRange();
+    var rect = sel.getRangeAt(0).getBoundingClientRect();
+    var panelRect = panel.getBoundingClientRect();
+    var float = document.getElementById('comment-float');
+    var floatInput = document.getElementById('comment-float-input');
+    floatInput.style.display = 'none';
+    document.getElementById('comment-float-text').value = '';
+    float.style.display = 'block';
+    float.style.top = (rect.top - panelRect.top + panel.scrollTop - 44) + 'px';
+    float.style.left = Math.min(rect.left - panelRect.left, panelRect.width - 240) + 'px';
+  });
+  document.addEventListener('mousedown', function(e) {
+    var float = document.getElementById('comment-float');
+    if (float && !float.contains(e.target) && !document.getElementById('contract-doc-panel').contains(e.target)) {
+      float.style.display = 'none';
+    }
+  });
+  function openInlineComment() {
+    document.querySelector('#comment-float .comment-float-btn').style.display = 'none';
+    document.getElementById('comment-float-input').style.display = 'block';
+    document.getElementById('comment-float-text').focus();
+  }
+  function cancelInlineComment() {
+    document.getElementById('comment-float').style.display = 'none';
+    document.querySelector('#comment-float .comment-float-btn').style.display = '';
+    window.getSelection && window.getSelection().removeAllRanges();
+  }
+  function submitInlineComment() {
+    var text = document.getElementById('comment-float-text').value.trim();
+    var quote = _selectionRange ? _selectionRange.toString().trim() : '';
+    if (!text) return;
+    document.getElementById('comment-float').style.display = 'none';
+    document.querySelector('#comment-float .comment-float-btn').style.display = '';
+    window.getSelection && window.getSelection().removeAllRanges();
+    // Switch to Collaborate tab and add card
+    var collabBtn = document.querySelector('[onclick*="collab-panel-6"]');
+    if (collabBtn) collabBtn.click();
+    addCollabCard('badge-comment', 'Comment', text, 'Surya Menon', quote);
+  }
+
   // Close collab dropdown on outside click
   document.addEventListener('click', function(e) {
     if (!e.target.closest('#collab-add-btn') && !e.target.closest('#collab-dropdown')) {
