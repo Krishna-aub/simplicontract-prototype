@@ -488,7 +488,7 @@
   .composer-agent-row {
     display: flex; align-items: center; gap: 5px; margin-bottom: 5px;
   }
-  .composer-at { font-size: 13px; color: var(--teal); font-weight: 600; }
+  .composer-at { font-size: 13px; color: var(--teal); font-weight: 600; cursor: pointer; }
   .composer-agent-chip {
     background: #E3F2FD; color: #1565C0;
     font-size: 12px; font-weight: 600;
@@ -2034,7 +2034,7 @@
               </div>
             </div>
             <div class="composer-agent-row">
-              <span class="composer-at">@</span>
+              <span class="composer-at" onclick="toggleAgentPicker()">@</span>
               <span class="composer-agent-chip" id="active-agent">NemoSummary</span>
               <span style="color:var(--light);font-size:12px">:</span>
             </div>
@@ -3071,6 +3071,10 @@
   });
 
   // ── Nemo Composer ─────────────────────────────────────────
+  function toggleAgentPicker() {
+    var picker = document.getElementById('agent-picker');
+    picker.style.display = picker.style.display === 'none' ? 'block' : 'none';
+  }
   function handleComposerInput(el) {
     var v = el.value;
     var picker = document.getElementById('agent-picker');
