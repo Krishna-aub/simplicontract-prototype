@@ -2232,9 +2232,15 @@
         <div class="details-panel-scroll" style="font-size:13px">
 
           <!-- Assignment Status -->
-          <div class="detail-section-row">
-            <div class="detail-section-label">Assignment Status</div>
-            <div style="color:#1565C0;font-weight:500" id="d6-assign-status">Completed</div>
+          <div class="detail-section-row" style="align-items:flex-start">
+            <div class="detail-section-label" style="padding-top:3px">Assignment Status</div>
+            <div id="d6-assign-status">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-weight:600;color:var(--dark)">Legal</span>
+                <button class="btn btn-primary btn-sm" style="padding:2px 10px;font-size:11px">Assign</button>
+              </div>
+              <div style="font-size:11px;color:#1565C0;margin-top:3px">Next reviewer: <strong>Rohan Jha</strong></div>
+            </div>
           </div>
 
           <!-- Document Renewal -->
