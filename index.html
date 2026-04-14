@@ -880,6 +880,14 @@
   .cmt-reply-input:focus { border-color: var(--teal); }
   .cmt-reply-actions { display: flex; justify-content: flex-end; gap: 6px; }
   /* ── Nemo context pill ────────────────────────────────────── */
+  /* Contract text highlight on comment select */
+  .contract-sel-highlight {
+    background: #FFF176; border-radius: 2px; padding: 1px 0;
+  }
+  .cmt-card-active {
+    border-color: var(--teal) !important;
+    box-shadow: 0 0 0 2px rgba(0,150,136,0.15);
+  }
   .nemo-ctx-pill {
     display: inline-flex; align-items: center; gap: 6px;
     background: #E3F2FD; border: 1px solid #90CAF9; border-radius: 6px;
@@ -2901,6 +2909,8 @@
     card.className = 'cmt-card collab-card';
     card.dataset.type  = 'comment';
     card.dataset.title = text.toLowerCase();
+    card.dataset.quote = quote;
+    card.onclick = function(e) { cmtSelectCard(this); };
     card.innerHTML =
       '<div class="cmt-card-main">' +
         '<div class="cmt-card-header">' +
@@ -2985,6 +2995,68 @@
     toggleBtn.style.visibility = 'visible';
     toggleBtn.textContent = count + ' repl' + (count === 1 ? 'y' : 'ies') + ' ↑';
   }
+
+  // ── Comment card selection + contract text highlight ─────
+  var _activeCmtCard = null;
+
+  function cmtSelectCard(card) {
+    // Deselect previous
+    if (_activeCmtCard && _activeCmtCard !== card) {
+      _activeCmtCard.classList.remove('cmt-card-active');
+    }
+    if (_activeCmtCard === card) {
+      // Toggle off
+      card.classList.remove('cmt-card-active');
+      clearContractHighlight();
+      _activeCmtCard = null;
+      return;
+    }
+    card.classList.add('cmt-card-active');
+    _activeCmtCard = card;
+    highlightContractText(card.dataset.quote || '');
+  }
+
+  function highlightContractText(text) {
+    clearContractHighlight();
+    if (!text) return;
+    var doc = document.querySelector('.contract-doc');
+    if (!doc) return;
+    var walker = document.createTreeWalker(doc, NodeFilter.SHOW_TEXT, null, false);
+    var node;
+    var lower = text.toLowerCase();
+    while ((node = walker.nextNode())) {
+      var idx = node.textContent.toLowerCase().indexOf(lower);
+      if (idx !== -1) {
+        var range = document.createRange();
+        range.setStart(node, idx);
+        range.setEnd(node, idx + text.length);
+        var mark = document.createElement('mark');
+        mark.className = 'contract-sel-highlight';
+        try {
+          range.surroundContents(mark);
+          mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch(e) {}
+        break;
+      }
+    }
+  }
+
+  function clearContractHighlight() {
+    document.querySelectorAll('.contract-sel-highlight').forEach(function(m) {
+      var p = m.parentNode;
+      while (m.firstChild) p.insertBefore(m.firstChild, m);
+      p.removeChild(m);
+    });
+  }
+
+  // Deselect comment card when clicking outside the collab list
+  document.addEventListener('click', function(e) {
+    if (_activeCmtCard && !e.target.closest('#collab-list')) {
+      _activeCmtCard.classList.remove('cmt-card-active');
+      clearContractHighlight();
+      _activeCmtCard = null;
+    }
+  });
 
   // legacy compat
   function openInlineComment() {}
