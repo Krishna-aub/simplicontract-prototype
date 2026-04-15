@@ -868,6 +868,19 @@
     border-top: 1px solid var(--border);
     background: var(--surface);
   }
+  /* Chat modal — attached reference chip */
+  .chat-ref-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: #EEF6EE; border: 1px solid #C8E6C9; border-radius: 8px;
+    padding: 8px 12px; font-size: 12px; font-weight: 500; color: #2E7D32;
+  }
+  .chat-ref-chip svg { flex-shrink: 0; color: #388E3C; }
+  .chat-ref-label { flex: 1; }
+  .chat-ref-remove {
+    background: none; border: none; cursor: pointer; font-size: 11px;
+    color: #81C784; line-height: 1; padding: 0 2px; flex-shrink: 0;
+  }
+  .chat-ref-remove:hover { color: #2E7D32; }
 
   /* ────────────────────────────────────────────────────────── */
   /* SCREEN 6 — POST-CREATION                                  */
@@ -2601,6 +2614,12 @@
       <button class="modal-close" onclick="closeCollabModal('chat')">✕</button>
     </div>
     <div class="modal-body" style="display:flex;flex-direction:column;gap:16px">
+      <!-- Attached reference chip (shown when opened from a detail view) -->
+      <div id="chat-modal-ref" class="chat-ref-chip" style="display:none">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 4a1 1 0 011-1h8a1 1 0 011 1v6a1 1 0 01-1 1H3a1 1 0 01-1-1V4z" stroke="currentColor" stroke-width="1.4"/><path d="M5 7h4M5 9h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="chat-ref-label">Task: …</span>
+        <button class="chat-ref-remove" onclick="document.getElementById('chat-modal-ref').style.display='none'" title="Remove">✕</button>
+      </div>
       <div class="input-group">
         <label class="input-label">Add Participant(s) <span style="color:var(--red)">*</span></label>
         <div class="input-wrap"><input type="text" placeholder="Type and select email(s)…" /></div>
@@ -3747,6 +3766,9 @@
       };
     }
     modal.style.display = 'none';
+    // Reset chat reference chip
+    var ref = document.getElementById('chat-modal-ref');
+    if (ref) ref.style.display = 'none';
     itemData.createdByMe = true;
     addCollabCard(badgeClass, badgeLabel, title, 'Surya Menon', '', itemData);
   }
@@ -4003,10 +4025,13 @@
   }
 
   // ── Collab detail view ────────────────────────────────────
+  var _cdCurrentItem = null; // tracks the currently open detail item
+
   function openCollabDetail(card) {
     var itemId = card.dataset.itemId;
     var data = _collabItemStore[itemId];
     if (!data) return;
+    _cdCurrentItem = data; // store for Chat button context
     var det  = document.getElementById('collab-detail');
     var body = document.getElementById('cd-body');
     var footer = document.getElementById('cd-footer');
@@ -4156,7 +4181,22 @@
     body.appendChild(fb);
     setTimeout(function(){ if(fb.parentNode) fb.parentNode.removeChild(fb); }, 2500);
   }
-  function cdNewChat() { openCollabModal('chat'); closeCollabDetail(); }
+  function cdNewChat() {
+    closeCollabDetail();
+    // Show modal with attached reference
+    var modal = document.getElementById('modal-chat');
+    modal.style.display = 'flex';
+    // Pre-fill the attached reference chip
+    var ref = document.getElementById('chat-modal-ref');
+    if (ref && _cdCurrentItem) {
+      var icon = _cdCurrentItem.type === 'task' ? '☑' : _cdCurrentItem.type === 'approval' ? '✔' : '💬';
+      var typeLabel = _cdCurrentItem.type.charAt(0).toUpperCase() + _cdCurrentItem.type.slice(1);
+      ref.style.display = 'flex';
+      ref.querySelector('.chat-ref-label').textContent = typeLabel + ': ' + _cdCurrentItem.title;
+    } else if (ref) {
+      ref.style.display = 'none';
+    }
+  }
   function cdAction(action) {
     var footer = document.getElementById('cd-footer');
     if (action === 'remind') {
