@@ -3980,9 +3980,9 @@
       document.getElementById('ewt-tab-' + t).classList.toggle('active', t === tab);
       document.getElementById('ewt-' + t).classList.toggle('active', t === tab);
     });
-    // Nemo needs flex
+    // Nemo needs flex display; all others use block (handled by .active CSS)
     var nemoPane = document.getElementById('ewt-nemo');
-    nemoPane.style.display = (tab === 'nemo') ? 'flex' : (tab === 'comments' ? 'block' : '');
+    nemoPane.style.display = (tab === 'nemo') ? 'flex' : 'none';
   }
   function ewOpenCommentsTab() { ewSwitchTab('comments'); }
 
@@ -4564,7 +4564,7 @@
         </div>
 
         <!-- Nemo pane -->
-        <div class="ewt-pane" id="ewt-nemo" style="display:flex;flex-direction:column;height:100%">
+        <div class="ewt-pane" id="ewt-nemo" style="flex-direction:column;height:100%">
           <div class="ewn-msgs" id="ewn-msgs">
             <!-- Opening Nemo message -->
             <div class="ewn-msg nemo">
