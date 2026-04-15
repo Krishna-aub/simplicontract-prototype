@@ -467,6 +467,31 @@
   .s2-page-btn:disabled { opacity: 0.35; cursor: default; }
   .s2-pagination { justify-content: space-between; }
 
+  /* Views dropdown pill */
+  .s2-views-pill { gap: 5px; font-weight: 600; }
+  .s2-views-dropdown {
+    display: none; position: absolute; top: calc(100% + 6px); left: 0;
+    background: var(--white); border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.12); z-index: 200; min-width: 210px; overflow: hidden;
+    padding: 6px 0;
+  }
+  .s2-views-dropdown.open { display: block; }
+  .s2-vd-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 8px 14px; font-size: 13px; color: var(--dark); cursor: pointer;
+    transition: background 0.1s;
+  }
+  .s2-vd-item:hover { background: var(--surface); }
+  .s2-vd-item.active { color: var(--green); font-weight: 600; background: #F1F8F1; }
+  .s2-vd-item svg { flex-shrink: 0; color: var(--mid); }
+  .s2-vd-item.active svg { color: var(--green); }
+  .s2-vd-count {
+    margin-left: auto; font-size: 11px; font-weight: 400;
+    color: var(--light); background: var(--surface);
+    padding: 1px 6px; border-radius: 8px;
+  }
+  .s2-vd-item.active .s2-vd-count { color: var(--green); background: #E8F5E9; }
+
   .expand-btn { background: none; border: none; cursor: pointer; color: var(--mid); font-size: 12px; padding: 0 4px; }
 
   /* Sidebar section heading */
@@ -1826,92 +1851,10 @@
       <div class="avatar">SM</div>
     </div>
   </div>
-  <!-- Body: sidebar + main -->
+  <!-- Full-width main content (sidebar removed) -->
   <div class="s2-body">
-    <!-- Sidebar toggle tab -->
-    <button class="s2-sidebar-toggle" id="s2SidebarToggle" onclick="s2ToggleSidebar()" title="Toggle sidebar">‹</button>
-    <!-- LEFT SIDEBAR -->
-    <div class="s2-sidebar" id="s2Sidebar">
-      <div class="s2-sidebar-section">
-        <div class="s2-sidebar-heading">Views</div>
-        <div class="s2-nav-item active" onclick="s2SetView(this,'In progress')">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7 4v3.5l2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          In progress
-          <span class="s2-nav-count">8</span>
-        </div>
-        <div class="s2-nav-item" onclick="s2SetView(this,'Owned by me')">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 12c0-2.761 2.239-5 5-5s5 2.239 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          Owned by me
-          <span class="s2-nav-count">12</span>
-        </div>
-        <div class="s2-nav-item" onclick="s2SetView(this,'Need my signature')">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 10h8M3 7h5M3 4h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          Need my signature
-          <span class="s2-nav-count">3</span>
-        </div>
-        <div class="s2-nav-item" onclick="s2SetView(this,'Assigned to me')">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Assigned to me
-          <span class="s2-nav-count">5</span>
-        </div>
-        <div class="s2-nav-item" onclick="s2SetView(this,'Participating in')">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="5" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M1 12c0-2 1.791-3.5 4-3.5s4 1.5 4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 8.5c2.209 0 4 1.5 4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          Participating in
-          <span class="s2-nav-count">7</span>
-        </div>
-        <div class="s2-nav-item" onclick="s2SetView(this,'Paused')">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 4.5v5M8.5 4.5v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          Paused
-          <span class="s2-nav-count">2</span>
-        </div>
-        <div class="s2-nav-item" onclick="s2SetView(this,'No activity')">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          No activity
-          <span class="s2-nav-count">4</span>
-        </div>
-        <div class="s2-nav-item" onclick="s2SetView(this,'Completed')">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 7l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Completed
-          <span class="s2-nav-count">186</span>
-        </div>
-      </div>
-      <div class="s2-sidebar-section">
-        <div class="s2-sidebar-heading">Workflows</div>
-        <div class="s2-nav-item" onclick="s2SetView(this,'NDA')">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="3" y="1" width="8" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 5h4M5 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          NDA
-        </div>
-        <div class="s2-nav-item" onclick="s2SetView(this,'Vendor Agreement')">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="3" y="1" width="8" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 5h4M5 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          Vendor Agreement
-        </div>
-        <div class="s2-nav-item" onclick="s2SetView(this,'MSA')">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="3" y="1" width="8" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 5h4M5 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          MSA
-        </div>
-      </div>
-      <div class="s2-sidebar-section">
-        <div class="s2-sidebar-heading">Repository</div>
-        <div class="s2-nav-item" onclick="s2SetView(this,'All contracts')">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 3h10M2 7h10M2 11h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          All contracts
-          <span class="s2-nav-count">247</span>
-        </div>
-      </div>
-      <div class="s2-sidebar-section">
-        <div class="s2-sidebar-heading" style="display:flex;align-items:center;justify-content:space-between">
-          My Views
-          <span style="font-size:16px;cursor:pointer;color:var(--mid);line-height:1">+</span>
-        </div>
-        <div class="s2-nav-item" onclick="s2SetView(this,'Legal Review Q2')">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 3h10M2 7h10M2 11h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-          Legal Review Q2
-        </div>
-      </div>
-    </div>
-
     <!-- MAIN CONTENT -->
-    <div class="s2-main">
+    <div class="s2-main" style="width:100%">
       <!-- Header row -->
       <div class="s2-main-header">
         <div style="display:flex;align-items:center;gap:12px">
@@ -1926,7 +1869,48 @@
 
       <!-- Filter pills -->
       <div class="s2-filter-bar">
-        <button class="s2-filter-pill active">Stage</button>
+        <!-- Views dropdown pill -->
+        <div style="position:relative">
+          <button class="s2-filter-pill s2-views-pill active" id="s2ViewsPill" onclick="s2ToggleViewsDrop()">
+            Views · <span id="s2ViewsPillLabel">In progress</span>
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style="margin-left:2px"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="s2-views-dropdown" id="s2ViewsDrop">
+            <div class="s2-vd-item active" onclick="s2PickView(this,'In progress')">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7 4v3.5l2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              In progress <span class="s2-vd-count">8</span>
+            </div>
+            <div class="s2-vd-item" onclick="s2PickView(this,'Owned by me')">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 12c0-2.761 2.239-5 5-5s5 2.239 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Owned by me <span class="s2-vd-count">12</span>
+            </div>
+            <div class="s2-vd-item" onclick="s2PickView(this,'Need my signature')">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M3 10h8M3 7h5M3 4h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Need my signature <span class="s2-vd-count">3</span>
+            </div>
+            <div class="s2-vd-item" onclick="s2PickView(this,'Assigned to me')">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Assigned to me <span class="s2-vd-count">5</span>
+            </div>
+            <div class="s2-vd-item" onclick="s2PickView(this,'Participating in')">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="5" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M1 12c0-2 1.791-3.5 4-3.5s4 1.5 4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 8.5c2.209 0 4 1.5 4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Participating in <span class="s2-vd-count">7</span>
+            </div>
+            <div class="s2-vd-item" onclick="s2PickView(this,'Paused')">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 4.5v5M8.5 4.5v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Paused <span class="s2-vd-count">2</span>
+            </div>
+            <div class="s2-vd-item" onclick="s2PickView(this,'No activity')">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              No activity <span class="s2-vd-count">4</span>
+            </div>
+            <div class="s2-vd-item" onclick="s2PickView(this,'Completed')">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 7l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Completed <span class="s2-vd-count">186</span>
+            </div>
+          </div>
+        </div>
+        <button class="s2-filter-pill">Stage</button>
         <button class="s2-filter-pill">Type</button>
         <button class="s2-filter-pill">Counterparty</button>
         <button class="s2-filter-pill">People</button>
@@ -3452,37 +3436,29 @@
     }
   }
 
-  // ── Screen 2 sidebar toggle ────────────────────────────────
-  function s2ToggleSidebar() {
-    var sidebar = document.getElementById('s2Sidebar');
-    var toggle = document.getElementById('s2SidebarToggle');
-    var collapsed = sidebar.classList.toggle('collapsed');
-    toggle.classList.toggle('collapsed', collapsed);
-    toggle.textContent = collapsed ? '›' : '‹';
-    toggle.style.left = collapsed ? '0' : '220px';
-  }
-
-  // ── Screen 2 sidebar nav ───────────────────────────────────
-  function s2SetView(el, viewName) {
-    document.querySelectorAll('#s2 .s2-nav-item').forEach(function(n) { n.classList.remove('active'); });
-    el.classList.add('active');
-    var t = document.getElementById('s2-view-title');
-    if (t) t.textContent = viewName;
-    // close dropdown if open
-    var d = document.getElementById('s2NewDrop');
-    if (d) d.classList.remove('open');
-  }
-
-  // ── Screen 2 New split button dropdown ────────────────────
-  function s2ToggleNewDrop() {
-    var d = document.getElementById('s2NewDrop');
+  // ── Screen 2 Views dropdown ────────────────────────────────
+  function s2ToggleViewsDrop() {
+    var d = document.getElementById('s2ViewsDrop');
     if (d) d.classList.toggle('open');
   }
+  function s2PickView(el, viewName) {
+    // update active state inside dropdown
+    document.querySelectorAll('.s2-vd-item').forEach(function(i) { i.classList.remove('active'); });
+    el.classList.add('active');
+    // update pill label and title
+    var lbl = document.getElementById('s2ViewsPillLabel');
+    if (lbl) lbl.textContent = viewName;
+    var t = document.getElementById('s2-view-title');
+    if (t) t.textContent = viewName;
+    // close dropdown
+    var d = document.getElementById('s2ViewsDrop');
+    if (d) d.classList.remove('open');
+  }
   document.addEventListener('click', function(e) {
-    var d = document.getElementById('s2NewDrop');
-    if (d && d.classList.contains('open')) {
-      var btn = document.getElementById('s2NewBtn');
-      if (!btn.contains(e.target)) d.classList.remove('open');
+    var d = document.getElementById('s2ViewsDrop');
+    var p = document.getElementById('s2ViewsPill');
+    if (d && d.classList.contains('open') && p && !p.contains(e.target) && !d.contains(e.target)) {
+      d.classList.remove('open');
     }
   });
 
