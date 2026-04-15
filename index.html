@@ -882,6 +882,25 @@
   }
   .chat-ref-remove:hover { color: #2E7D32; }
 
+  /* Attached item chip inside chat detail body */
+  .cd-attached-chip {
+    display: flex; align-items: center; gap: 7px;
+    margin: 10px 14px 0; padding: 9px 12px;
+    background: #F1F8F1; border: 1px solid #C8E6C9; border-radius: 8px;
+    cursor: pointer; transition: background 0.12s; flex-shrink: 0;
+  }
+  .cd-attached-chip:hover { background: #E8F5E9; }
+  .cd-attached-chip svg { color: #388E3C; flex-shrink: 0; }
+  .cd-attached-type {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; color: #388E3C; flex-shrink: 0;
+  }
+  .cd-attached-title {
+    font-size: 12px; font-weight: 500; color: #1B5E20;
+    flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .cd-attached-arrow { font-size: 14px; color: #81C784; flex-shrink: 0; }
+
   /* ────────────────────────────────────────────────────────── */
   /* SCREEN 6 — POST-CREATION                                  */
   /* ────────────────────────────────────────────────────────── */
@@ -3766,9 +3785,12 @@
       };
     }
     modal.style.display = 'none';
-    // Reset chat reference chip
+    // Capture attached reference from the chip (if visible)
     var ref = document.getElementById('chat-modal-ref');
-    if (ref) ref.style.display = 'none';
+    if (ref && ref.style.display !== 'none' && _cdCurrentItem) {
+      itemData.attachedItem = _cdCurrentItem;
+    }
+    ref && (ref.style.display = 'none');
     itemData.createdByMe = true;
     addCollabCard(badgeClass, badgeLabel, title, 'Surya Menon', '', itemData);
   }
@@ -4131,8 +4153,22 @@
   function renderChatDetail(body, data) {
     body.style.display = 'flex';
     body.style.flexDirection = 'column';
+    // Attached item chip
+    var attachedHtml = '';
+    if (data.attachedItem) {
+      var ai = data.attachedItem;
+      var typeLabel = ai.type.charAt(0).toUpperCase() + ai.type.slice(1);
+      var chipIcon = ai.type === 'task'
+        ? '<svg width="12" height="12" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 4a1 1 0 011-1h8a1 1 0 011 1v6a1 1 0 01-1 1H3a1 1 0 01-1-1V4z" stroke="currentColor" stroke-width="1.4"/><path d="M5 7h4M5 9h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
+      attachedHtml = '<div class="cd-attached-chip" onclick="cdOpenAttached()" title="View ' + typeLabel + '">' +
+        chipIcon +
+        '<span class="cd-attached-type">' + typeLabel + '</span>' +
+        '<span class="cd-attached-title">' + ai.title + '</span>' +
+        '<span class="cd-attached-arrow">›</span>' +
+        '</div>';
+    }
     var msgs = '<div class="cd-chat-msgs" id="cd-chat-msgs">';
-    // Initial message if any
     if (data.message) {
       var side = data.createdByMe ? 'mine' : 'theirs';
       var sender = data.createdByMe ? 'Surya Menon' : 'Riya Ramani';
@@ -4145,7 +4181,58 @@
       '<textarea class="cd-chat-input" id="cd-chat-input" placeholder="Type a message…" rows="1" onkeydown="cdChatKey(event)"></textarea>' +
       '<button class="cd-chat-send" onclick="cdSendMsg()">↑</button>' +
       '</div>';
-    body.innerHTML = msgs + input;
+    body.innerHTML = attachedHtml + msgs + input;
+  }
+
+  // Opens the attached task/approval from within a chat detail, remembering return path
+  var _cdReturnToChatItemId = null;
+  function cdOpenAttached() {
+    if (!_cdCurrentItem || !_cdCurrentItem.attachedItem) return;
+    var attached = _cdCurrentItem.attachedItem;
+    // Remember the chat item so the back button can return
+    _cdReturnToChatItemId = _cdCurrentItem;
+    // Update back button to go back to chat
+    var backBtn = document.querySelector('.cd-back');
+    if (backBtn) {
+      backBtn.setAttribute('onclick', 'cdBackToChat()');
+      backBtn.title = 'Back to chat';
+    }
+    // Render the attached item's detail in place
+    var body = document.getElementById('cd-body');
+    var footer = document.getElementById('cd-footer');
+    document.getElementById('cd-title').textContent = attached.title;
+    body.innerHTML = '';
+    footer.style.display = 'none';
+    footer.innerHTML = '';
+    _cdCurrentItem = attached; // switch context to the attached item
+    if (attached.type === 'task') {
+      renderTaskDetail(body, attached);
+      renderActionFooter(footer, attached);
+    } else if (attached.type === 'approval') {
+      renderApprovalDetail(body, attached);
+      renderActionFooter(footer, attached);
+    }
+  }
+
+  function cdBackToChat() {
+    if (!_cdReturnToChatItemId) { closeCollabDetail(); return; }
+    var chatData = _cdReturnToChatItemId;
+    _cdReturnToChatItemId = null;
+    _cdCurrentItem = chatData;
+    // Restore back button behaviour
+    var backBtn = document.querySelector('.cd-back');
+    if (backBtn) {
+      backBtn.setAttribute('onclick', 'closeCollabDetail()');
+      backBtn.title = '';
+    }
+    // Re-render the chat detail
+    var body = document.getElementById('cd-body');
+    var footer = document.getElementById('cd-footer');
+    document.getElementById('cd-title').textContent = chatData.title;
+    body.innerHTML = '';
+    footer.style.display = 'none';
+    footer.innerHTML = '';
+    renderChatDetail(body, chatData);
   }
 
   function renderActionFooter(footer, data) {
