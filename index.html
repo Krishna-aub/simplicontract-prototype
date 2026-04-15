@@ -2775,7 +2775,7 @@
           <span class="chip-dot"></span>2 Deviations
         </div>
         <div class="doc-action-sep"></div>
-        <button class="doc-act-btn" onclick="" title="Edit contract">
+        <button class="doc-act-btn" onclick="openEditWindow()" title="Edit contract">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 1.5a2.121 2.121 0 013 3L5 14H2v-3L11.5 1.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Edit
         </button>
@@ -4182,8 +4182,7 @@
     if (e.target === this) closeSaveVersionModal();
   });
 
-  // Wire Edit button
-  document.querySelector('.doc-act-btn[title="Edit contract"]').addEventListener('click', openEditWindow);
+  // Edit button wired via inline onclick
 </script>
 
 <!-- ════════════════════════════════════════════════════════════
