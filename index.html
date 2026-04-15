@@ -1191,6 +1191,333 @@
     .origin-cards { grid-template-columns: 1fr; }
     .left-panel { width: 300px; }
   }
+
+  /* ═══════════════════════════════════════════════════════════
+     CONTRACT EDIT WINDOW
+  ═══════════════════════════════════════════════════════════ */
+  #edit-window {
+    display: none; position: fixed; inset: 0; z-index: 500;
+    flex-direction: column; background: var(--white);
+  }
+  #edit-window.open { display: flex; }
+
+  /* Header */
+  .ew-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; height: 48px; flex-shrink: 0;
+    background: var(--white); border-bottom: 1px solid var(--border);
+  }
+  .ew-header-left { display: flex; align-items: center; gap: 10px; }
+  .ew-back-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 18px; color: var(--mid); padding: 4px 6px; border-radius: 6px;
+    display: flex; align-items: center;
+  }
+  .ew-back-btn:hover { background: var(--surface); color: var(--dark); }
+  .ew-contract-name { font-size: 14px; font-weight: 600; color: var(--dark); }
+  .ew-header-right { display: flex; align-items: center; gap: 10px; }
+  .ew-close-link {
+    background: none; border: none; cursor: pointer;
+    font-size: 13px; color: var(--mid); padding: 4px 8px; border-radius: 6px;
+  }
+  .ew-close-link:hover { color: var(--dark); background: var(--surface); }
+
+  /* Body split */
+  .ew-body {
+    flex: 1; display: flex; min-height: 0; overflow: hidden;
+  }
+
+  /* Document zone */
+  .ew-doc-zone {
+    width: 65%; display: flex; flex-direction: column;
+    border-right: 1px solid var(--border); overflow: hidden;
+  }
+  .ew-doc-toolbar {
+    flex-shrink: 0; background: #FAFAFA;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 1px;
+    padding: 0 10px; height: 38px; overflow-x: auto;
+  }
+  .edt-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--mid); font-size: 13px; padding: 4px 6px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background 0.12s;
+  }
+  .edt-btn:hover { background: var(--border); color: var(--dark); }
+  .edt-btn.active { background: #E8F5E9; color: var(--green); }
+  .edt-sep { width: 1px; height: 18px; background: var(--border); margin: 0 3px; flex-shrink: 0; }
+  .edt-track-pill {
+    display: flex; align-items: center; gap: 5px;
+    background: #F0F0F0; border: 1px solid var(--border);
+    border-radius: 20px; padding: 2px 10px; font-size: 11px;
+    font-weight: 600; color: var(--mid); cursor: pointer; white-space: nowrap;
+    flex-shrink: 0; transition: all 0.15s;
+  }
+  .edt-track-pill.on { background: #E8F5E9; border-color: var(--green-l); color: var(--green); }
+  .edt-count-badge {
+    background: var(--green); color: white; border-radius: 10px;
+    padding: 1px 5px; font-size: 10px; font-weight: 700;
+  }
+  .edt-comments-btn {
+    display: flex; align-items: center; gap: 5px;
+    background: none; border: 1px solid var(--border);
+    border-radius: 6px; padding: 3px 8px; font-size: 11px;
+    font-weight: 500; color: var(--mid); cursor: pointer; flex-shrink: 0;
+  }
+  .edt-comments-btn:hover { background: var(--surface); }
+  .edt-zoom-wrap {
+    display: flex; align-items: center; gap: 2px; flex-shrink: 0;
+  }
+  .edt-zoom-pct { font-size: 11px; color: var(--mid); min-width: 36px; text-align: center; }
+
+  /* Document scroll */
+  .ew-doc-scroll {
+    flex: 1; overflow-y: auto; background: #EFEFEF; padding: 32px;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+  }
+  .ew-doc-page {
+    background: var(--white); width: 100%; max-width: 720px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12); border-radius: 2px;
+    padding: 56px 72px; font-family: 'Georgia', serif;
+    font-size: 13px; line-height: 1.8; color: #222;
+  }
+  .ew-doc-page h1 {
+    font-size: 16px; text-align: center; text-transform: uppercase;
+    letter-spacing: 0.06em; margin-bottom: 4px;
+  }
+  .ew-doc-page .doc-ref {
+    text-align: center; font-size: 11px; color: var(--mid);
+    font-family: 'Inter', sans-serif; margin-bottom: 24px;
+  }
+  .ew-doc-page hr { border: none; border-top: 2px solid #222; margin: 16px 0; }
+  .ew-clause-section { margin-bottom: 20px; position: relative; }
+  .ew-clause-heading {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+    margin-bottom: 6px; display: flex; align-items: flex-start; gap: 6px;
+  }
+  .ew-clause-body { font-size: 13px; line-height: 1.8; }
+
+  /* AI highlights in doc */
+  .ai-flag-amber { background: #FFF8E1; border-left: 3px solid #FFB300; padding-left: 8px; border-radius: 0 4px 4px 0; }
+  .ai-flag-red { background: #FFEBEE; border-left: 3px solid #EF5350; padding-left: 8px; border-radius: 0 4px 4px 0; }
+  .ai-flag-green { background: #F1F8E9; border-left: 3px solid #81C784; padding-left: 8px; border-radius: 0 4px 4px 0; }
+  /* Tracked changes */
+  .tc-add { color: #2E7D32; text-decoration: underline; }
+  .tc-del { color: #C62828; text-decoration: line-through; }
+
+  /* Inline selection toolbar for edit window */
+  #ew-sel-toolbar {
+    display: none; position: fixed; z-index: 9999;
+    transform: translateX(-50%);
+  }
+  .ew-sel-tb {
+    background: #1E1E1E; border-radius: 8px; padding: 5px 8px;
+    display: flex; align-items: center; gap: 2px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+  .ew-sel-btn {
+    background: none; border: none; color: #E0E0E0; cursor: pointer;
+    font-size: 11px; font-weight: 500; padding: 3px 7px; border-radius: 5px;
+    white-space: nowrap;
+  }
+  .ew-sel-btn:hover { background: rgba(255,255,255,0.15); }
+  .ew-sel-sep { width: 1px; height: 14px; background: rgba(255,255,255,0.2); }
+
+  /* Right intelligence panel */
+  .ew-intel-panel {
+    width: 35%; display: flex; flex-direction: column; overflow: hidden;
+  }
+  .ew-panel-tabs {
+    flex-shrink: 0; display: flex; border-bottom: 1px solid var(--border);
+    background: var(--white);
+  }
+  .ewt-tab {
+    flex: 1; background: none; border: none; cursor: pointer;
+    font-size: 12px; font-weight: 500; color: var(--mid);
+    padding: 10px 4px; border-bottom: 2px solid transparent;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .ewt-tab.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 600; }
+  .ewt-tab:hover:not(.active) { color: var(--dark); background: var(--surface); }
+  .ew-panel-body { flex: 1; overflow-y: auto; min-height: 0; }
+  .ewt-pane { display: none; }
+  .ewt-pane.active { display: block; }
+
+  /* AI Analysis tab */
+  .ewa-summary {
+    padding: 10px 14px; background: var(--surface);
+    border-bottom: 1px solid var(--border); font-size: 11px; color: var(--mid);
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  }
+  .ewa-pill {
+    display: inline-flex; align-items: center; gap: 3px;
+    border-radius: 10px; padding: 2px 7px; font-size: 10px; font-weight: 700;
+  }
+  .ewa-pill.red { background: #FFEBEE; color: #C62828; }
+  .ewa-pill.amber { background: #FFF8E1; color: #E65100; }
+  .ewa-pill.green { background: #E8F5E9; color: var(--green); }
+  .ewa-clause-card {
+    border-bottom: 1px solid var(--border); padding: 12px 14px; cursor: pointer;
+    transition: background 0.12s;
+  }
+  .ewa-clause-card:hover { background: var(--surface); }
+  .ewa-clause-card.selected { background: #F0FDF4; border-left: 3px solid var(--teal); }
+  .ewa-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+  .ewa-clause-name { font-size: 12px; font-weight: 700; color: var(--dark); }
+  .ewa-clause-num { font-size: 11px; color: var(--light); font-family: 'Inter', sans-serif; }
+  .ewa-status-badge {
+    border-radius: 10px; padding: 2px 8px; font-size: 10px; font-weight: 700;
+    flex-shrink: 0; white-space: nowrap;
+  }
+  .ewa-badge-green { background: #E8F5E9; color: var(--green); }
+  .ewa-badge-amber { background: #FFF8E1; color: #E65100; }
+  .ewa-badge-red { background: #FFEBEE; color: #C62828; }
+  .ewa-clause-desc { font-size: 11px; color: var(--mid); margin-bottom: 8px; line-height: 1.5; }
+  .ewa-position-label { font-size: 10px; font-weight: 700; color: var(--light); text-transform: uppercase; margin-bottom: 4px; }
+  .ewa-position-val { font-size: 11px; color: var(--dark); font-weight: 500; }
+  .ewa-lang-block {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 10px; font-size: 11px; color: var(--dark); line-height: 1.6;
+    margin: 8px 0; max-height: 80px; overflow: hidden; position: relative;
+  }
+  .ewa-lang-block.expanded { max-height: none; }
+  .ewa-actions { display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .ewa-btn {
+    border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--border); background: var(--white);
+    color: var(--dark);
+  }
+  .ewa-btn:hover { background: var(--surface); }
+  .ewa-btn.primary { background: var(--green); color: white; border-color: var(--green); }
+  .ewa-btn.primary:hover { background: #2E7D32; }
+  .ewa-btn.amber { background: #FFF8E1; color: #E65100; border-color: #FFE0B2; }
+  .ewa-btn.red-btn { background: #FFEBEE; color: #C62828; border-color: #FFCDD2; }
+  .ewa-fix-link { font-size: 11px; color: var(--teal); cursor: pointer; text-decoration: underline; }
+  .ewa-fix-link:hover { color: var(--green); }
+  .ewa-reviewer-note { font-size: 10px; color: var(--light); margin-top: 6px; line-height: 1.5; font-style: italic; }
+  .ewa-used { font-size: 10px; color: var(--green); font-weight: 600; display: flex; align-items: center; gap: 3px; }
+
+  /* Playbook tab */
+  .ewp-category {
+    border-bottom: 1px solid var(--border); padding: 10px 14px; cursor: pointer;
+  }
+  .ewp-category:hover { background: var(--surface); }
+  .ewp-cat-top { display: flex; align-items: center; justify-content: space-between; }
+  .ewp-cat-name { font-size: 12px; font-weight: 600; color: var(--dark); }
+  .ewp-cat-status { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+  .ewp-present { background: #E8F5E9; color: var(--green); }
+  .ewp-review { background: #FFF8E1; color: #E65100; }
+  .ewp-missing { background: #FFEBEE; color: #C62828; }
+  .ewp-cat-desc { font-size: 11px; color: var(--mid); margin-top: 3px; }
+
+  /* Comments tab */
+  .ewc-section-label {
+    padding: 8px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--light); background: var(--surface);
+    border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px;
+  }
+  .ewc-internal-section { background: var(--white); }
+  .ewc-external-section { background: #F8F4FF; border-top: 2px solid #9C27B0; }
+  .ewc-comment-card {
+    padding: 10px 14px; border-bottom: 1px solid var(--border);
+  }
+  .ewc-comment-card.internal-card { border-left: 3px solid #FFB300; background: #FFFDE7; }
+  .ewc-comment-card.external-card { border-left: 3px solid #9C27B0; }
+  .ewc-card-top { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+  .ewc-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--green); color: white; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0; }
+  .ewc-author { font-size: 11px; font-weight: 600; color: var(--dark); }
+  .ewc-time { font-size: 10px; color: var(--light); }
+  .ewc-visibility { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 8px; }
+  .ewc-vis-internal { background: #FFF3E0; color: #E65100; }
+  .ewc-vis-external { background: #F3E5F5; color: #9C27B0; }
+  .ewc-quote { font-size: 11px; color: var(--mid); font-style: italic; border-left: 2px solid var(--border); padding-left: 8px; margin-bottom: 5px; line-height: 1.5; }
+  .ewc-body { font-size: 12px; color: var(--dark); line-height: 1.5; }
+  .ewc-reply-btn { font-size: 10px; color: var(--teal); cursor: pointer; margin-top: 4px; background: none; border: none; padding: 0; }
+  /* New comment input */
+  .ewc-new-comment {
+    position: sticky; bottom: 0; background: var(--white);
+    border-top: 2px solid var(--border); padding: 10px 14px;
+  }
+  .ewc-visibility-toggle {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+  }
+  .ewc-vis-opt {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 11px; cursor: pointer; padding: 3px 8px; border-radius: 6px;
+    border: 1px solid var(--border); color: var(--mid);
+  }
+  .ewc-vis-opt.selected { border-color: #E65100; background: #FFF3E0; color: #E65100; }
+  .ewc-vis-opt.selected.ext { border-color: #9C27B0; background: #F3E5F5; color: #9C27B0; }
+  .ewc-new-input {
+    width: 100%; border: 1px solid var(--border); border-radius: 6px;
+    padding: 7px 10px; font-size: 12px; resize: none; min-height: 60px;
+    font-family: 'Inter', sans-serif; color: var(--dark);
+  }
+  .ewc-new-input:focus { outline: none; border-color: var(--teal); }
+  .ewc-submit-row { display: flex; justify-content: flex-end; margin-top: 6px; gap: 6px; }
+
+  /* Nemo tab in edit window */
+  .ewn-body { display: flex; flex-direction: column; height: 100%; }
+  .ewn-msgs { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .ewn-msg { max-width: 90%; font-size: 12px; line-height: 1.6; }
+  .ewn-msg.nemo { align-self: flex-start; }
+  .ewn-msg.user { align-self: flex-end; }
+  .ewn-bubble {
+    padding: 9px 12px; border-radius: 12px;
+  }
+  .ewn-msg.nemo .ewn-bubble { background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 3px; color: var(--dark); }
+  .ewn-msg.user .ewn-bubble { background: var(--green); color: white; border-bottom-right-radius: 3px; }
+  .ewn-msg-meta { font-size: 10px; color: var(--light); margin-top: 3px; }
+  .ewn-msg.user .ewn-msg-meta { text-align: right; }
+  .ewn-insert-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    margin-top: 6px; background: #E8F5E9; border: 1px solid var(--green-l);
+    border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600;
+    color: var(--green); cursor: pointer;
+  }
+  .ewn-insert-btn:hover { background: var(--green); color: white; }
+  .ewn-input-wrap {
+    flex-shrink: 0; border-top: 1px solid var(--border); padding: 10px 12px;
+    display: flex; gap: 8px; align-items: flex-end;
+  }
+  .ewn-input {
+    flex: 1; border: 1px solid var(--border); border-radius: 20px;
+    padding: 7px 14px; font-size: 12px; resize: none; max-height: 80px;
+    font-family: 'Inter', sans-serif; background: var(--surface);
+  }
+  .ewn-input:focus { outline: none; border-color: var(--teal); background: var(--white); }
+  .ewn-send-btn {
+    background: var(--green); color: white; border: none; border-radius: 50%;
+    width: 32px; height: 32px; cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+
+  /* Save version modal */
+  #save-version-modal {
+    display: none; position: fixed; inset: 0; z-index: 600;
+    background: rgba(0,0,0,0.4); align-items: center; justify-content: center;
+  }
+  #save-version-modal.open { display: flex; }
+  .svm-box {
+    background: var(--white); border-radius: 12px; width: 480px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.2); padding: 28px;
+  }
+  .svm-title { font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 20px; }
+  .svm-label { font-size: 12px; font-weight: 600; color: var(--dark); margin-bottom: 6px; }
+  .svm-label span { color: var(--red); margin-left: 2px; }
+  .svm-textarea {
+    width: 100%; border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; font-size: 13px; resize: vertical; min-height: 80px;
+    font-family: 'Inter', sans-serif; color: var(--dark);
+  }
+  .svm-textarea:focus { outline: none; border-color: var(--teal); }
+  .svm-after { font-size: 12px; font-weight: 600; color: var(--mid); margin: 18px 0 10px; }
+  .svm-checkbox-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .svm-checkbox-row input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; width: 14px; height: 14px; }
+  .svm-checkbox-label { font-size: 13px; color: var(--dark); }
+  .svm-checkbox-note { font-size: 11px; color: var(--light); margin-top: 2px; line-height: 1.4; }
+  .svm-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
 </style>
 </head>
 <body>
@@ -3634,6 +3961,659 @@
   document.getElementById('confirm-modal').addEventListener('click', function(e) {
     if (e.target === this) hideModal();
   });
+
+  // ══════════════════════════════════════════════════════════
+  // CONTRACT EDIT WINDOW
+  // ══════════════════════════════════════════════════════════
+
+  function openEditWindow() {
+    document.getElementById('edit-window').classList.add('open');
+    ewSwitchTab('analysis');
+  }
+  function closeEditWindow() {
+    document.getElementById('edit-window').classList.remove('open');
+  }
+
+  // Tab switching
+  function ewSwitchTab(tab) {
+    ['analysis','playbook','comments','nemo'].forEach(function(t) {
+      document.getElementById('ewt-tab-' + t).classList.toggle('active', t === tab);
+      document.getElementById('ewt-' + t).classList.toggle('active', t === tab);
+    });
+    // Nemo needs flex
+    var nemoPane = document.getElementById('ewt-nemo');
+    nemoPane.style.display = (tab === 'nemo') ? 'flex' : (tab === 'comments' ? 'block' : '');
+  }
+  function ewOpenCommentsTab() { ewSwitchTab('comments'); }
+
+  // Zoom
+  var _ewZoom = 100;
+  function ewZoomIn() {
+    _ewZoom = Math.min(_ewZoom + 10, 200);
+    document.getElementById('ew-zoom-pct').textContent = _ewZoom + '%';
+    var p = document.getElementById('ew-doc-page');
+    if (p) { p.style.transformOrigin = 'top center'; p.style.transform = 'scale(' + _ewZoom/100 + ')'; }
+  }
+  function ewZoomOut() {
+    _ewZoom = Math.max(_ewZoom - 10, 50);
+    document.getElementById('ew-zoom-pct').textContent = _ewZoom + '%';
+    var p = document.getElementById('ew-doc-page');
+    if (p) { p.style.transformOrigin = 'top center'; p.style.transform = 'scale(' + _ewZoom/100 + ')'; }
+  }
+
+  // Track changes toggle
+  var _ewTrackOn = true;
+  function ewToggleTrack() {
+    _ewTrackOn = !_ewTrackOn;
+    var btn = document.getElementById('ew-track-btn');
+    var badge = document.getElementById('ew-track-count');
+    btn.classList.toggle('on', _ewTrackOn);
+    badge.style.display = _ewTrackOn ? 'inline' : 'none';
+    // Show/hide tracked change spans
+    document.querySelectorAll('#ew-doc-page .tc-add, #ew-doc-page .tc-del').forEach(function(el) {
+      el.style.display = _ewTrackOn ? '' : 'none';
+    });
+  }
+  // Init track pill as on
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('ew-track-btn').classList.add('on');
+    document.getElementById('ew-track-count').style.display = 'inline';
+  });
+
+  // Clause selection — jump doc + highlight card
+  function ewSelectClause(key) {
+    // Highlight card
+    document.querySelectorAll('.ewa-clause-card').forEach(function(c) { c.classList.remove('selected'); });
+    var card = document.getElementById('ewcard-' + key);
+    if (card) {
+      card.classList.add('selected');
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    ewSwitchTab('analysis');
+  }
+  function ewJumpToClause(key, clauseId) {
+    // Scroll doc to clause
+    var el = document.getElementById(clauseId);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Highlight clause section briefly
+    document.querySelectorAll('.ew-clause-section').forEach(function(s) { s.style.outline = ''; });
+    if (el) {
+      el.style.outline = '2px solid var(--teal)';
+      setTimeout(function() { if (el) el.style.outline = ''; }, 1500);
+    }
+    document.querySelectorAll('.ewa-clause-card').forEach(function(c) { c.classList.remove('selected'); });
+    var card = document.getElementById('ewcard-' + key);
+    if (card) card.classList.add('selected');
+  }
+
+  // Fix clause — show Nemo with pre-loaded prompt
+  function ewFixClause(key) {
+    var prompts = {
+      payment: 'Please redraft clause 4 to use Net 30 payment terms instead of Net 60, in line with our playbook standard.',
+      termination: 'Please redraft clause 9 to restore the 30-day termination notice period as required by our playbook.'
+    };
+    ewSwitchTab('nemo');
+    var input = document.getElementById('ewn-input');
+    if (input && prompts[key]) { input.value = prompts[key]; input.focus(); }
+  }
+
+  // Insert as tracked change (stub — shows feedback)
+  function ewInsertTracked(key) {
+    var msgs = { termination: 'Tracked change inserted for Termination clause.' };
+    var msg = msgs[key] || 'Tracked change inserted.';
+    var fb = document.createElement('div');
+    fb.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1E1E1E;color:white;border-radius:8px;padding:8px 16px;font-size:12px;z-index:9999;pointer-events:none';
+    fb.textContent = '✓ ' + msg;
+    document.body.appendChild(fb);
+    setTimeout(function() { fb.parentNode && fb.parentNode.removeChild(fb); }, 2000);
+  }
+
+  // Inline selection toolbar in edit window
+  var _ewSelRange = null;
+  document.addEventListener('mouseup', function(e) {
+    var docZone = document.getElementById('ew-doc-scroll');
+    var tb = document.getElementById('ew-sel-toolbar');
+    if (!docZone || !docZone.contains(e.target)) {
+      if (tb) tb.style.display = 'none'; return;
+    }
+    if (e.target.closest('#ew-sel-toolbar')) return;
+    var sel = window.getSelection();
+    if (!sel || sel.isCollapsed || !sel.toString().trim()) {
+      if (tb) tb.style.display = 'none'; return;
+    }
+    _ewSelRange = sel.getRangeAt(0);
+    var rect = _ewSelRange.getBoundingClientRect();
+    tb.style.display = 'block';
+    tb.style.left = (rect.left + rect.width / 2) + 'px';
+    tb.style.top  = (rect.top - 46 + window.scrollY) + 'px';
+  });
+  document.addEventListener('mousedown', function(e) {
+    var tb = document.getElementById('ew-sel-toolbar');
+    if (tb && !e.target.closest('#ew-sel-toolbar')) tb.style.display = 'none';
+  });
+  function ewSelComment() {
+    document.getElementById('ew-sel-toolbar').style.display = 'none';
+    ewSwitchTab('comments');
+    var input = document.querySelector('.ewc-new-input');
+    if (input) { input.focus(); }
+  }
+  function ewSelRedraft() {
+    var text = _ewSelRange ? _ewSelRange.toString().trim() : '';
+    document.getElementById('ew-sel-toolbar').style.display = 'none';
+    ewSwitchTab('nemo');
+    var input = document.getElementById('ewn-input');
+    if (input && text) {
+      input.value = '"' + text.substring(0, 80) + (text.length > 80 ? '…' : '') + '" — How would you like me to change this?';
+      input.focus();
+    }
+  }
+  function ewSelSuggest() { ewSelRedraft(); }
+  function ewSelCopy() {
+    var text = _ewSelRange ? _ewSelRange.toString() : '';
+    if (text && navigator.clipboard) navigator.clipboard.writeText(text);
+    document.getElementById('ew-sel-toolbar').style.display = 'none';
+  }
+
+  // Nemo chat
+  var _ewNemoResponses = {
+    'termination': 'Here is the standard playbook language for the Termination clause:\n\n"Either party may terminate this Agreement for convenience by giving **thirty (30) days\'** written notice to the other party. Termination for material breach requires 14 days\' written cure notice."\n\nThis restores the 30-day notice period required by your playbook.',
+    'payment': 'The playbook standard for Payment Terms is **Net 30**. Here is the revised clause 4 language:\n\n"The Company shall pay undisputed invoices within **thirty (30) days** of receipt of a valid tax invoice. Late payment interest shall apply at 1.5% per month on overdue amounts."\n\nThis brings the contract in line with your standard position.',
+    'default': 'I\'ve reviewed the relevant clause in the context of your playbook. Based on my analysis, the language can be improved to better align with your standard positions. Would you like me to draft specific replacement language?'
+  };
+  function ewNemoKey(e) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); ewNemoSend(); } }
+  function ewNemoSend() {
+    var input = document.getElementById('ewn-input');
+    var msgs = document.getElementById('ewn-msgs');
+    if (!input || !input.value.trim()) return;
+    var text = input.value.trim();
+    input.value = '';
+
+    // User bubble
+    var userBubble = document.createElement('div');
+    userBubble.className = 'ewn-msg user';
+    userBubble.innerHTML = '<div class="ewn-bubble">' + text + '</div><div class="ewn-msg-meta">Surya Menon · Just now</div>';
+    msgs.appendChild(userBubble);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    // Nemo response
+    setTimeout(function() {
+      var key = text.toLowerCase().indexOf('termination') >= 0 ? 'termination'
+              : text.toLowerCase().indexOf('payment') >= 0 ? 'payment' : 'default';
+      var resp = _ewNemoResponses[key];
+      var showInsert = (key !== 'default');
+      var nemoBubble = document.createElement('div');
+      nemoBubble.className = 'ewn-msg nemo';
+      var html = '<div class="ewn-bubble">' + resp.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>') + '</div>';
+      if (showInsert) {
+        html += '<button class="ewn-insert-btn" onclick="ewInsertTracked(\'' + key + '\')">↳ Insert as tracked change</button>';
+      }
+      html += '<div class="ewn-msg-meta">✦ Nemo · Just now</div>';
+      nemoBubble.innerHTML = html;
+      msgs.appendChild(nemoBubble);
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 600);
+  }
+
+  // Comment visibility toggle
+  function ewSetVisibility(mode) {
+    document.getElementById('ewc-vis-int').classList.toggle('selected', mode === 'internal');
+    document.getElementById('ewc-vis-int').classList.remove('ext');
+    document.getElementById('ewc-vis-ext').classList.toggle('selected', mode === 'external');
+    if (mode === 'external') document.getElementById('ewc-vis-ext').classList.add('ext');
+  }
+  function ewSubmitComment() {
+    var input = document.querySelector('.ewc-new-input');
+    if (!input || !input.value.trim()) return;
+    input.value = '';
+  }
+
+  // Save as New Version modal
+  function openSaveVersionModal() {
+    document.getElementById('save-version-modal').classList.add('open');
+  }
+  function closeSaveVersionModal() {
+    document.getElementById('save-version-modal').classList.remove('open');
+  }
+  function doSaveVersion() {
+    closeSaveVersionModal();
+    closeEditWindow();
+  }
+  document.getElementById('save-version-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeSaveVersionModal();
+  });
+
+  // Wire Edit button
+  document.querySelector('.doc-act-btn[title="Edit contract"]').addEventListener('click', openEditWindow);
 </script>
+
+<!-- ════════════════════════════════════════════════════════════
+     CONTRACT EDIT WINDOW
+════════════════════════════════════════════════════════════ -->
+<div id="edit-window">
+
+  <!-- Header -->
+  <div class="ew-header">
+    <div class="ew-header-left">
+      <button class="ew-back-btn" onclick="closeEditWindow()" title="Back">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <span class="ew-contract-name">Wholesale Supply Agreement</span>
+    </div>
+    <div class="ew-header-right">
+      <button class="btn btn-primary btn-sm" onclick="openSaveVersionModal()">Save as New Version</button>
+      <button class="ew-close-link" onclick="closeEditWindow()">Close</button>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="ew-body">
+
+    <!-- LEFT: Document editing zone -->
+    <div class="ew-doc-zone">
+
+      <!-- Rich-text toolbar -->
+      <div class="ew-doc-toolbar">
+        <button class="edt-btn" title="Undo" onclick="">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 7.5A5 5 0 1 1 4.5 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 4v3.5h3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="edt-btn" title="Redo" onclick="">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M13 7.5A5 5 0 1 0 11.5 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13 4v3.5H9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="edt-sep"></div>
+        <button class="edt-btn" title="Bold"><strong style="font-size:12px">B</strong></button>
+        <button class="edt-btn" title="Italic"><em style="font-size:12px">I</em></button>
+        <button class="edt-btn" title="Underline"><u style="font-size:12px">U</u></button>
+        <button class="edt-btn" title="Strikethrough"><s style="font-size:12px">S</s></button>
+        <button class="edt-btn" title="Text color" style="position:relative">
+          <span style="font-size:12px;font-weight:700;color:var(--dark)">A</span>
+          <span style="position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:10px;height:3px;background:#EF5350;border-radius:1px"></span>
+        </button>
+        <button class="edt-btn" title="Link">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M7 9a3 3 0 004.243 0l1.414-1.414a3 3 0 00-4.243-4.243L7 4.757" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 7a3 3 0 00-4.243 0L3.343 8.414a3 3 0 004.243 4.243L9 11.243" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="edt-sep"></div>
+        <button class="edt-btn" title="Bullet list">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="3" cy="5" r="1.2" fill="currentColor"/><circle cx="3" cy="9" r="1.2" fill="currentColor"/><circle cx="3" cy="13" r="1.2" fill="currentColor"/><path d="M6 5h7M6 9h7M6 13h7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+        <button class="edt-btn" title="Numbered list">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 4h1.5M2 8h2M2 12h2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M6 5h7M6 9h7M6 13h7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </button>
+        <button class="edt-btn" title="Indent">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M6 8h8M2 12h12M2 8l3-2v4L2 8z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="edt-sep"></div>
+        <div class="edt-zoom-wrap">
+          <button class="edt-btn" onclick="ewZoomOut()" title="Zoom out">−</button>
+          <span class="edt-zoom-pct" id="ew-zoom-pct">100%</span>
+          <button class="edt-btn" onclick="ewZoomIn()" title="Zoom in">+</button>
+        </div>
+        <div class="edt-sep"></div>
+        <button class="edt-track-pill" id="ew-track-btn" onclick="ewToggleTrack()" title="Track changes">
+          Track Changes <span class="edt-count-badge" id="ew-track-count" style="display:none">2</span>
+        </button>
+        <button class="edt-comments-btn" onclick="ewOpenCommentsTab()" title="Comments">
+          💬 Comments <span style="background:#1565C0;color:white;border-radius:8px;padding:1px 5px;font-size:10px;font-weight:700">1</span>
+        </button>
+        <div class="edt-sep"></div>
+        <button class="edt-btn" title="Download">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 2v8m0 0l-3-3m3 3l3-3M3 13h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="edt-btn" title="Version history">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.4"/><path d="M8 5v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="edt-btn" title="Preview">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><ellipse cx="8" cy="8" rx="6" ry="4" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="1.8" fill="currentColor"/></svg>
+        </button>
+      </div>
+
+      <!-- Inline selection toolbar -->
+      <div id="ew-sel-toolbar">
+        <div class="ew-sel-tb">
+          <button class="ew-sel-btn" onclick="ewSelComment()">💬 Comment</button>
+          <div class="ew-sel-sep"></div>
+          <button class="ew-sel-btn" onclick="ewSelRedraft()">✦ Redraft with AI</button>
+          <div class="ew-sel-sep"></div>
+          <button class="ew-sel-btn" onclick="ewSelSuggest()">↪ Suggest change</button>
+          <div class="ew-sel-sep"></div>
+          <button class="ew-sel-btn" onclick="ewSelCopy()">⎘ Copy</button>
+        </div>
+      </div>
+
+      <!-- Document page -->
+      <div class="ew-doc-scroll" id="ew-doc-scroll">
+        <div class="ew-doc-page" id="ew-doc-page">
+          <h1>Wholesale Supply Agreement</h1>
+          <div class="doc-ref">Contract Ref: C-1260 &nbsp;·&nbsp; Date: 15-Apr-2026</div>
+          <hr/>
+
+          <p style="font-size:13px;line-height:1.8">This Wholesale Supply Agreement ("<strong>Agreement</strong>") is entered into as of the Effective Date set forth above, by and between:</p>
+          <br/>
+          <p><strong>Flipkart India Private Limited</strong>, a company incorporated under the laws of India, having its registered office at Buildings Alyssa, Begonia &amp; Clover, Embassy Tech Village, Outer Ring Road, Bengaluru – 560 103, Karnataka, India ("<strong>Company</strong>"); and</p>
+          <br/>
+          <p><strong>[ Counterparty Name ]</strong>, a company incorporated under the laws of [ Country ] ("<strong>Vendor</strong>").</p>
+          <hr style="border-top:1px solid #ddd;margin:20px 0"/>
+
+          <div class="ew-clause-section" id="ewc-1">
+            <div class="ew-clause-heading">1. Definitions and Interpretation</div>
+            <div class="ew-clause-body">
+              <p><strong>"Goods"</strong> means products supplied by the Vendor as specified in the applicable Purchase Order. <strong>"Purchase Order"</strong> means a written order issued by the Company. <strong>"Defective Goods"</strong> means any Goods that do not conform to specifications or quality standards.</p>
+            </div>
+          </div>
+
+          <div class="ew-clause-section" id="ewc-2">
+            <div class="ew-clause-heading">2. Term</div>
+            <div class="ew-clause-body">
+              <p>This Agreement shall commence on <strong>[ Start Date ]</strong> and shall remain in full force until <strong>[ End Date ]</strong>, unless earlier terminated. The Agreement may be renewed by mutual written consent for successive periods of twelve (12) months.</p>
+            </div>
+          </div>
+
+          <div class="ew-clause-section ai-flag-green" id="ewc-3" onclick="ewSelectClause('delivery')" style="cursor:pointer">
+            <div class="ew-clause-heading">3. Supply of Goods</div>
+            <div class="ew-clause-body">
+              <p>The Vendor shall supply Goods in accordance with Purchase Orders issued by the Company. Each PO shall specify quantities, specifications, delivery schedule, and price. The Vendor shall notify the Company promptly of any inability to fulfil a PO.</p>
+            </div>
+          </div>
+
+          <div class="ew-clause-section ai-flag-amber" id="ewc-4" onclick="ewSelectClause('payment')" style="cursor:pointer">
+            <div class="ew-clause-heading">4. Pricing and Payment Terms</div>
+            <div class="ew-clause-body">
+              <p>The Company shall pay undisputed invoices within <strong id="ew-payment-days">sixty (60) days</strong> of receipt of a valid tax invoice. Late payment interest shall apply at 1.5% per month on overdue amounts. The Vendor may suspend deliveries after 90 days of non-payment with 14 days' written notice.</p>
+            </div>
+          </div>
+
+          <div class="ew-clause-section ai-flag-green" id="ewc-5" onclick="ewSelectClause('delivery')" style="cursor:pointer">
+            <div class="ew-clause-heading">5. Delivery and Risk</div>
+            <div class="ew-clause-body">
+              <p>Risk of loss shall pass to the Company upon delivery at the designated Delivery Location. The Vendor shall obtain appropriate insurance. Time of delivery is of the essence.</p>
+            </div>
+          </div>
+
+          <div class="ew-clause-section" id="ewc-6">
+            <div class="ew-clause-heading">6. Warranties and Quality Assurance</div>
+            <div class="ew-clause-body">
+              <p>The Vendor warrants that all Goods shall conform to agreed specifications, be free from defects, and comply with applicable laws. The Vendor shall maintain a quality management system and provide inspection access upon request.</p>
+            </div>
+          </div>
+
+          <div class="ew-clause-section" id="ewc-7">
+            <div class="ew-clause-heading">7. Intellectual Property</div>
+            <div class="ew-clause-body">
+              <p>All intellectual property rights in Goods supplied remain with the Vendor unless separately agreed in writing. The Company receives a non-exclusive licence to use such rights solely in connection with the Goods.</p>
+            </div>
+          </div>
+
+          <div class="ew-clause-section ai-flag-green" id="ewc-8" onclick="ewSelectClause('confidentiality')" style="cursor:pointer">
+            <div class="ew-clause-heading">8. Confidentiality</div>
+            <div class="ew-clause-body">
+              <p>Each party shall keep confidential all Confidential Information of the other party and shall not disclose it to any third party without prior written consent. This obligation survives termination for a period of five (5) years.</p>
+            </div>
+          </div>
+
+          <div class="ew-clause-section ai-flag-red" id="ewc-9" onclick="ewSelectClause('termination')" style="cursor:pointer">
+            <div class="ew-clause-heading">9. Termination</div>
+            <div class="ew-clause-body">
+              <p>Either party may terminate this Agreement for convenience by giving <strong id="ew-notice-days"><span class="tc-del">thirty (30)</span> <span class="tc-add">fifteen (15)</span></strong> days' written notice. Termination for material breach requires 14 days' cure period notice. Upon termination all outstanding POs shall be fulfilled unless the parties agree otherwise.</p>
+            </div>
+          </div>
+
+          <div class="ew-clause-section ai-flag-amber" id="ewc-10" onclick="ewSelectClause('governing')" style="cursor:pointer">
+            <div class="ew-clause-heading">10. Governing Law and Dispute Resolution</div>
+            <div class="ew-clause-body">
+              <p>This Agreement shall be governed by the laws of India. Any disputes shall be referred to arbitration under the Arbitration and Conciliation Act, 1996, with a sole arbitrator appointed by mutual agreement. The seat of arbitration shall be Bengaluru.</p>
+            </div>
+          </div>
+
+          <hr style="border-top:1px solid #ddd;margin:24px 0"/>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;font-family:'Inter',sans-serif">
+            <div>
+              <p style="font-size:12px;margin-bottom:28px"><strong>For and on behalf of Flipkart India Private Limited</strong></p>
+              <div style="border-top:1px solid #222;padding-top:6px;font-size:11px;color:var(--mid)">Authorised Signatory<br/>Name: _______________<br/>Date: _______________</div>
+            </div>
+            <div>
+              <p style="font-size:12px;margin-bottom:28px"><strong>For and on behalf of [ Counterparty ]</strong></p>
+              <div style="border-top:1px solid #222;padding-top:6px;font-size:11px;color:var(--mid)">Authorised Signatory<br/>Name: _______________<br/>Date: _______________</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /.ew-doc-zone -->
+
+    <!-- RIGHT: Intelligence panel -->
+    <div class="ew-intel-panel">
+      <div class="ew-panel-tabs">
+        <button class="ewt-tab active" id="ewt-tab-analysis" onclick="ewSwitchTab('analysis')">AI Analysis</button>
+        <button class="ewt-tab" id="ewt-tab-playbook" onclick="ewSwitchTab('playbook')">Playbook</button>
+        <button class="ewt-tab" id="ewt-tab-comments" onclick="ewSwitchTab('comments')">Comments</button>
+        <button class="ewt-tab" id="ewt-tab-nemo" onclick="ewSwitchTab('nemo')">✦ Nemo</button>
+      </div>
+
+      <div class="ew-panel-body">
+
+        <!-- AI Analysis pane -->
+        <div class="ewt-pane active" id="ewt-analysis">
+          <div class="ewa-summary">
+            <span style="font-weight:600;color:var(--dark)">Flagged:</span>
+            <span class="ewa-pill red">2 Non-standard</span>
+            <span class="ewa-pill amber">2 Needs Review</span>
+            <span class="ewa-pill green">3 Acceptable</span>
+          </div>
+
+          <!-- Clause: Payment Terms — Needs Review -->
+          <div class="ewa-clause-card" id="ewcard-payment" onclick="ewJumpToClause('payment','ewc-4')">
+            <div class="ewa-card-top">
+              <div>
+                <div class="ewa-clause-name">Payment Terms</div>
+                <div class="ewa-clause-num">§ 4</div>
+              </div>
+              <span class="ewa-status-badge ewa-badge-amber">Needs Review</span>
+            </div>
+            <div class="ewa-clause-desc">Governs invoice payment timing and late payment consequences.</div>
+            <div class="ewa-position-label">Position</div>
+            <div class="ewa-position-val" style="color:#E65100">Non-standard language</div>
+            <div class="ewa-lang-block">Contract specifies Net 60 payment terms. Playbook standard is Net 30. Deviation may impact cash flow and vendor relationships.</div>
+            <div class="ewa-actions">
+              <span class="ewa-fix-link" onclick="event.stopPropagation();ewFixClause('payment')">Fix non-standard language</span>
+              <span style="color:var(--light);font-size:11px">or</span>
+              <span class="ewa-fix-link" onclick="event.stopPropagation()">Request an exception</span>
+              <button class="ewa-btn amber" onclick="event.stopPropagation()">Approve</button>
+            </div>
+            <div class="ewa-reviewer-note">Note: Legal Ops requires escalation for any payment terms beyond Net 45. Obtain CFO sign-off if Net 60 is to be accepted.</div>
+          </div>
+
+          <!-- Clause: Termination — Non-standard -->
+          <div class="ewa-clause-card" id="ewcard-termination" onclick="ewJumpToClause('termination','ewc-9')">
+            <div class="ewa-card-top">
+              <div>
+                <div class="ewa-clause-name">Termination</div>
+                <div class="ewa-clause-num">§ 9</div>
+              </div>
+              <span class="ewa-status-badge ewa-badge-red">Non-standard</span>
+            </div>
+            <div class="ewa-clause-desc">Governs termination rights, notice periods, and consequences.</div>
+            <div class="ewa-position-label">Position</div>
+            <div class="ewa-position-val" style="color:#C62828">Non-standard — 15-day notice (standard: 30 days)</div>
+            <div class="ewa-lang-block">Notice period is 15 days. Playbook standard requires minimum 30 days for convenience termination. Track changes shows the edit.</div>
+            <div class="ewa-actions">
+              <span class="ewa-fix-link" onclick="event.stopPropagation();ewFixClause('termination')">Fix non-standard language</span>
+              <span style="color:var(--light);font-size:11px">or</span>
+              <span class="ewa-fix-link" onclick="event.stopPropagation()">Request an exception</span>
+              <button class="ewa-btn red-btn" onclick="event.stopPropagation()">Escalate</button>
+            </div>
+            <div class="ewa-reviewer-note">Note: Standard playbook position is 30 days minimum. Any reduction requires VP Legal approval.</div>
+
+            <!-- Pre-approved language -->
+            <div style="margin-top:10px">
+              <div class="ewa-position-label">Pre-approved language</div>
+              <div style="font-size:10px;font-weight:600;color:var(--mid);margin-bottom:4px">✓ Standard <span style="background:#E8F5E9;color:var(--green);padding:1px 5px;border-radius:8px;margin-left:4px">Preferred</span></div>
+              <div class="ewa-lang-block">Either party may terminate this Agreement for convenience by giving thirty (30) days' written notice to the other party.</div>
+              <div class="ewa-actions">
+                <button class="ewa-btn primary" onclick="event.stopPropagation();ewInsertTracked('termination')">↳ Insert as tracked change</button>
+                <span class="ewa-used"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5"/></svg> Used in document</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Clause: Governing Law — Needs Review -->
+          <div class="ewa-clause-card" id="ewcard-governing" onclick="ewJumpToClause('governing','ewc-10')">
+            <div class="ewa-card-top">
+              <div>
+                <div class="ewa-clause-name">Governing Law</div>
+                <div class="ewa-clause-num">§ 10</div>
+              </div>
+              <span class="ewa-status-badge ewa-badge-amber">Needs Review</span>
+            </div>
+            <div class="ewa-clause-desc">Determines which jurisdiction's laws govern this agreement.</div>
+            <div class="ewa-position-label">Position</div>
+            <div class="ewa-position-val">Standard</div>
+            <div class="ewa-lang-block">Governing law is India / Bengaluru. Playbook prefers Indian law for domestic vendor agreements. Verify arbitration clause aligns with latest institutional rules.</div>
+            <div class="ewa-actions">
+              <button class="ewa-btn primary" onclick="event.stopPropagation()">↳ Insert as tracked change</button>
+              <span class="ewa-used"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5"/></svg> Used in document</span>
+            </div>
+            <div class="ewa-reviewer-note">Reviewer note: Confirm arbitration seat is consistent with company's preferred institutional rules (SIAC or DIAC).</div>
+          </div>
+
+          <!-- Clause: Supply of Goods — Acceptable -->
+          <div class="ewa-clause-card" id="ewcard-supply" onclick="ewJumpToClause('supply','ewc-3')">
+            <div class="ewa-card-top">
+              <div>
+                <div class="ewa-clause-name">Supply of Goods</div>
+                <div class="ewa-clause-num">§ 3</div>
+              </div>
+              <span class="ewa-status-badge ewa-badge-green">Acceptable</span>
+            </div>
+            <div class="ewa-clause-desc">Governs the supply obligations, PO process, and notification duties.</div>
+            <div class="ewa-position-label">Position</div>
+            <div class="ewa-position-val" style="color:var(--green)">Standard</div>
+            <div class="ewa-used" style="margin-top:6px"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5"/></svg> Matches playbook standard language</div>
+          </div>
+
+          <!-- Clause: Confidentiality — Acceptable -->
+          <div class="ewa-clause-card" id="ewcard-confidentiality" onclick="ewJumpToClause('confidentiality','ewc-8')">
+            <div class="ewa-card-top">
+              <div>
+                <div class="ewa-clause-name">Confidentiality</div>
+                <div class="ewa-clause-num">§ 8</div>
+              </div>
+              <span class="ewa-status-badge ewa-badge-green">Acceptable</span>
+            </div>
+            <div class="ewa-clause-desc">Sets obligations for protecting confidential information.</div>
+            <div class="ewa-position-label">Position</div>
+            <div class="ewa-position-val" style="color:var(--green)">Standard — 5-year survival</div>
+            <div class="ewa-used" style="margin-top:6px"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.5"/></svg> Matches playbook standard language</div>
+          </div>
+        </div><!-- /#ewt-analysis -->
+
+        <!-- Playbook pane -->
+        <div class="ewt-pane" id="ewt-playbook">
+          <div style="padding:12px 14px;background:var(--surface);border-bottom:1px solid var(--border);font-size:11px;color:var(--mid)">Full playbook — Wholesale Supply Agreement template</div>
+          <div class="ewp-category"><div class="ewp-cat-top"><span class="ewp-cat-name">Payment Terms</span><span class="ewp-cat-status ewp-review">Needs Review</span></div><div class="ewp-cat-desc">Net 30 standard. Escalation required for Net 60+.</div></div>
+          <div class="ewp-category"><div class="ewp-cat-top"><span class="ewp-cat-name">Supply Obligations</span><span class="ewp-cat-status ewp-present">Acceptable</span></div><div class="ewp-cat-desc">PO-based supply with notification duty on shortfalls.</div></div>
+          <div class="ewp-category"><div class="ewp-cat-top"><span class="ewp-cat-name">Delivery and Risk</span><span class="ewp-cat-status ewp-present">Acceptable</span></div><div class="ewp-cat-desc">Risk passes on delivery to designated location.</div></div>
+          <div class="ewp-category"><div class="ewp-cat-top"><span class="ewp-cat-name">Warranties</span><span class="ewp-cat-status ewp-present">Acceptable</span></div><div class="ewp-cat-desc">Goods must meet spec, be defect-free, comply with law.</div></div>
+          <div class="ewp-category"><div class="ewp-cat-top"><span class="ewp-cat-name">Confidentiality</span><span class="ewp-cat-status ewp-present">Acceptable</span></div><div class="ewp-cat-desc">5-year survival post-termination. Mutual obligation.</div></div>
+          <div class="ewp-category"><div class="ewp-cat-top"><span class="ewp-cat-name">Termination for Convenience</span><span class="ewp-cat-status ewp-missing">Non-standard</span></div><div class="ewp-cat-desc">Minimum 30 days notice required. VP Legal approval needed for shorter periods.</div></div>
+          <div class="ewp-category"><div class="ewp-cat-top"><span class="ewp-cat-name">Intellectual Property</span><span class="ewp-cat-status ewp-present">Acceptable</span></div><div class="ewp-cat-desc">Non-exclusive licence for use of vendor IP in Goods.</div></div>
+          <div class="ewp-category"><div class="ewp-cat-top"><span class="ewp-cat-name">Governing Law</span><span class="ewp-cat-status ewp-review">Needs Review</span></div><div class="ewp-cat-desc">Indian law preferred. Confirm arbitration institutional rules.</div></div>
+          <div class="ewp-category"><div class="ewp-cat-top"><span class="ewp-cat-name">Indemnification</span><span class="ewp-cat-status ewp-missing">Missing</span></div><div class="ewp-cat-desc">Not present. Playbook requires mutual indemnification capped at contract value.</div></div>
+          <div class="ewp-category"><div class="ewp-cat-top"><span class="ewp-cat-name">Force Majeure</span><span class="ewp-cat-status ewp-missing">Missing</span></div><div class="ewp-cat-desc">Not present. Standard clause should be added.</div></div>
+        </div>
+
+        <!-- Comments pane -->
+        <div class="ewt-pane" id="ewt-comments">
+          <!-- Internal -->
+          <div class="ewc-internal-section">
+            <div class="ewc-section-label">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="2" y="5" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 5V4a3 3 0 016 0v1" stroke="currentColor" stroke-width="1.4"/></svg>
+              Internal — visible to your team only
+            </div>
+            <div class="ewc-comment-card internal-card">
+              <div class="ewc-card-top">
+                <div class="ewc-avatar" style="background:#1565C0">LB</div>
+                <span class="ewc-author">Lauren Bolopue</span>
+                <span class="ewc-time">2 mins ago</span>
+                <span class="ewc-visibility ewc-vis-internal">Internal</span>
+              </div>
+              <div class="ewc-quote">…the Company shall pay undisputed invoices within sixty (60) days…</div>
+              <div class="ewc-body"><span style="color:var(--teal);font-weight:600">@Ian IT Leader</span> Are you ok with these data security terms?</div>
+              <button class="ewc-reply-btn">Reply</button>
+            </div>
+          </div>
+
+          <!-- External -->
+          <div class="ewc-external-section">
+            <div class="ewc-section-label" style="color:#9C27B0">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 13c0-2.761 2.239-5 5-5s5 2.239 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              Shared with Counterparty — visible externally
+            </div>
+            <div style="padding:20px 14px;text-align:center;color:var(--light);font-size:12px">No external comments yet</div>
+          </div>
+
+          <!-- New comment input -->
+          <div class="ewc-new-comment">
+            <div style="font-size:11px;font-weight:600;color:var(--dark);margin-bottom:6px">New comment</div>
+            <div class="ewc-visibility-toggle">
+              <div class="ewc-vis-opt selected" id="ewc-vis-int" onclick="ewSetVisibility('internal')">🔒 Internal only</div>
+              <div class="ewc-vis-opt" id="ewc-vis-ext" onclick="ewSetVisibility('external')">👤 Share with counterparty</div>
+            </div>
+            <textarea class="ewc-new-input" placeholder="Add a comment or tag with @…" rows="3"></textarea>
+            <div class="ewc-submit-row">
+              <button class="btn btn-ghost btn-sm">Cancel</button>
+              <button class="btn btn-primary btn-sm" onclick="ewSubmitComment()">Add Comment</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nemo pane -->
+        <div class="ewt-pane" id="ewt-nemo" style="display:flex;flex-direction:column;height:100%">
+          <div class="ewn-msgs" id="ewn-msgs">
+            <!-- Opening Nemo message -->
+            <div class="ewn-msg nemo">
+              <div class="ewn-bubble">
+                I've analysed this contract. I found <strong>4 clauses</strong> that need review and <strong>2 deviations</strong> from your playbook.<br/><br/>
+                The most critical issue is the <strong>Termination clause (§9)</strong> — the notice period has been reduced to 15 days, which is below the 30-day minimum in your playbook. Would you like me to suggest replacement language for it?
+              </div>
+              <div class="ewn-msg-meta">✦ Nemo · Just now</div>
+            </div>
+          </div>
+          <div class="ewn-input-wrap">
+            <textarea class="ewn-input" id="ewn-input" placeholder="Ask Nemo anything about this contract…" rows="1" onkeydown="ewNemoKey(event)"></textarea>
+            <button class="ewn-send-btn" onclick="ewNemoSend()">↑</button>
+          </div>
+        </div>
+
+      </div><!-- /.ew-panel-body -->
+    </div><!-- /.ew-intel-panel -->
+
+  </div><!-- /.ew-body -->
+</div><!-- /#edit-window -->
+
+<!-- Save as New Version modal -->
+<div id="save-version-modal">
+  <div class="svm-box">
+    <div class="svm-title">Save as New Version</div>
+    <div class="svm-label">Comment<span>*</span></div>
+    <textarea class="svm-textarea" id="svm-comment">Updated Termination clause notice period and added internal comments on Payment Terms.</textarea>
+    <div class="svm-after">After saving…</div>
+    <div class="svm-checkbox-row">
+      <input type="checkbox" id="svm-turn"/>
+      <div>
+        <div class="svm-checkbox-label">Change turn to Counterparty</div>
+      </div>
+    </div>
+    <div class="svm-checkbox-row">
+      <input type="checkbox" id="svm-approvals" checked/>
+      <div>
+        <div class="svm-checkbox-label">Allow approvals to reset</div>
+        <div class="svm-checkbox-note">Reset excludes clause approvals. Visible to users with Workflow Management permissions only.</div>
+      </div>
+    </div>
+    <div class="svm-footer">
+      <button class="btn btn-ghost" onclick="closeSaveVersionModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="doSaveVersion()">Save</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
