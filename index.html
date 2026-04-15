@@ -315,7 +315,24 @@
     width: 220px; flex-shrink: 0; background: var(--white);
     border-right: 1px solid var(--border); overflow-y: auto;
     display: flex; flex-direction: column;
+    transition: width 0.2s ease, min-width 0.2s ease;
+    overflow: hidden;
   }
+  .s2-sidebar.collapsed { width: 0; min-width: 0; border-right: none; }
+  .s2-sidebar-toggle {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    left: 220px; z-index: 10;
+    width: 20px; height: 36px;
+    background: var(--white); border: 1px solid var(--border);
+    border-left: none; border-radius: 0 6px 6px 0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--mid); font-size: 10px;
+    transition: left 0.2s ease, background 0.1s;
+    flex-shrink: 0;
+  }
+  .s2-sidebar-toggle:hover { background: var(--surface); color: var(--dark); }
+  .s2-sidebar-toggle.collapsed { left: 0; }
+  .s2-body { position: relative; }
   .s2-sidebar-top {
     padding: 12px 14px 6px; display: flex; align-items: center; justify-content: space-between;
   }
@@ -1811,8 +1828,10 @@
   </div>
   <!-- Body: sidebar + main -->
   <div class="s2-body">
+    <!-- Sidebar toggle tab -->
+    <button class="s2-sidebar-toggle" id="s2SidebarToggle" onclick="s2ToggleSidebar()" title="Toggle sidebar">‹</button>
     <!-- LEFT SIDEBAR -->
-    <div class="s2-sidebar">
+    <div class="s2-sidebar" id="s2Sidebar">
       <div class="s2-sidebar-section">
         <div class="s2-sidebar-heading">Views</div>
         <div class="s2-nav-item active" onclick="s2SetView(this,'In progress')">
@@ -3431,6 +3450,16 @@
       row.style.display = 'none';
       btn.textContent = '▾';
     }
+  }
+
+  // ── Screen 2 sidebar toggle ────────────────────────────────
+  function s2ToggleSidebar() {
+    var sidebar = document.getElementById('s2Sidebar');
+    var toggle = document.getElementById('s2SidebarToggle');
+    var collapsed = sidebar.classList.toggle('collapsed');
+    toggle.classList.toggle('collapsed', collapsed);
+    toggle.textContent = collapsed ? '›' : '‹';
+    toggle.style.left = collapsed ? '0' : '220px';
   }
 
   // ── Screen 2 sidebar nav ───────────────────────────────────
