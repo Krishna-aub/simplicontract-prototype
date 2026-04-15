@@ -2194,16 +2194,10 @@
   </div>
   <!-- Stepper bar -->
   <div class="stepper-bar">
-    <!-- Back button -->
-    <button class="stepper-back" onclick="goto('s2')" style="background:none;border:none;padding:0">
-      <div class="stepper-back-arrow">←</div>
-      <div class="stepper-back-text">
-        <span class="stepper-back-label">Back to</span>
-        <span class="stepper-back-name">Contracts</span>
-      </div>
-    </button>
-    <!-- Lifecycle steps -->
-    <div style="display:flex;align-items:center;gap:0">
+    <!-- Back icon button -->
+    <button onclick="goto('s2')" title="Back to Contracts" style="background:none;border:1px solid var(--border);border-radius:6px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--dark);font-size:15px;flex-shrink:0">←</button>
+    <!-- Lifecycle steps pushed to right -->
+    <div style="display:flex;align-items:center;gap:0;margin-left:auto">
       <div class="step-item">
         <div class="step-circle active">1</div>
         <span class="step-label active">Create</span>
@@ -2224,8 +2218,6 @@
         <span class="step-label">Archive</span>
       </div>
     </div>
-    <!-- Spacer to balance left side -->
-    <div style="width:120px"></div>
   </div>
   <div class="page-content" style="overflow-y:auto">
     <div class="origin-content">
