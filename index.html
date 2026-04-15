@@ -2192,27 +2192,40 @@
       <div class="avatar">SM</div>
     </div>
   </div>
-  <!-- Stepper -->
-  <div class="stepper">
-    <div class="step-item">
-      <div class="step-circle active">1</div>
-      <span class="step-label active">Create</span>
+  <!-- Stepper bar -->
+  <div class="stepper-bar">
+    <!-- Back button -->
+    <button class="stepper-back" onclick="goto('s2')" style="background:none;border:none;padding:0">
+      <div class="stepper-back-arrow">←</div>
+      <div class="stepper-back-text">
+        <span class="stepper-back-label">Back to</span>
+        <span class="stepper-back-name">Contracts</span>
+      </div>
+    </button>
+    <!-- Lifecycle steps -->
+    <div style="display:flex;align-items:center;gap:0">
+      <div class="step-item">
+        <div class="step-circle active">1</div>
+        <span class="step-label active">Create</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item">
+        <div class="step-circle">2</div>
+        <span class="step-label">Review</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item">
+        <div class="step-circle">3</div>
+        <span class="step-label">Sign</span>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item">
+        <div class="step-circle">4</div>
+        <span class="step-label">Archive</span>
+      </div>
     </div>
-    <div class="step-connector"></div>
-    <div class="step-item">
-      <div class="step-circle">2</div>
-      <span class="step-label">Review</span>
-    </div>
-    <div class="step-connector"></div>
-    <div class="step-item">
-      <div class="step-circle">3</div>
-      <span class="step-label">Sign</span>
-    </div>
-    <div class="step-connector"></div>
-    <div class="step-item">
-      <div class="step-circle">4</div>
-      <span class="step-label">Archive</span>
-    </div>
+    <!-- Spacer to balance left side -->
+    <div style="width:120px"></div>
   </div>
   <div class="page-content" style="overflow-y:auto">
     <div class="origin-content">
