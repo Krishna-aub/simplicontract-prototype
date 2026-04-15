@@ -1738,6 +1738,62 @@
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
 
+  /* ── Vendor turn banner ───────────────────────────────────── */
+  .vendor-turn-banner {
+    flex-shrink: 0; background: #FFF8E1; border-top: 2px solid #FFD54F;
+    padding: 12px 16px;
+  }
+  .vtb-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .vtb-left { display: flex; align-items: flex-start; gap: 10px; }
+  .vtb-icon { color: #F57F17; flex-shrink: 0; margin-top: 2px; }
+  .vtb-title { font-size: 13px; font-weight: 700; color: #4E342E; }
+  .vtb-sub { font-size: 11px; color: #795548; margin-top: 2px; line-height: 1.4; }
+  .vtb-chips { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
+  .vtb-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #FF8F00; color: white; border-radius: 10px;
+    padding: 3px 9px; font-size: 11px; font-weight: 600;
+  }
+  .vtb-chip.secondary {
+    background: var(--surface); color: var(--mid); border: 1px solid var(--border);
+  }
+
+  /* ── Key Terms panel ──────────────────────────────────────── */
+  .kt-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px 10px; flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .kt-title { font-size: 15px; font-weight: 700; color: var(--dark); }
+  .kt-icon-btn {
+    background: none; border: none; cursor: pointer; color: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    padding: 3px; border-radius: 4px;
+  }
+  .kt-icon-btn:hover { background: var(--surface); }
+  .kt-body { flex: 1; overflow-y: auto; padding: 12px 16px; }
+  .kt-section-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--light); margin-bottom: 8px;
+  }
+  .kt-row {
+    display: flex; align-items: baseline; gap: 8px;
+    padding: 7px 0; border-bottom: 1px solid #F5F5F5;
+  }
+  .kt-label {
+    font-size: 12px; color: var(--dark); font-weight: 500; flex: 1; min-width: 0;
+  }
+  .kt-value {
+    font-size: 12px; color: var(--mid); flex-shrink: 0; max-width: 48%; text-align: right;
+  }
+  .kt-value.empty { color: #D0D0D0; font-style: italic; }
+  .kt-disclaimer {
+    flex-shrink: 0; padding: 10px 16px 14px;
+    font-size: 11px; color: var(--mid); line-height: 1.5;
+    border-top: 1px solid var(--border); background: #FFFDE7;
+  }
+  .kt-disclaimer strong { color: #C62828; }
+
   /* Save version modal */
   #save-version-modal {
     display: none; position: fixed; inset: 0; z-index: 600;
@@ -2937,6 +2993,7 @@
       <div class="panel-tabs">
         <button class="panel-tab active" onclick="switchTab(this,'nemo-panel-6')">✦ Nemo</button>
         <button class="panel-tab" onclick="switchTab(this,'details-panel-6')">Details</button>
+        <button class="panel-tab" onclick="switchTab(this,'keyterms-panel-6')">Key Terms</button>
         <button class="panel-tab" onclick="switchTab(this,'collab-panel-6')">Collaborate</button>
       </div>
       <div id="nemo-panel-6" class="panel-tab-content active">
@@ -3116,6 +3173,52 @@
       </div>
       <div id="details-summary" style="display:none"></div>
 
+      <!-- KEY TERMS PANEL -->
+      <div id="keyterms-panel-6" class="panel-tab-content">
+        <div class="kt-header">
+          <span class="kt-title">Key Terms</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="kt-icon-btn" title="Share">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="12" cy="3" r="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="13" r="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="4" cy="8" r="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 3.75L5.5 7.25M5.5 8.75l5 3.5" stroke="currentColor" stroke-width="1.3"/></svg>
+            </button>
+            <button class="kt-icon-btn" title="Edit">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M11.5 1.5a2.121 2.121 0 013 3L5 14H2v-3L11.5 1.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="kt-body">
+          <!-- Contract metadata -->
+          <div class="kt-section-label">Contract Details</div>
+          <div class="kt-row"><span class="kt-label">Effective Date</span><span class="kt-value">08-Apr-2026</span></div>
+          <div class="kt-row"><span class="kt-label">Contract End Date</span><span class="kt-value">30-Jun-2027</span></div>
+          <div class="kt-row"><span class="kt-label">Contract Value</span><span class="kt-value empty">—</span></div>
+          <div class="kt-row"><span class="kt-label">Currency</span><span class="kt-value">INR</span></div>
+          <div class="kt-row"><span class="kt-label">Payment Term</span><span class="kt-value">30 Days</span></div>
+          <div class="kt-row"><span class="kt-label">Does The Contract Have A Rebate</span><span class="kt-value">No</span></div>
+          <div class="kt-row"><span class="kt-label">Is Payment Term Below 60 Days</span><span class="kt-value">Yes</span></div>
+          <div class="kt-row"><span class="kt-label">Renewal / Auto Renewal</span><span class="kt-value empty">—</span></div>
+          <div class="kt-row"><span class="kt-label">What Is The Pricing Type</span><span class="kt-value">Fixed</span></div>
+          <div class="kt-row"><span class="kt-label">Is The Contract Take-Or-Pay</span><span class="kt-value">No</span></div>
+          <div class="kt-row"><span class="kt-label">What Is The Contract About</span><span class="kt-value">Wholesale supply of goods between Flipkart India Pvt Ltd and the counterparty vendor.</span></div>
+          <div class="kt-row"><span class="kt-label">Have You Procured Stamp Paper</span><span class="kt-value">No</span></div>
+          <div class="kt-row"><span class="kt-label">Exception Approval</span><span class="kt-value empty">—</span></div>
+
+          <!-- Vendor / counterparty -->
+          <div class="kt-section-label" style="margin-top:20px">Vendor / Counterparty</div>
+          <div class="kt-row"><span class="kt-label">Vendor Name</span><span class="kt-value">Test01</span></div>
+          <div class="kt-row"><span class="kt-label">Vendor ID</span><span class="kt-value">V-00412</span></div>
+          <div class="kt-row"><span class="kt-label">Country</span><span class="kt-value">India</span></div>
+          <div class="kt-row"><span class="kt-label">GST / Tax ID</span><span class="kt-value empty">—</span></div>
+          <div class="kt-row"><span class="kt-label">Primary Contact</span><span class="kt-value">vendor@test01.com</span></div>
+          <div class="kt-row"><span class="kt-label">Business Unit</span><span class="kt-value">B2B (Wholesale)</span></div>
+          <div class="kt-row"><span class="kt-label">Category</span><span class="kt-value">Wholesale Supply Agreement</span></div>
+          <div class="kt-row"><span class="kt-label">Sub-category</span><span class="kt-value empty">—</span></div>
+        </div>
+        <div class="kt-disclaimer">
+          <strong>Disclaimer:</strong> Our AI generated content helps you discover data swiftly. While this technology provides valuable assistance, we advise reviewing the original records and linked documents before making critical decisions.
+        </div>
+      </div>
+
       <div id="collab-panel-6" class="panel-tab-content" style="position:relative">
         <!-- Detail view overlay (replaces list when an item is opened) -->
         <div id="collab-detail" style="display:none;position:absolute;inset:0;z-index:20;background:var(--white);flex-direction:column;overflow:hidden">
@@ -3240,7 +3343,7 @@
         <button class="doc-act-btn icon-only" title="Share">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="12" cy="3" r="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="13" r="1.5" stroke="currentColor" stroke-width="1.3"/><circle cx="4" cy="8" r="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 3.75L5.5 7.25M5.5 8.75l5 3.5" stroke="currentColor" stroke-width="1.3"/></svg>
         </button>
-        <button class="doc-act-btn primary" onclick="" title="Send to Vendor">
+        <button class="doc-act-btn primary" id="send-to-vendor-btn" onclick="sendToVendor()" title="Send to Vendor">
           <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 8l12-6-4 6 4 6-12-6z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
           Send to Vendor
         </button>
@@ -3401,6 +3504,28 @@
         </div>
       </div>
       </div><!-- /.doc-scroll-area -->
+
+      <!-- Vendor turn banner (shown after Send to Vendor) -->
+      <div id="vendor-turn-banner" style="display:none" class="vendor-turn-banner">
+        <div class="vtb-inner">
+          <div class="vtb-left">
+            <div class="vtb-icon">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M10 6v4.5l2.5 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </div>
+            <div class="vtb-text">
+              <div class="vtb-title">Waiting for vendor to review</div>
+              <div class="vtb-sub">The contract has been sent. Editing is disabled until the vendor returns it.</div>
+            </div>
+          </div>
+          <div class="vtb-chips">
+            <div class="vtb-chip">
+              <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7 4v3.5l2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Vendor's turn
+            </div>
+            <div class="vtb-chip secondary">Test01 · Sent just now</div>
+          </div>
+        </div>
+      </div>
     </div><!-- /.contract-doc-panel -->
   </div><!-- /.workspace -->
 </div><!-- /.screen -->
@@ -4535,6 +4660,18 @@
   // ══════════════════════════════════════════════════════════
   // CONTRACT EDIT WINDOW
   // ══════════════════════════════════════════════════════════
+
+  function sendToVendor() {
+    // Hide Edit button
+    var editBtn = document.querySelector('.doc-act-btn[onclick*="openEditWindow"]');
+    if (editBtn) editBtn.style.display = 'none';
+    // Disable Send to Vendor button
+    var sendBtn = document.getElementById('send-to-vendor-btn');
+    if (sendBtn) { sendBtn.disabled = true; sendBtn.style.opacity = '0.5'; sendBtn.style.cursor = 'default'; }
+    // Show vendor turn banner
+    var banner = document.getElementById('vendor-turn-banner');
+    if (banner) banner.style.display = 'block';
+  }
 
   function openEditWindow() {
     document.getElementById('edit-window').classList.add('open');
