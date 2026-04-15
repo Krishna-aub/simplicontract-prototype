@@ -306,34 +306,205 @@
   td.muted { color: var(--mid); }
 
   /* ────────────────────────────────────────────────────────── */
-  /* SCREEN 2 — CONTRACTS LIST                                 */
+  /* SCREEN 2 — CONTRACTS DASHBOARD (Ironclad-style)           */
   /* ────────────────────────────────────────────────────────── */
-  .contracts-header {
+  .s2-body { display: flex; flex: 1; min-height: 0; overflow: hidden; }
+
+  /* Left sidebar */
+  .s2-sidebar {
+    width: 220px; flex-shrink: 0; background: var(--white);
+    border-right: 1px solid var(--border); overflow-y: auto;
+    display: flex; flex-direction: column;
+  }
+  .s2-sidebar-top {
+    padding: 12px 14px 6px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .s2-sidebar-top-label { font-size: 11px; font-weight: 700; color: var(--light); text-transform: uppercase; letter-spacing: 0.06em; }
+  .s2-sidebar-section { margin-bottom: 4px; }
+  .s2-sidebar-section-label {
+    padding: 8px 16px 4px; font-size: 10px; font-weight: 700; color: var(--light);
+    text-transform: uppercase; letter-spacing: 0.07em;
+  }
+  .s2-nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 16px; font-size: 13px; color: var(--dark);
+    cursor: pointer; border-radius: 0; transition: background 0.12s;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .s2-nav-item:hover { background: var(--surface); }
+  .s2-nav-item.active { background: #E8F5E9; color: var(--green); font-weight: 600; }
+  .s2-nav-item .s2-nav-count {
+    margin-left: auto; font-size: 11px; color: var(--light); font-weight: 400;
+  }
+  .s2-nav-item.active .s2-nav-count { color: var(--green); }
+  .s2-nav-icon { font-size: 13px; width: 16px; text-align: center; flex-shrink: 0; }
+
+  /* Main content */
+  .s2-main { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--white); }
+
+  /* Main header */
+  .s2-main-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 24px;
-    background: var(--white);
-    border-bottom: 1px solid var(--border);
+    padding: 16px 24px 12px; flex-shrink: 0;
   }
-  .contracts-header h1 { font-size: 20px; font-weight: 700; }
-  .filter-bar {
+  .s2-main-title { font-size: 20px; font-weight: 700; color: var(--dark); }
+  .s2-header-actions { display: flex; align-items: center; gap: 8px; }
+  .s2-new-wrap { position: relative; }
+  .s2-new-btn {
+    display: flex; align-items: center; gap: 0;
+    background: var(--dark); color: white; border: none; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer; overflow: hidden;
+  }
+  .s2-new-main { padding: 7px 14px; }
+  .s2-new-caret {
+    padding: 7px 10px; border-left: 1px solid rgba(255,255,255,0.15);
+    display: flex; align-items: center;
+  }
+  .s2-new-btn:hover .s2-new-main, .s2-new-btn:hover .s2-new-caret { background: rgba(255,255,255,0.08); }
+  .s2-new-dropdown {
+    display: none; position: absolute; top: calc(100% + 4px); right: 0;
+    background: var(--white); border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12); z-index: 200; min-width: 200px; overflow: hidden;
+  }
+  .s2-new-dropdown.open { display: block; }
+  .s2-dd-item {
     display: flex; align-items: center; gap: 10px;
-    padding: 10px 24px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
+    padding: 10px 14px; font-size: 13px; color: var(--dark); cursor: pointer;
+    transition: background 0.12s;
   }
-  .filter-bar input[type="text"] { max-width: 280px; }
-  .filter-bar select { max-width: 140px; }
-  .contracts-table-wrap { flex: 1; overflow-y: auto; background: var(--white); }
-  tr.child-row td { background: var(--surface); }
-  tr.child-row td:first-child { padding-left: 36px; position: relative; }
-  tr.child-row td:first-child::before {
-    content: '';
-    position: absolute; left: 24px; top: 0; bottom: 50%;
-    border-left: 2px solid var(--border);
-    border-bottom: 2px solid var(--border);
-    width: 8px;
+  .s2-dd-item:hover { background: var(--surface); }
+  .s2-dd-item-icon { width: 28px; height: 28px; border-radius: 6px; background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+
+  /* Filter bar */
+  .s2-filter-bar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 0 24px 10px; flex-shrink: 0; flex-wrap: wrap;
   }
+  .s2-filter-btn {
+    display: flex; align-items: center; gap: 4px;
+    background: var(--white); border: 1px solid var(--border); border-radius: 6px;
+    padding: 5px 10px; font-size: 12px; font-weight: 500; color: var(--dark);
+    cursor: pointer; transition: background 0.12s;
+  }
+  .s2-filter-btn:hover { background: var(--surface); }
+  .s2-filter-btn.active { border-color: var(--teal); background: var(--teal-bg); color: var(--teal); }
+  .s2-search-btn { background: none; border: none; cursor: pointer; color: var(--mid); font-size: 16px; padding: 4px 6px; border-radius: 6px; }
+  .s2-search-btn:hover { background: var(--surface); }
+  .s2-filter-sep { height: 18px; width: 1px; background: var(--border); margin: 0 2px; }
+  .s2-save-btn { background: none; border: none; cursor: pointer; font-size: 12px; color: var(--mid); display: flex; align-items: center; gap: 4px; padding: 5px 8px; border-radius: 6px; }
+  .s2-save-btn:hover { background: var(--surface); }
+
+  /* Contracts table */
+  .s2-table-wrap { flex: 1; overflow-y: auto; border-top: 1px solid var(--border); }
+  .s2-table { width: 100%; border-collapse: collapse; }
+  .s2-table thead th {
+    padding: 8px 12px; font-size: 10px; font-weight: 700; color: var(--light);
+    text-transform: uppercase; letter-spacing: 0.06em; background: var(--surface);
+    border-bottom: 1px solid var(--border); white-space: nowrap; text-align: left;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .s2-table tbody tr { cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  .s2-table tbody tr:hover { background: #FAFAFA; }
+  .s2-table tbody td { padding: 10px 12px; font-size: 13px; color: var(--dark); vertical-align: middle; }
+  .s2-table tbody td.muted { color: var(--mid); }
+
+  /* Stage dots */
+  .stage-dots { display: flex; align-items: center; gap: 3px; }
+  .stage-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .stage-dot.done { background: var(--teal); }
+  .stage-dot.current { background: var(--teal); box-shadow: 0 0 0 2px rgba(0,137,123,0.25); }
+  .stage-dot.pending { background: transparent; border: 1.5px solid #D0D0D0; }
+  .stage-label { font-size: 11px; color: var(--mid); margin-left: 6px; }
+
+  /* Turn chip */
+  .turn-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--teal-bg); color: var(--teal); border-radius: 10px;
+    padding: 2px 8px; font-size: 11px; font-weight: 600;
+  }
+  .turn-chip.vendor { background: #EDE7F6; color: #7B1FA2; }
+  .turn-chip.completed { background: var(--green-bg); color: var(--green); }
+
+  /* Assignee avatar row */
+  .assignee-avatars { display: flex; gap: -4px; }
+  .s2-avatar {
+    width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; color: white; margin-left: -4px;
+    flex-shrink: 0;
+  }
+  .s2-avatar:first-child { margin-left: 0; }
+
+  /* Pagination */
+  .s2-pagination {
+    flex-shrink: 0; display: flex; align-items: center; gap: 4px;
+    padding: 10px 24px; border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--mid);
+  }
+  .s2-page-btn {
+    background: none; border: 1px solid var(--border); border-radius: 5px;
+    padding: 3px 8px; font-size: 12px; color: var(--mid); cursor: pointer;
+  }
+  .s2-page-btn:hover { background: var(--surface); }
+  .s2-page-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+  .s2-page-btn:disabled { opacity: 0.35; cursor: default; }
+  .s2-pagination { justify-content: space-between; }
+
   .expand-btn { background: none; border: none; cursor: pointer; color: var(--mid); font-size: 12px; padding: 0 4px; }
+
+  /* Sidebar section heading */
+  .s2-sidebar-heading {
+    padding: 12px 16px 4px; font-size: 10px; font-weight: 700; color: var(--light);
+    text-transform: uppercase; letter-spacing: 0.07em;
+  }
+
+  /* Filter pills */
+  .s2-filter-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--white); border: 1px solid var(--border); border-radius: 14px;
+    padding: 4px 11px; font-size: 12px; font-weight: 500; color: var(--dark);
+    cursor: pointer; transition: all 0.12s; white-space: nowrap;
+  }
+  .s2-filter-pill:hover { background: var(--surface); }
+  .s2-filter-pill.active { border-color: var(--dark); background: var(--dark); color: white; }
+
+  /* New button split style */
+  .s2-new-btn {
+    display: inline-flex; align-items: center;
+    background: var(--dark); color: white; border: none; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer; overflow: hidden;
+    user-select: none;
+  }
+  .s2-new-btn > span { padding: 7px 12px; transition: background 0.1s; }
+  .s2-new-btn > span:hover { background: rgba(255,255,255,0.1); }
+  .s2-new-btn-divider { width: 1px; background: rgba(255,255,255,0.2); padding: 0 !important; align-self: stretch; }
+  .s2-new-btn-arrow { font-size: 10px; padding: 7px 9px !important; }
+
+  /* New dropdown items */
+  .s2-new-dropdown-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 9px 14px; font-size: 13px; color: var(--dark); cursor: pointer;
+    transition: background 0.12s;
+  }
+  .s2-new-dropdown-item:hover { background: var(--surface); }
+  .s2-new-dropdown-item svg { color: var(--mid); flex-shrink: 0; }
+
+  /* Turn chip variants */
+  .turn-chip.turn-internal { background: #E3F2FD; color: #1565C0; }
+  .turn-chip.turn-external { background: #FFF3E0; color: #E65100; }
+  .turn-chip.turn-waiting { background: #F3E5F5; color: #7B1FA2; }
+
+  /* Stage dot active state */
+  .stage-dot.active {
+    background: var(--teal); box-shadow: 0 0 0 2px white, 0 0 0 3.5px var(--teal);
+  }
+  /* Unset dot (no class) */
+  .stage-dot:not(.done):not(.active) {
+    background: transparent; border: 1.5px solid #D0D0D0;
+  }
+
+  /* Table row hover */
+  .s2-row:hover td { background: #F7F9FC; }
 
   /* ────────────────────────────────────────────────────────── */
   /* SCREEN 3 — ORIGIN SELECTION                               */
@@ -1620,7 +1791,8 @@
 <!-- ════════════════════════════════════════════════════════════
      SCREEN 2 — CONTRACTS LIST
 ════════════════════════════════════════════════════════════ -->
-<div id="s2" class="screen">
+<div id="s2" class="screen" style="flex-direction:column;overflow:hidden">
+  <!-- Top bar -->
   <div class="topbar">
     <a class="logo" href="#"><div class="logo-mark">S</div></a>
     <div class="topbar-nav">
@@ -1637,132 +1809,384 @@
       <div class="avatar">SM</div>
     </div>
   </div>
-  <div class="contracts-header">
-    <h1>Contracts</h1>
-    <div style="display:flex;gap:10px">
-      <button class="btn btn-outline">Import</button>
-      <button class="btn btn-primary" onclick="goto('s3')">+ Add New</button>
+  <!-- Body: sidebar + main -->
+  <div class="s2-body">
+    <!-- LEFT SIDEBAR -->
+    <div class="s2-sidebar">
+      <div class="s2-sidebar-section">
+        <div class="s2-sidebar-heading">Views</div>
+        <div class="s2-nav-item active" onclick="s2SetView(this,'In progress')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7 4v3.5l2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          In progress
+          <span class="s2-nav-count">8</span>
+        </div>
+        <div class="s2-nav-item" onclick="s2SetView(this,'Owned by me')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 12c0-2.761 2.239-5 5-5s5 2.239 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Owned by me
+          <span class="s2-nav-count">12</span>
+        </div>
+        <div class="s2-nav-item" onclick="s2SetView(this,'Need my signature')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 10h8M3 7h5M3 4h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Need my signature
+          <span class="s2-nav-count">3</span>
+        </div>
+        <div class="s2-nav-item" onclick="s2SetView(this,'Assigned to me')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 7l1.5 1.5L9 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Assigned to me
+          <span class="s2-nav-count">5</span>
+        </div>
+        <div class="s2-nav-item" onclick="s2SetView(this,'Participating in')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="5" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="5" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M1 12c0-2 1.791-3.5 4-3.5s4 1.5 4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 8.5c2.209 0 4 1.5 4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Participating in
+          <span class="s2-nav-count">7</span>
+        </div>
+        <div class="s2-nav-item" onclick="s2SetView(this,'Paused')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 4.5v5M8.5 4.5v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Paused
+          <span class="s2-nav-count">2</span>
+        </div>
+        <div class="s2-nav-item" onclick="s2SetView(this,'No activity')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          No activity
+          <span class="s2-nav-count">4</span>
+        </div>
+        <div class="s2-nav-item" onclick="s2SetView(this,'Completed')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 7l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Completed
+          <span class="s2-nav-count">186</span>
+        </div>
+      </div>
+      <div class="s2-sidebar-section">
+        <div class="s2-sidebar-heading">Workflows</div>
+        <div class="s2-nav-item" onclick="s2SetView(this,'NDA')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="3" y="1" width="8" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 5h4M5 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          NDA
+        </div>
+        <div class="s2-nav-item" onclick="s2SetView(this,'Vendor Agreement')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="3" y="1" width="8" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 5h4M5 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Vendor Agreement
+        </div>
+        <div class="s2-nav-item" onclick="s2SetView(this,'MSA')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="3" y="1" width="8" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 5h4M5 8h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          MSA
+        </div>
+      </div>
+      <div class="s2-sidebar-section">
+        <div class="s2-sidebar-heading">Repository</div>
+        <div class="s2-nav-item" onclick="s2SetView(this,'All contracts')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 3h10M2 7h10M2 11h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          All contracts
+          <span class="s2-nav-count">247</span>
+        </div>
+      </div>
+      <div class="s2-sidebar-section">
+        <div class="s2-sidebar-heading" style="display:flex;align-items:center;justify-content:space-between">
+          My Views
+          <span style="font-size:16px;cursor:pointer;color:var(--mid);line-height:1">+</span>
+        </div>
+        <div class="s2-nav-item" onclick="s2SetView(this,'Legal Review Q2')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 3h10M2 7h10M2 11h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Legal Review Q2
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="filter-bar">
-    <input type="text" placeholder="Search contracts…" style="max-width:260px" />
-    <div class="input-wrap" style="max-width:140px">
-      <select><option>Status</option><option>Active</option><option>Expired</option><option>Pending</option></select>
-      <span class="select-arrow">▾</span>
+
+    <!-- MAIN CONTENT -->
+    <div class="s2-main">
+      <!-- Header row -->
+      <div class="s2-main-header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <h2 id="s2-view-title" style="font-size:18px;font-weight:700;color:var(--dark);margin:0">In progress</h2>
+          <span style="font-size:13px;color:var(--mid)">8 contracts</span>
+        </div>
+        <!-- New split button -->
+        <div style="position:relative">
+          <div class="s2-new-btn" id="s2NewBtn">
+            <span onclick="goto('s3')">+ New</span>
+            <span class="s2-new-btn-divider"></span>
+            <span class="s2-new-btn-arrow" onclick="s2ToggleNewDrop()">▾</span>
+          </div>
+          <div class="s2-new-dropdown" id="s2NewDrop">
+            <div class="s2-new-dropdown-item" onclick="goto('s3')">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7 4v6M4 7h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Start workflow
+            </div>
+            <div class="s2-new-dropdown-item">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 10V4a1 1 0 011-1h5l3 3v4a1 1 0 01-1 1H3a1 1 0 01-1-1z" stroke="currentColor" stroke-width="1.5"/><path d="M8 3v3h3" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+              Upload contracts
+            </div>
+            <div class="s2-new-dropdown-item">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2H5a1 1 0 00-1 1v8a1 1 0 001 1h7a1 1 0 001-1V5l-4-3z" stroke="currentColor" stroke-width="1.5"/><path d="M8 2v4h4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M5 8h4M5 10h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Upload for signature
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter pills -->
+      <div class="s2-filter-bar">
+        <button class="s2-filter-pill active">Stage</button>
+        <button class="s2-filter-pill">Type</button>
+        <button class="s2-filter-pill">Counterparty</button>
+        <button class="s2-filter-pill">People</button>
+        <button class="s2-filter-pill">Date</button>
+        <button class="s2-filter-pill">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 3h10M3 6h6M5 9h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          All filters
+        </button>
+        <div style="flex:1"></div>
+        <button class="s2-filter-pill">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1h10v2L7 7v4l-2-1V7L1 3V1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          Sort
+        </button>
+        <button class="s2-filter-pill">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="6" cy="6" r="1" fill="currentColor"/><circle cx="9" cy="6" r="1" fill="currentColor"/></svg>
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="s2-table-wrap">
+        <table class="s2-table">
+          <thead>
+            <tr>
+              <th style="width:32px"><input type="checkbox" style="width:13px;height:13px;cursor:pointer"></th>
+              <th>Contract name</th>
+              <th>Stage</th>
+              <th>Turn</th>
+              <th style="text-align:center">No. Turns</th>
+              <th>Assignee</th>
+              <th>Last activity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1 -->
+            <tr onclick="goto('s6')" class="s2-row">
+              <td><input type="checkbox" style="width:13px;height:13px;cursor:pointer" onclick="event.stopPropagation()"></td>
+              <td>
+                <div style="font-weight:500;color:var(--dark);font-size:13px">FLIP_FINAL_TEST1_with_signature</div>
+                <div style="font-size:11px;color:var(--mid)">C-1259 · Test01</div>
+              </td>
+              <td>
+                <div class="stage-dots">
+                  <span class="stage-dot done" title="Intake"></span>
+                  <span class="stage-dot done" title="Draft"></span>
+                  <span class="stage-dot active" title="Review"></span>
+                  <span class="stage-dot" title="Signature"></span>
+                  <span class="stage-dot" title="Executed"></span>
+                </div>
+                <div style="font-size:10px;color:var(--mid);margin-top:3px">Review</div>
+              </td>
+              <td><span class="turn-chip turn-internal">Internal</span></td>
+              <td style="text-align:center;font-size:13px;color:var(--mid)">3</td>
+              <td>
+                <div style="display:flex;gap:-4px">
+                  <div class="s2-avatar" title="Surya Menon" style="background:#4CAF50">SM</div>
+                  <div class="s2-avatar" title="Rohan Jha" style="background:#2196F3;margin-left:-6px">RJ</div>
+                </div>
+              </td>
+              <td style="font-size:12px;color:var(--mid)">2 hours ago</td>
+            </tr>
+            <!-- Row 2 -->
+            <tr onclick="goto('s6')" class="s2-row">
+              <td><input type="checkbox" style="width:13px;height:13px;cursor:pointer" onclick="event.stopPropagation()"></td>
+              <td>
+                <div style="font-weight:500;color:var(--dark);font-size:13px">FLIP_FINAL_TEST1</div>
+                <div style="font-size:11px;color:var(--mid)">C-1258 · Test01</div>
+              </td>
+              <td>
+                <div class="stage-dots">
+                  <span class="stage-dot done" title="Intake"></span>
+                  <span class="stage-dot active" title="Draft"></span>
+                  <span class="stage-dot" title="Review"></span>
+                  <span class="stage-dot" title="Signature"></span>
+                  <span class="stage-dot" title="Executed"></span>
+                </div>
+                <div style="font-size:10px;color:var(--mid);margin-top:3px">Draft</div>
+              </td>
+              <td><span class="turn-chip turn-external">External</span></td>
+              <td style="text-align:center;font-size:13px;color:var(--mid)">1</td>
+              <td>
+                <div style="display:flex">
+                  <div class="s2-avatar" title="Surya Menon" style="background:#4CAF50">SM</div>
+                </div>
+              </td>
+              <td style="font-size:12px;color:var(--mid)">Yesterday</td>
+            </tr>
+            <!-- Row 3 -->
+            <tr onclick="goto('s6')" class="s2-row">
+              <td><input type="checkbox" style="width:13px;height:13px;cursor:pointer" onclick="event.stopPropagation()"></td>
+              <td>
+                <div style="font-weight:500;color:var(--dark);font-size:13px">KR-Test-Document_1</div>
+                <div style="font-size:11px;color:var(--mid)">C-1255 · Test01</div>
+              </td>
+              <td>
+                <div class="stage-dots">
+                  <span class="stage-dot done" title="Intake"></span>
+                  <span class="stage-dot done" title="Draft"></span>
+                  <span class="stage-dot done" title="Review"></span>
+                  <span class="stage-dot active" title="Signature"></span>
+                  <span class="stage-dot" title="Executed"></span>
+                </div>
+                <div style="font-size:10px;color:var(--mid);margin-top:3px">Signature</div>
+              </td>
+              <td><span class="turn-chip turn-internal">Internal</span></td>
+              <td style="text-align:center;font-size:13px;color:var(--mid)">5</td>
+              <td>
+                <div style="display:flex">
+                  <div class="s2-avatar" title="Rohan Jha" style="background:#2196F3">RJ</div>
+                  <div class="s2-avatar" title="Priya Singh" style="background:#9C27B0;margin-left:-6px">PS</div>
+                  <div class="s2-avatar" title="Amit Kumar" style="background:#FF9800;margin-left:-6px">AK</div>
+                </div>
+              </td>
+              <td style="font-size:12px;color:var(--mid)">3 days ago</td>
+            </tr>
+            <!-- Row 4 -->
+            <tr onclick="goto('s6')" class="s2-row">
+              <td><input type="checkbox" style="width:13px;height:13px;cursor:pointer" onclick="event.stopPropagation()"></td>
+              <td>
+                <div style="font-weight:500;color:var(--dark);font-size:13px">KR-Test-Document_2</div>
+                <div style="font-size:11px;color:var(--mid)">C-1256 · Test01</div>
+              </td>
+              <td>
+                <div class="stage-dots">
+                  <span class="stage-dot done" title="Intake"></span>
+                  <span class="stage-dot active" title="Draft"></span>
+                  <span class="stage-dot" title="Review"></span>
+                  <span class="stage-dot" title="Signature"></span>
+                  <span class="stage-dot" title="Executed"></span>
+                </div>
+                <div style="font-size:10px;color:var(--mid);margin-top:3px">Draft</div>
+              </td>
+              <td><span class="turn-chip turn-external">External</span></td>
+              <td style="text-align:center;font-size:13px;color:var(--mid)">2</td>
+              <td>
+                <div style="display:flex">
+                  <div class="s2-avatar" title="Surya Menon" style="background:#4CAF50">SM</div>
+                  <div class="s2-avatar" title="Rohan Jha" style="background:#2196F3;margin-left:-6px">RJ</div>
+                </div>
+              </td>
+              <td style="font-size:12px;color:var(--mid)">1 week ago</td>
+            </tr>
+            <!-- Row 5 -->
+            <tr onclick="goto('s6')" class="s2-row">
+              <td><input type="checkbox" style="width:13px;height:13px;cursor:pointer" onclick="event.stopPropagation()"></td>
+              <td>
+                <div style="font-weight:500;color:var(--dark);font-size:13px">KR-Test-Document</div>
+                <div style="font-size:11px;color:var(--mid)">C-1254 · Test01</div>
+              </td>
+              <td>
+                <div class="stage-dots">
+                  <span class="stage-dot done" title="Intake"></span>
+                  <span class="stage-dot done" title="Draft"></span>
+                  <span class="stage-dot active" title="Review"></span>
+                  <span class="stage-dot" title="Signature"></span>
+                  <span class="stage-dot" title="Executed"></span>
+                </div>
+                <div style="font-size:10px;color:var(--mid);margin-top:3px">Review</div>
+              </td>
+              <td><span class="turn-chip turn-internal">Internal</span></td>
+              <td style="text-align:center;font-size:13px;color:var(--mid)">4</td>
+              <td>
+                <div style="display:flex">
+                  <div class="s2-avatar" title="Priya Singh" style="background:#9C27B0">PS</div>
+                </div>
+              </td>
+              <td style="font-size:12px;color:var(--mid)">2 weeks ago</td>
+            </tr>
+            <!-- Row 6 -->
+            <tr onclick="goto('s6')" class="s2-row">
+              <td><input type="checkbox" style="width:13px;height:13px;cursor:pointer" onclick="event.stopPropagation()"></td>
+              <td>
+                <div style="font-weight:500;color:var(--dark);font-size:13px">TestCreate</div>
+                <div style="font-size:11px;color:var(--mid)">C-746 · Test67</div>
+              </td>
+              <td>
+                <div class="stage-dots">
+                  <span class="stage-dot done" title="Intake"></span>
+                  <span class="stage-dot done" title="Draft"></span>
+                  <span class="stage-dot done" title="Review"></span>
+                  <span class="stage-dot active" title="Signature"></span>
+                  <span class="stage-dot" title="Executed"></span>
+                </div>
+                <div style="font-size:10px;color:var(--mid);margin-top:3px">Signature</div>
+              </td>
+              <td><span class="turn-chip turn-waiting">Waiting</span></td>
+              <td style="text-align:center;font-size:13px;color:var(--mid)">6</td>
+              <td>
+                <div style="display:flex">
+                  <div class="s2-avatar" title="Surya Menon" style="background:#4CAF50">SM</div>
+                  <div class="s2-avatar" title="Amit Kumar" style="background:#FF9800;margin-left:-6px">AK</div>
+                </div>
+              </td>
+              <td style="font-size:12px;color:var(--mid)">3 weeks ago</td>
+            </tr>
+            <!-- Row 7 -->
+            <tr onclick="goto('s6')" class="s2-row">
+              <td><input type="checkbox" style="width:13px;height:13px;cursor:pointer" onclick="event.stopPropagation()"></td>
+              <td>
+                <div style="font-weight:500;color:var(--dark);font-size:13px">Brilio_test_S.B.1</div>
+                <div style="font-size:11px;color:var(--mid)">C-1257 · Test01</div>
+              </td>
+              <td>
+                <div class="stage-dots">
+                  <span class="stage-dot done" title="Intake"></span>
+                  <span class="stage-dot active" title="Draft"></span>
+                  <span class="stage-dot" title="Review"></span>
+                  <span class="stage-dot" title="Signature"></span>
+                  <span class="stage-dot" title="Executed"></span>
+                </div>
+                <div style="font-size:10px;color:var(--mid);margin-top:3px">Draft</div>
+              </td>
+              <td><span class="turn-chip turn-external">External</span></td>
+              <td style="text-align:center;font-size:13px;color:var(--mid)">2</td>
+              <td>
+                <div style="display:flex">
+                  <div class="s2-avatar" title="Rohan Jha" style="background:#2196F3">RJ</div>
+                </div>
+              </td>
+              <td style="font-size:12px;color:var(--mid)">1 month ago</td>
+            </tr>
+            <!-- Row 8 -->
+            <tr onclick="goto('s6')" class="s2-row">
+              <td><input type="checkbox" style="width:13px;height:13px;cursor:pointer" onclick="event.stopPropagation()"></td>
+              <td>
+                <div style="font-weight:500;color:var(--dark);font-size:13px">Test_Fk_Issue_AO</div>
+                <div style="font-size:11px;color:var(--mid)">C-3860 · Contessa Inc.</div>
+              </td>
+              <td>
+                <div class="stage-dots">
+                  <span class="stage-dot done" title="Intake"></span>
+                  <span class="stage-dot done" title="Draft"></span>
+                  <span class="stage-dot active" title="Review"></span>
+                  <span class="stage-dot" title="Signature"></span>
+                  <span class="stage-dot" title="Executed"></span>
+                </div>
+                <div style="font-size:10px;color:var(--mid);margin-top:3px">Review</div>
+              </td>
+              <td><span class="turn-chip turn-internal">Internal</span></td>
+              <td style="text-align:center;font-size:13px;color:var(--mid)">3</td>
+              <td>
+                <div style="display:flex">
+                  <div class="s2-avatar" title="Priya Singh" style="background:#9C27B0">PS</div>
+                  <div class="s2-avatar" title="Surya Menon" style="background:#4CAF50;margin-left:-6px">SM</div>
+                </div>
+              </td>
+              <td style="font-size:12px;color:var(--mid)">1 month ago</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="s2-pagination">
+        <span style="font-size:12px;color:var(--mid)">Showing 1–8 of 8</span>
+        <div style="display:flex;gap:4px">
+          <button class="s2-page-btn" disabled>‹</button>
+          <button class="s2-page-btn active">1</button>
+          <button class="s2-page-btn" disabled>›</button>
+        </div>
+      </div>
     </div>
-    <div class="input-wrap" style="max-width:180px">
-      <select><option>Category</option><option>Wholesale Supply</option><option>VPL Agreement</option><option>Transportation</option></select>
-      <span class="select-arrow">▾</span>
-    </div>
-    <button class="btn btn-ghost btn-sm">📅 Date range</button>
-  </div>
-  <div class="contracts-table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th style="width:32px"></th>
-          <th>Contract Number</th>
-          <th>Name</th>
-          <th>Created Date</th>
-          <th>Category</th>
-          <th>Client or Supplier</th>
-          <th>Status</th>
-          <th>Business Unit</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr onclick="goto('s6')">
-          <td><button class="expand-btn" onclick="toggleChild(event,'child-1259')">▾</button></td>
-          <td class="mono">C-1259</td>
-          <td>FLIP_FINAL_TEST1_with_signature</td>
-          <td class="muted">02-Apr-2026</td>
-          <td class="muted">Vendor | Wholesale Supply Agreement</td>
-          <td class="muted">Test01</td>
-          <td><span class="pill pill-green">Active</span></td>
-          <td class="muted">B2B(Wholesale)</td>
-        </tr>
-        <tr id="child-1259" class="child-row" style="display:none" onclick="goto('s6')">
-          <td></td>
-          <td class="mono">--</td>
-          <td>FLIP_FINAL_TEST</td>
-          <td class="muted">02-Apr-2026</td>
-          <td class="muted">Vendor | Wholesale Supply Agreement</td>
-          <td class="muted">Test01</td>
-          <td><span class="pill pill-green">Active</span></td>
-          <td class="muted">B2B(Wholesale)</td>
-        </tr>
-        <tr onclick="goto('s6')">
-          <td></td>
-          <td class="mono">C-1258</td>
-          <td>FLIP_FINAL_TEST1</td>
-          <td class="muted">02-Apr-2026</td>
-          <td class="muted">Vendor | Wholesale Supply Agreement</td>
-          <td class="muted">Test01</td>
-          <td><span class="pill pill-green">Active</span></td>
-          <td class="muted">B2B(Wholesale)</td>
-        </tr>
-        <tr onclick="goto('s6')">
-          <td></td>
-          <td class="mono">C-1257</td>
-          <td style="padding-left:24px;color:var(--mid)">↳ Brilio_test_S.B.1</td>
-          <td class="muted">02-Apr-2026</td>
-          <td class="muted">Vendor | Wholesale Supply Agreement</td>
-          <td class="muted">Test01</td>
-          <td><span class="pill pill-green">Active</span></td>
-          <td class="muted">B2B(Wholesale)</td>
-        </tr>
-        <tr onclick="goto('s6')">
-          <td></td>
-          <td class="mono">C-1255</td>
-          <td>KR-Test-Document_1</td>
-          <td class="muted">01-Apr-2026</td>
-          <td class="muted">Vendor | Wholesale Supply Agreement</td>
-          <td class="muted">Test01</td>
-          <td><span class="pill pill-green">Active</span></td>
-          <td class="muted">B2B(Wholesale)</td>
-        </tr>
-        <tr onclick="goto('s6')">
-          <td></td>
-          <td class="mono">C-1256</td>
-          <td>KR-Test-Document_2</td>
-          <td class="muted">01-Apr-2026</td>
-          <td class="muted">Vendor | Wholesale Supply Agreement</td>
-          <td class="muted">Test01</td>
-          <td><span class="pill pill-red">Expired</span></td>
-          <td class="muted">B2B(Wholesale)</td>
-        </tr>
-        <tr onclick="goto('s6')">
-          <td></td>
-          <td class="mono">C-1254</td>
-          <td>KR-Test-Document</td>
-          <td class="muted">01-Apr-2026</td>
-          <td class="muted">Vendor | Wholesale Supply Agreement</td>
-          <td class="muted">Test01</td>
-          <td><span class="pill pill-green">Active</span></td>
-          <td class="muted">B2B(Wholesale)</td>
-        </tr>
-        <tr onclick="goto('s6')">
-          <td><button class="expand-btn" onclick="toggleChild(event,'child-746')">▾</button></td>
-          <td class="mono">C-746</td>
-          <td>TestCreate</td>
-          <td class="muted">16-Sep-2024</td>
-          <td class="muted">Vendor | 2Gud-VPL Agreement Template</td>
-          <td class="muted">Test67</td>
-          <td><span class="pill pill-green">Active</span></td>
-          <td class="muted">B2B(Wholesale)</td>
-        </tr>
-        <tr id="child-746" class="child-row" style="display:none">
-          <td></td>
-          <td class="mono">C-3860</td>
-          <td style="padding-left:24px;color:var(--mid)">↳ Test_Fk_Issue_AO</td>
-          <td class="muted">17-Jan-2023</td>
-          <td class="muted">Vendor | Wholesale Supply Agreement</td>
-          <td class="muted">Contessa Inc.</td>
-          <td><span class="pill pill-green">Active</span></td>
-          <td class="muted">B2B(Wholesale)</td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 </div>
 
@@ -3021,6 +3445,30 @@
       btn.textContent = '▾';
     }
   }
+
+  // ── Screen 2 sidebar nav ───────────────────────────────────
+  function s2SetView(el, viewName) {
+    document.querySelectorAll('#s2 .s2-nav-item').forEach(function(n) { n.classList.remove('active'); });
+    el.classList.add('active');
+    var t = document.getElementById('s2-view-title');
+    if (t) t.textContent = viewName;
+    // close dropdown if open
+    var d = document.getElementById('s2NewDrop');
+    if (d) d.classList.remove('open');
+  }
+
+  // ── Screen 2 New split button dropdown ────────────────────
+  function s2ToggleNewDrop() {
+    var d = document.getElementById('s2NewDrop');
+    if (d) d.classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    var d = document.getElementById('s2NewDrop');
+    if (d && d.classList.contains('open')) {
+      var btn = document.getElementById('s2NewBtn');
+      if (!btn.contains(e.target)) d.classList.remove('open');
+    }
+  });
 
   // ── Origin card selection ──────────────────────────────────
   function selectOrigin(type) {
