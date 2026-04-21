@@ -1757,6 +1757,15 @@
   .vtb-chip.secondary {
     background: var(--surface); color: var(--mid); border: 1px solid var(--border);
   }
+  .vtb-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+  .vtb-sent-info { font-size: 10px; color: #A1887F; }
+  .vtb-recall-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: white; color: #E65100; border: 1.5px solid #E65100;
+    border-radius: 10px; padding: 3px 10px; font-size: 11px; font-weight: 600;
+    cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .vtb-recall-btn:hover { background: #E65100; color: white; }
 
   /* ── Key Terms panel ──────────────────────────────────────── */
   .kt-header {
@@ -1835,7 +1844,7 @@
       <button class="navtab" onclick="goto('s2')">Contracts</button>
       <button class="navtab">Tasks</button>
       <button class="navtab">Deliverables</button>
-      <button class="navtab">Analytics</button>
+      <button class="navtab">Approvals</button>
       <button class="navtab">Settings</button>
     </div>
     <div class="topbar-right">
@@ -1930,7 +1939,7 @@
       <button class="navtab active" onclick="goto('s2')">Contracts</button>
       <button class="navtab">Tasks</button>
       <button class="navtab">Deliverables</button>
-      <button class="navtab">Analytics</button>
+      <button class="navtab">Approvals</button>
       <button class="navtab">Settings</button>
     </div>
     <div class="topbar-right">
@@ -2274,7 +2283,7 @@
       <button class="navtab active" onclick="goto('s2')">Contracts</button>
       <button class="navtab">Tasks</button>
       <button class="navtab">Deliverables</button>
-      <button class="navtab">Analytics</button>
+      <button class="navtab">Approvals</button>
       <button class="navtab">Settings</button>
     </div>
     <div class="topbar-right">
@@ -2382,7 +2391,7 @@
       <button class="navtab active" onclick="goto('s2')">Contracts</button>
       <button class="navtab">Tasks</button>
       <button class="navtab">Deliverables</button>
-      <button class="navtab">Analytics</button>
+      <button class="navtab">Approvals</button>
       <button class="navtab">Settings</button>
     </div>
     <div class="topbar-right">
@@ -2948,7 +2957,7 @@
       <button class="navtab active" onclick="goto('s2')">Contracts</button>
       <button class="navtab">Tasks</button>
       <button class="navtab">Deliverables</button>
-      <button class="navtab">Analytics</button>
+      <button class="navtab">Approvals</button>
       <button class="navtab">Settings</button>
     </div>
     <div class="topbar-right">
@@ -3517,12 +3526,18 @@
               <div class="vtb-sub">The contract has been sent. Editing is disabled until the vendor returns it.</div>
             </div>
           </div>
-          <div class="vtb-chips">
-            <div class="vtb-chip">
-              <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7 4v3.5l2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-              Vendor's turn
+          <div class="vtb-right">
+            <div class="vtb-chips">
+              <div class="vtb-chip">
+                <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7 4v3.5l2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Vendor's turn
+              </div>
+              <button class="vtb-recall-btn" onclick="recallFromVendor()">
+                <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 10a6 6 0 1 0 1.5-3.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><polyline points="2,5 4,10 9,8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Recall
+              </button>
             </div>
-            <div class="vtb-chip secondary">Test01 · Sent just now</div>
+            <div class="vtb-sent-info">Version 1 sent just now</div>
           </div>
         </div>
       </div>
@@ -3536,6 +3551,8 @@
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
     window.scrollTo(0, 0);
+    // Reset vendor-turn state whenever entering the contract workspace
+    if (screenId === 's6') resetVendorState();
   }
 
   // ── Doc viewer toolbar ─────────────────────────────────────
@@ -4672,6 +4689,20 @@
     var banner = document.getElementById('vendor-turn-banner');
     if (banner) banner.style.display = 'block';
   }
+
+  function resetVendorState() {
+    // Restore Edit button
+    var editBtn = document.querySelector('.doc-act-btn[onclick*="openEditWindow"]');
+    if (editBtn) editBtn.style.display = '';
+    // Re-enable Send to Vendor button
+    var sendBtn = document.getElementById('send-to-vendor-btn');
+    if (sendBtn) { sendBtn.disabled = false; sendBtn.style.opacity = ''; sendBtn.style.cursor = ''; }
+    // Hide vendor turn banner
+    var banner = document.getElementById('vendor-turn-banner');
+    if (banner) banner.style.display = 'none';
+  }
+
+  function recallFromVendor() { resetVendorState(); }
 
   function openEditWindow() {
     document.getElementById('edit-window').classList.add('open');
